@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inicia sesión o regístrate en CasasBarinas para publicar y gestionar propiedades.">
+    <title>Login - CasasBarinas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>CasasBarinas</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="search.html" class="nav-link">Propiedades</a></li>
+                <li><a href="map.html" class="nav-link">Mapa</a></li>
+                <li><a href="new-property.html" class="nav-link">Publicar</a></li>
+                <li id="navLoginItem"><a href="login.html" class="nav-link nav-btn active">Login</a></li>
+                <li id="navUserItem" class="nav-user hidden">
+                    <a href="dashboard.html" class="nav-link" id="navUserName">
+                        <i class="fas fa-user-circle"></i> Mi Cuenta
+                    </a>
+                    <button class="nav-link btn-logout" id="navLogout">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Auth Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <!-- Tab Toggle -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin" data-tab="login">Iniciar Sesión</button>
+                    <button class="auth-tab" id="tabRegister" data-tab="register">Registrarse</button>
+                </div>
+
+                <!-- Login Form -->
+                <form class="auth-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Correo Electrónico</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" name="email" placeholder="tu@email.com" required autocomplete="email">
+                        </div>
+                        <span class="form-error" id="loginEmailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" name="password" placeholder="Tu contraseña" required autocomplete="current-password" minlength="6">
+                            <button type="button" class="toggle-password" data-target="loginPassword" aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span class="form-error" id="loginPasswordError"></span>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" name="remember">
+                            <span>Recordarme</span>
+                        </label>
+                        <a href="#" class="form-link" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+
+                    <div class="auth-message" id="loginMessage" style="display:none;"></div>
+                </form>
+
+                <!-- Register Form -->
+                <form class="auth-form hidden" id="registerForm">
+                    <div class="form-group">
+                        <label for="regName">Nombre Completo</label>
+                        <div class="input-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="regName" name="name" placeholder="Tu nombre completo" required autocomplete="name" minlength="2">
+                        </div>
+                        <span class="form-error" id="regNameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">Correo Electrónico</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="regEmail" name="email" placeholder="tu@email.com" required autocomplete="email">
+                        </div>
+                        <span class="form-error" id="regEmailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regPhone">Teléfono</label>
+                        <div class="input-icon">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="regPhone" name="phone" placeholder="+58 274-000-0000" autocomplete="tel">
+                        </div>
+                        <span class="form-error" id="regPhoneError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regPassword">Contraseña</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regPassword" name="password" placeholder="Mínimo 6 caracteres" required autocomplete="new-password" minlength="6">
+                            <button type="button" class="toggle-password" data-target="regPassword" aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span class="form-error" id="regPasswordError"></span>
+                        <div class="password-strength" id="passwordStrength">
+                            <div class="strength-bar" id="strengthBar"></div>
+                        </div>
+                        <small class="form-hint" id="strengthText"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirmar Contraseña</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regConfirmPassword" name="confirmPassword" placeholder="Repite tu contraseña" required autocomplete="new-password" minlength="6">
+                            <button type="button" class="toggle-password" data-target="regConfirmPassword" aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span class="form-error" id="regConfirmError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="acceptTerms" name="terms" required>
+                            <span>Acepto los <a href="#" class="form-link">Términos y Condiciones</a></span>
+                        </label>
+                        <span class="form-error" id="regTermsError"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Crear Cuenta
+                    </button>
+
+                    <div class="auth-message" id="registerMessage" style="display:none;"></div>
+                </form>
+
+                <div class="auth-footer">
+                    <a href="index.html"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 CasasBarinas. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

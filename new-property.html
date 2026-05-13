@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Publica una nueva propiedad en CasasBarinas - El portal inmobiliario de Barinas, Venezuela.">
+    <title>Publicar Propiedad - CasasBarinas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>CasasBarinas</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="search.html" class="nav-link">Propiedades</a></li>
+                <li><a href="map.html" class="nav-link">Mapa</a></li>
+                <li><a href="new-property.html" class="nav-link active">Publicar</a></li>
+                <li id="navLoginItem"><a href="login.html" class="nav-link nav-btn">Login</a></li>
+                <li id="navUserItem" class="nav-user hidden">
+                    <a href="dashboard.html" class="nav-link" id="navUserName">
+                        <i class="fas fa-user-circle"></i> Mi Cuenta
+                    </a>
+                    <button class="nav-link btn-logout" id="navLogout">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Property Form -->
+    <main class="property-form-page">
+        <div class="container">
+            <div class="form-header">
+                <h1 id="formTitle"><i class="fas fa-plus-circle"></i> Publicar Nueva Propiedad</h1>
+                <p class="form-subtitle">Completa los datos de tu propiedad para publicarla en el portal.</p>
+            </div>
+
+            <form class="property-form" id="propertyForm" enctype="multipart/form-data">
+                <!-- Section: Basic Info -->
+                <div class="form-section">
+                    <h2 class="form-section-title"><i class="fas fa-info-circle"></i> Información Básica</h2>
+
+                    <div class="form-group">
+                        <label for="propTitle">Título de la Propiedad <span class="required">*</span></label>
+                        <input type="text" id="propTitle" name="titulo" placeholder="Ej: Casa moderna en Barinas con 3 habitaciones" required maxlength="150">
+                        <small class="form-hint">Máximo 150 caracteres</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="propDescription">Descripción <span class="required">*</span></label>
+                        <textarea id="propDescription" name="descripcion" rows="5" placeholder="Describe tu propiedad en detalle: características, estado, vecinos, servicios cercanos..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="propTipo">Tipo de Propiedad <span class="required">*</span></label>
+                            <select id="propTipo" name="tipo" required>
+                                <option value="">Selecciona un tipo</option>
+                                <option value="Casa">Casa</option>
+                                <option value="Apartamento">Apartamento</option>
+                                <option value="Terreno">Terreno</option>
+                                <option value="Local Comercial">Local Comercial</option>
+                                <option value="Oficina">Oficina</option>
+                                <option value="Hotel">Hotel</option>
+                                <option value="Finca">Finca</option>
+                                <option value="Galpón">Galpón</option>
+                                <option value="Estacionamiento">Estacionamiento</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="propOperacion">Tipo de Operación <span class="required">*</span></label>
+                            <select id="propOperacion" name="operacion" required>
+                                <option value="">Selecciona operación</option>
+                                <option value="Venta">Venta</option>
+                                <option value="Alquiler">Alquiler</option>
+                                <option value="Venta y Alquiler">Venta y Alquiler</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Price -->
+                <div class="form-section">
+                    <h2 class="form-section-title"><i class="fas fa-dollar-sign"></i> Precio</h2>
+
+                    <div class="form-row">
+                        <div class="form-group form-group-lg">
+                            <label for="propPrecio">Precio <span class="required">*</span></label>
+                            <input type="number" id="propPrecio" name="precio" placeholder="0.00" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="propMoneda">Moneda</label>
+                            <select id="propMoneda" name="moneda">
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (&euro;)</option>
+                                <option value="Bs">Bs (Bolívares)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Location -->
+                <div class="form-section">
+                    <h2 class="form-section-title"><i class="fas fa-map-marker-alt"></i> Ubicación</h2>
+
+                    <div class="form-group">
+                        <label for="propDireccion">Dirección <span class="required">*</span></label>
+                        <input type="text" id="propDireccion" name="direccion" placeholder="Ej: Av. Marquesa, Centro, Barinas" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="propCiudad">Ciudad <span class="required">*</span></label>
+                            <input type="text" id="propCiudad" name="ciudad" placeholder="Barinas" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="propEstado">Estado</label>
+                            <input type="text" id="propEstado" name="estado" placeholder="Barinas" value="Barinas">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="propLat">Latitud</label>
+                            <input type="number" id="propLat" name="latitud" placeholder="8.6233" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="propLng">Longitud</label>
+                            <input type="number" id="propLng" name="longitud" placeholder="-70.2158" step="any">
+                        </div>
+                    </div>
+                    <small class="form-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Puedes seleccionar la ubicación en el mapa después de publicar la propiedad, o usar
+                        <a href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps</a>
+                        para obtener las coordenadas.
+                    </small>
+                </div>
+
+                <!-- Section: Property Details -->
+                <div class="form-section">
+                    <h2 class="form-section-title"><i class="fas fa-bed"></i> Características</h2>
+
+                    <div class="form-row form-row-4">
+                        <div class="form-group">
+                            <label for="propHabitaciones">Habitaciones</label>
+                            <input type="number" id="propHabitaciones" name="habitaciones" min="0" max="50" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="propBanos">Baños</label>
+                            <input type="number" id="propBanos" name="banos" min="0" max="50" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="propEstacionamientos">Estacionamientos</label>
+                            <input type="number" id="propEstacionamientos" name="estacionamientos" min="0" max="50" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="propPisos">Pisos</label>
+                            <input type="number" id="propPisos" name="pisos" min="0" max="100" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="propArea">Área <span class="required">*</span></label>
+                            <input type="number" id="propArea" name="area" placeholder="0" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="propAreaUnidad">Unidad de Área</label>
+                            <select id="propAreaUnidad" name="area_unidad">
+                                <option value="m2">m²</option>
+                                <option value="ha">Hectáreas</option>
+                                <option value="ft2">ft²</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="propAno">Año de Construcción</label>
+                            <input type="number" id="propAno" name="ano_construccion" placeholder="2000" min="1800" max="2025">
+                        </div>
+                    </div>
+
+                    <!-- Features Checkboxes -->
+                    <div class="form-group">
+                        <label>Características Adicionales</label>
+                        <div class="features-grid">
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Piscina">
+                                <span class="feature-icon"><i class="fas fa-swimming-pool"></i></span>
+                                <span>Piscina</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Jardín">
+                                <span class="feature-icon"><i class="fas fa-leaf"></i></span>
+                                <span>Jardín</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Aire Acondicionado">
+                                <span class="feature-icon"><i class="fas fa-snowflake"></i></span>
+                                <span>Aire Acondicionado</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Cocina">
+                                <span class="feature-icon"><i class="fas fa-utensils"></i></span>
+                                <span>Cocina Equipada</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Amueblado">
+                                <span class="feature-icon"><i class="fas fa-couch"></i></span>
+                                <span>Amueblado</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Seguridad">
+                                <span class="feature-icon"><i class="fas fa-shield-alt"></i></span>
+                                <span>Seguridad</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Ascensor">
+                                <span class="feature-icon"><i class="fas fa-elevator"></i></span>
+                                <span>Ascensor</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Terraza">
+                                <span class="feature-icon"><i class="fas fa-border-all"></i></span>
+                                <span>Terraza</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Estacionamiento">
+                                <span class="feature-icon"><i class="fas fa-car"></i></span>
+                                <span>Estacionamiento</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Vigilancia 24h">
+                                <span class="feature-icon"><i class="fas fa-video"></i></span>
+                                <span>Vigilancia 24h</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Portón Eléctrico">
+                                <span class="feature-icon"><i class="fas fa-door-closed"></i></span>
+                                <span>Portón Eléctrico</span>
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="caracteristicas" value="Patio">
+                                <span class="feature-icon"><i class="fas fa-seedling"></i></span>
+                                <span>Patio</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Photos -->
+                <div class="form-section">
+                    <h2 class="form-section-title"><i class="fas fa-camera"></i> Fotografías</h2>
+
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Arrastra y suelta tus imágenes aquí</h3>
+                            <p>o haz clic para seleccionar archivos</p>
+                            <small>JPG, PNG o WebP. Máximo 5MB por imagen. Máximo 10 imágenes.</small>
+                        </div>
+                        <input type="file" id="photoInput" name="fotos" accept="image/*" multiple hidden>
+                    </div>
+
+                    <div class="photos-preview" id="photosPreview">
+                        <!-- Preview thumbnails added dynamically -->
+                    </div>
+                    <small class="form-hint">
+                        <i class="fas fa-info-circle"></i>
+                        La primera imagen será la foto principal. Arrastra para reordenar.
+                    </small>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="dashboard.html" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitPropertyBtn">
+                        <i class="fas fa-paper-plane"></i> <span id="submitBtnText">Publicar Propiedad</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script src="js/property-form.js"></script>
+</body>
+</html>

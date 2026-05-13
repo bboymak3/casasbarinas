@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Detalle de propiedad en CasasBarinas - Barinas, Venezuela.">
+    <title>Propiedad - CasasBarinas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>CasasBarinas</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="search.html" class="nav-link">Propiedades</a></li>
+                <li><a href="map.html" class="nav-link">Mapa</a></li>
+                <li><a href="new-property.html" class="nav-link">Publicar</a></li>
+                <li id="navLoginItem"><a href="login.html" class="nav-link nav-btn">Login</a></li>
+                <li id="navUserItem" class="nav-user hidden">
+                    <a href="dashboard.html" class="nav-link" id="navUserName">
+                        <i class="fas fa-user-circle"></i> Mi Cuenta
+                    </a>
+                    <button class="nav-link btn-logout" id="navLogout">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Property Detail -->
+    <main class="property-detail-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="search.html">Propiedades</a>
+                <span id="breadcrumbTitle">Cargando...</span>
+            </nav>
+
+            <!-- Loading State -->
+            <div class="loading-spinner" id="propertyLoading">
+                <i class="fas fa-spinner fa-spin fa-3x"></i>
+                <p>Cargando propiedad...</p>
+            </div>
+
+            <!-- Error State -->
+            <div class="error-state hidden" id="propertyError">
+                <i class="fas fa-exclamation-circle fa-3x"></i>
+                <h2>Propiedad no encontrada</h2>
+                <p>La propiedad que buscas no existe o ha sido eliminada.</p>
+                <a href="search.html" class="btn btn-primary">Buscar Propiedades</a>
+            </div>
+
+            <!-- Property Content -->
+            <div class="property-content hidden" id="propertyContent">
+                <!-- Gallery -->
+                <div class="property-gallery" id="propertyGallery">
+                    <div class="gallery-main">
+                        <img id="mainImage" src="" alt="" class="gallery-main-img">
+                        <button class="gallery-nav gallery-prev" id="galleryPrev" aria-label="Anterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="gallery-nav gallery-next" id="galleryNext" aria-label="Siguiente">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <div class="gallery-counter">
+                            <span id="galleryCurrent">1</span> / <span id="galleryTotal">1</span>
+                        </div>
+                        <button class="gallery-fullscreen" id="galleryFullscreen" aria-label="Pantalla completa">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <!-- Badges on image -->
+                        <div class="gallery-badges" id="galleryBadges"></div>
+                    </div>
+                    <div class="gallery-thumbnails" id="galleryThumbnails">
+                        <!-- Thumbnails loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Main Info Row -->
+                <div class="property-detail-grid">
+                    <div class="property-detail-main">
+                        <!-- Title & Price -->
+                        <div class="property-header-info">
+                            <div class="property-title-row">
+                                <h1 id="propDetailTitle">Cargando...</h1>
+                                <button class="btn-favorite" id="btnFavorite" aria-label="Agregar a favoritos" data-property-id="">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="property-price" id="propDetailPrice">--</div>
+                            <div class="property-location" id="propDetailLocation">
+                                <i class="fas fa-map-marker-alt"></i> <span>Cargando...</span>
+                            </div>
+                            <div class="property-type-badges" id="propDetailBadges"></div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="property-quick-stats" id="propQuickStats">
+                            <div class="quick-stat">
+                                <i class="fas fa-bed"></i>
+                                <span id="statBedrooms">--</span>
+                                <label>Habitaciones</label>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-bath"></i>
+                                <span id="statBathrooms">--</span>
+                                <label>Baños</label>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-car"></i>
+                                <span id="statParking">--</span>
+                                <label>Estacionamientos</label>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span id="statArea">--</span>
+                                <label id="statAreaLabel">Área</label>
+                            </div>
+                            <div class="quick-stat" id="statYearWrap" style="display:none;">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span id="statYear">--</span>
+                                <label>Año</label>
+                            </div>
+                            <div class="quick-stat" id="statFloorsWrap" style="display:none;">
+                                <i class="fas fa-layer-group"></i>
+                                <span id="statFloors">--</span>
+                                <label>Pisos</label>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="property-section">
+                            <h2 class="property-section-title">Descripción</h2>
+                            <div class="property-description" id="propDescription">
+                                <p>Cargando descripción...</p>
+                            </div>
+                        </div>
+
+                        <!-- Features -->
+                        <div class="property-section hidden" id="featuresSection">
+                            <h2 class="property-section-title">Características</h2>
+                            <div class="features-list" id="featuresList">
+                                <!-- Features loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Map -->
+                        <div class="property-section" id="mapSection">
+                            <h2 class="property-section-title">Ubicación</h2>
+                            <div class="property-map" id="propertyMap">
+                                <p>Ubicación no disponible</p>
+                            </div>
+                        </div>
+
+                        <!-- Contact Form -->
+                        <div class="property-section contact-section">
+                            <h2 class="property-section-title">Contactar al Propietario</h2>
+                            <form class="contact-form" id="contactForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="contactName">Tu Nombre <span class="required">*</span></label>
+                                        <input type="text" id="contactName" name="nombre" required placeholder="Tu nombre">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contactEmail">Tu Email <span class="required">*</span></label>
+                                        <input type="email" id="contactEmail" name="email" required placeholder="tu@email.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactPhone">Tu Teléfono</label>
+                                    <input type="tel" id="contactPhone" name="telefono" placeholder="+58 274-000-0000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactMessage">Mensaje <span class="required">*</span></label>
+                                    <textarea id="contactMessage" name="mensaje" rows="4" required placeholder="Hola, estoy interesado(a) en esta propiedad. ¿Podría darme más información?"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg btn-full">
+                                    <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                                </button>
+                                <div class="contact-whatsapp" id="contactWhatsapp" style="display:none;">
+                                    <span class="contact-divider">o contactar por</span>
+                                    <a href="#" class="btn btn-whatsapp" id="whatsappLink" target="_blank" rel="noopener">
+                                        <i class="fab fa-whatsapp"></i> WhatsApp
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <aside class="property-detail-sidebar">
+                        <!-- Owner Card -->
+                        <div class="owner-card" id="ownerCard">
+                            <div class="owner-avatar" id="ownerAvatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <h3 class="owner-name" id="ownerName">Propietario</h3>
+                            <p class="owner-since" id="ownerSince">Miembro desde --</p>
+                            <div class="owner-stats" id="ownerStats">
+                                <div class="owner-stat">
+                                    <span class="owner-stat-number" id="ownerPropCount">0</span>
+                                    <span class="owner-stat-label">Propiedades</span>
+                                </div>
+                            </div>
+                            <div class="owner-contact" id="ownerPhoneWrap" style="display:none;">
+                                <a href="tel:" class="owner-phone" id="ownerPhoneLink">
+                                    <i class="fas fa-phone"></i> <span id="ownerPhone">--</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Price Summary -->
+                        <div class="sidebar-card">
+                            <h4>Resumen del Precio</h4>
+                            <div class="price-summary" id="priceSummary">
+                                <span class="price-big" id="sidePrice">--</span>
+                                <span class="price-operation" id="sideOperation">--</span>
+                            </div>
+                            <div class="price-details">
+                                <div class="price-detail-item" id="pricePerArea" style="display:none;">
+                                    <span>Precio por m²:</span>
+                                    <strong id="pricePerAreaValue">--</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="sidebar-card">
+                            <a href="#" class="btn btn-whatsapp btn-full btn-lg" id="sideWhatsApp" style="display:none;" target="_blank" rel="noopener">
+                                <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+                            </a>
+                            <button class="btn btn-primary btn-full btn-lg" id="sideContactBtn" onclick="document.querySelector('.contact-form').scrollIntoView({behavior:'smooth'})">
+                                <i class="fas fa-envelope"></i> Enviar Mensaje
+                            </button>
+                            <div class="sidebar-actions">
+                                <button class="btn btn-outline btn-sm btn-favorite" id="sideFavoriteBtn" data-property-id="">
+                                    <i class="far fa-heart"></i> Guardar
+                                </button>
+                                <button class="btn btn-outline btn-sm" id="shareBtn">
+                                    <i class="fas fa-share-alt"></i> Compartir
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Info -->
+                        <div class="sidebar-card">
+                            <h4>Información Rápida</h4>
+                            <ul class="quick-info-list" id="quickInfoList">
+                                <li><i class="fas fa-tag"></i> <span id="qiType">--</span></li>
+                                <li><i class="fas fa-exchange-alt"></i> <span id="qiOperation">--</span></li>
+                                <li><i class="fas fa-map-marker-alt"></i> <span id="qiLocation">--</span></li>
+                                <li><i class="fas fa-calendar-alt"></i> Publicado: <span id="qiPublished">--</span></li>
+                                <li><i class="fas fa-eye"></i> Vistas: <span id="qiViews">0</span></li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- Similar Properties -->
+            <section class="section hidden" id="similarSection">
+                <div class="section-header">
+                    <h2 class="section-title">Propiedades Similares</h2>
+                    <a href="search.html" class="section-link">Ver más <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="property-grid" id="similarGrid">
+                    <!-- Similar properties loaded dynamically -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Image Lightbox -->
+    <div class="lightbox hidden" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <img id="lightboxImage" src="" alt="" class="lightbox-img">
+        <button class="lightbox-nav lightbox-next" id="lightboxNext">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Panel de Administración - CasasBarinas">
+    <title>Administración - CasasBarinas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-admin" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>CasasBarinas</span>
+                <span class="admin-badge">Admin</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-globe"></i> Ver Sitio</a></li>
+                <li><a href="search.html" class="nav-link"><i class="fas fa-building"></i> Propiedades</a></li>
+                <li id="navUserItem" class="nav-user">
+                    <a href="dashboard.html" class="nav-link" id="navUserName">
+                        <i class="fas fa-user-shield"></i> Administrador
+                    </a>
+                    <button class="nav-link btn-logout" id="navLogout">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Admin Panel -->
+    <main class="admin-panel">
+        <div class="admin-layout">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar" id="adminSidebar">
+                <div class="admin-sidebar-header">
+                    <i class="fas fa-cogs"></i>
+                    <span>Administración</span>
+                </div>
+                <nav class="admin-nav">
+                    <a href="#" class="admin-nav-link active" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="admin-nav-link" data-tab="properties">
+                        <i class="fas fa-building"></i>
+                        <span>Propiedades</span>
+                        <span class="badge" id="adminPendingBadge">0</span>
+                    </a>
+                    <a href="#" class="admin-nav-link" data-tab="users">
+                        <i class="fas fa-users"></i>
+                        <span>Usuarios</span>
+                    </a>
+                    <a href="#" class="admin-nav-link" data-tab="messages">
+                        <i class="fas fa-envelope"></i>
+                        <span>Mensajes</span>
+                        <span class="badge" id="adminMsgBadge">0</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Admin Content -->
+            <div class="admin-content">
+                <!-- Top Bar -->
+                <div class="admin-topbar">
+                    <div class="admin-topbar-left">
+                        <button class="admin-sidebar-toggle" id="adminSidebarToggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 class="admin-page-title" id="adminPageTitle">Dashboard</h1>
+                    </div>
+                    <div class="admin-topbar-right">
+                        <span class="admin-date" id="adminDate"></span>
+                    </div>
+                </div>
+
+                <!-- ==================== DASHBOARD TAB ==================== -->
+                <div class="admin-tab" id="tabDashboard">
+                    <!-- Stats Cards -->
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon" style="background: #e8f0fe; color: #1a73e8;">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="admin-stat-info">
+                                <div class="admin-stat-number" id="adminTotalProps">0</div>
+                                <div class="admin-stat-label">Total Propiedades</div>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon" style="background: #fff3e0; color: #ff6b35;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="admin-stat-info">
+                                <div class="admin-stat-number" id="adminPendingProps">0</div>
+                                <div class="admin-stat-label">Pendientes de Aprobación</div>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon" style="background: #e8f5e9; color: #28a745;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="admin-stat-info">
+                                <div class="admin-stat-number" id="adminTotalUsers">0</div>
+                                <div class="admin-stat-label">Usuarios Registrados</div>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon" style="background: #fce4ec; color: #e91e63;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="admin-stat-info">
+                                <div class="admin-stat-number" id="adminTotalMsgs">0</div>
+                                <div class="admin-stat-label">Mensajes de Contacto</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-history"></i> Actividad Reciente</h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="activity-list" id="adminActivityList">
+                                <div class="empty-state-sm">
+                                    <p>No hay actividad reciente.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Properties -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-building"></i> Últimas Propiedades</h3>
+                            <a href="#" class="admin-link" data-tab="properties">Ver todas</a>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Propiedad</th>
+                                            <th>Tipo</th>
+                                            <th>Usuario</th>
+                                            <th>Estado</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminRecentProps">
+                                        <tr class="empty-row">
+                                            <td colspan="5">
+                                                <div class="empty-state-sm"><p>No hay propiedades.</p></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Users -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-users"></i> Últimos Usuarios</h3>
+                            <a href="#" class="admin-link" data-tab="users">Ver todos</a>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Email</th>
+                                            <th>Rol</th>
+                                            <th>Estado</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminRecentUsers">
+                                        <tr class="empty-row">
+                                            <td colspan="5">
+                                                <div class="empty-state-sm"><p>No hay usuarios.</p></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== PROPERTIES TAB ==================== -->
+                <div class="admin-tab hidden" id="tabProperties">
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-building"></i> Gestión de Propiedades</h3>
+                            <div class="admin-card-actions">
+                                <select id="adminPropStatusFilter" class="form-select-sm">
+                                    <option value="">Todos los estados</option>
+                                    <option value="publicada">Publicadas</option>
+                                    <option value="pendiente">Pendientes</option>
+                                    <option value="rechazada">Rechazadas</option>
+                                </select>
+                                <select id="adminPropTypeFilter" class="form-select-sm">
+                                    <option value="">Todos los tipos</option>
+                                    <option value="Casa">Casas</option>
+                                    <option value="Apartamento">Apartamentos</option>
+                                    <option value="Terreno">Terrenos</option>
+                                    <option value="Local Comercial">Locales Comerciales</option>
+                                    <option value="Oficina">Oficinas</option>
+                                    <option value="Hotel">Hoteles</option>
+                                    <option value="Finca">Fincas</option>
+                                    <option value="Galpón">Galpones</option>
+                                    <option value="Estacionamiento">Estacionamientos</option>
+                                    <option value="Otro">Otros</option>
+                                </select>
+                                <input type="text" id="adminPropSearch" class="form-input-sm" placeholder="Buscar...">
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-table-responsive">
+                                <table class="admin-table admin-table-props">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Imagen</th>
+                                            <th>Título</th>
+                                            <th>Tipo</th>
+                                            <th>Operación</th>
+                                            <th>Precio</th>
+                                            <th>Usuario</th>
+                                            <th>Estado</th>
+                                            <th>Destacada</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminPropsTableBody">
+                                        <tr class="empty-row">
+                                            <td colspan="10">
+                                                <div class="empty-state-sm"><p>Cargando propiedades...</p></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="admin-pagination" id="adminPropsPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== USERS TAB ==================== -->
+                <div class="admin-tab hidden" id="tabUsers">
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-users"></i> Gestión de Usuarios</h3>
+                            <div class="admin-card-actions">
+                                <select id="adminUserRoleFilter" class="form-select-sm">
+                                    <option value="">Todos los roles</option>
+                                    <option value="user">Usuarios</option>
+                                    <option value="admin">Administradores</option>
+                                </select>
+                                <input type="text" id="adminUserSearch" class="form-input-sm" placeholder="Buscar usuario...">
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Teléfono</th>
+                                            <th>Rol</th>
+                                            <th>Estado</th>
+                                            <th>Propiedades</th>
+                                            <th>Fecha Registro</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminUsersTableBody">
+                                        <tr class="empty-row">
+                                            <td colspan="9">
+                                                <div class="empty-state-sm"><p>Cargando usuarios...</p></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="admin-pagination" id="adminUsersPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== MESSAGES TAB ==================== -->
+                <div class="admin-tab hidden" id="tabMessages">
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-envelope"></i> Mensajes de Contacto</h3>
+                            <div class="admin-card-actions">
+                                <select id="adminMsgFilter" class="form-select-sm">
+                                    <option value="">Todos</option>
+                                    <option value="nuevo">Nuevos</option>
+                                    <option value="leido">Leídos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="admin-table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Remitente</th>
+                                            <th>Email</th>
+                                            <th>Propiedad</th>
+                                            <th>Mensaje</th>
+                                            <th>Teléfono</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminMsgsTableBody">
+                                        <tr class="empty-row">
+                                            <td colspan="8">
+                                                <div class="empty-state-sm"><p>Cargando mensajes...</p></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="admin-pagination" id="adminMsgsPagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Property Detail Modal -->
+    <div class="modal hidden" id="adminPropertyModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="adminPropModalTitle">Detalle de Propiedad</h3>
+                <button class="modal-close" id="adminPropModalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="adminPropModalBody">
+                <!-- Content loaded dynamically -->
+            </div>
+            <div class="modal-footer" id="adminPropModalFooter">
+                <!-- Actions loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div class="modal hidden" id="adminUserModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Usuario</h3>
+                <button class="modal-close" id="adminUserModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="adminUserEditForm">
+                    <div class="form-group">
+                        <label for="editUserName">Nombre</label>
+                        <input type="text" id="editUserName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserEmail">Email</label>
+                        <input type="email" id="editUserEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserRole">Rol</label>
+                        <select id="editUserRole" name="role">
+                            <option value="user">Usuario</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserStatus">Estado</label>
+                        <select id="editUserStatus" name="status">
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="adminUserModalCancel">Cancelar</button>
+                <button class="btn btn-primary" id="adminUserModalSave">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Reason Modal -->
+    <div class="modal hidden" id="adminRejectModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-ban text-danger"></i> Rechazar Propiedad</h3>
+                <button class="modal-close" id="adminRejectModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="rejectReason">Motivo del rechazo</label>
+                    <textarea id="rejectReason" name="reason" rows="4" placeholder="Explique por qué esta propiedad es rechazada..." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="adminRejectCancel">Cancelar</button>
+                <button class="btn btn-danger" id="adminRejectConfirm">
+                    <i class="fas fa-ban"></i> Rechazar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div class="modal hidden" id="adminMsgModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-envelope-open"></i> Detalle del Mensaje</h3>
+                <button class="modal-close" id="adminMsgModalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="adminMsgModalBody">
+                <!-- Message content loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="adminMsgModalCloseBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal hidden" id="adminDeleteModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle text-danger"></i> Confirmar Eliminación</h3>
+                <button class="modal-close" id="adminDeleteModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="adminDeleteMsg">¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="adminDeleteCancel">Cancelar</button>
+                <button class="btn btn-danger" id="adminDeleteConfirm">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

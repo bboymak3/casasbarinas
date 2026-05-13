@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CasasBarinas - El portal inmobiliario líder en Barinas, Venezuela. Encuentra casas, apartamentos, terrenos y más.">
+    <meta name="keywords" content="inmobiliaria, Barinas, casas, apartamentos, terrenos, venta, alquiler, Venezuela">
+    <title>CasasBarinas - Propiedades en Barinas, Venezuela</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>CasasBarinas</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link active">Inicio</a></li>
+                <li><a href="search.html" class="nav-link">Propiedades</a></li>
+                <li><a href="map.html" class="nav-link">Mapa</a></li>
+                <li><a href="new-property.html" class="nav-link">Publicar</a></li>
+                <li id="navLoginItem"><a href="login.html" class="nav-link nav-btn">Login</a></li>
+                <li id="navUserItem" class="nav-user hidden">
+                    <a href="dashboard.html" class="nav-link" id="navUserName">
+                        <i class="fas fa-user-circle"></i> Mi Cuenta
+                    </a>
+                    <button class="nav-link btn-logout" id="navLogout">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Encuentra tu <span class="text-accent">hogar ideal</span> en Barinas</h1>
+            <p class="hero-subtitle">El portal inmobiliario más completo de Barinas, Venezuela. Casas, apartamentos, terrenos y mucho más.</p>
+
+            <!-- Search Bar -->
+            <form class="search-bar" id="heroSearchForm" action="search.html" method="GET">
+                <div class="search-row">
+                    <div class="search-field">
+                        <label for="searchTipo">Tipo</label>
+                        <select id="searchTipo" name="tipo">
+                            <option value="">Todas</option>
+                            <option value="Casa">Casas</option>
+                            <option value="Apartamento">Apartamentos</option>
+                            <option value="Terreno">Terrenos</option>
+                            <option value="Local Comercial">Locales Comerciales</option>
+                            <option value="Oficina">Oficinas</option>
+                            <option value="Hotel">Hoteles</option>
+                            <option value="Finca">Fincas</option>
+                            <option value="Galpón">Galpones</option>
+                            <option value="Estacionamiento">Estacionamientos</option>
+                            <option value="Otro">Otros</option>
+                        </select>
+                    </div>
+                    <div class="search-field">
+                        <label for="searchOperacion">Operación</label>
+                        <select id="searchOperacion" name="operacion">
+                            <option value="">Ambos</option>
+                            <option value="Venta">Venta</option>
+                            <option value="Alquiler">Alquiler</option>
+                        </select>
+                    </div>
+                    <div class="search-field">
+                        <label for="searchCiudad">Ciudad</label>
+                        <input type="text" id="searchCiudad" name="ciudad" placeholder="Barinas">
+                    </div>
+                </div>
+                <div class="search-row">
+                    <div class="search-field">
+                        <label for="searchPrecioMin">Precio Mín</label>
+                        <input type="number" id="searchPrecioMin" name="precio_min" placeholder="0" min="0">
+                    </div>
+                    <div class="search-field">
+                        <label for="searchPrecioMax">Precio Máx</label>
+                        <input type="number" id="searchPrecioMax" name="precio_max" placeholder="Sin límite" min="0">
+                    </div>
+                    <div class="search-field">
+                        <label for="searchHabitaciones">Habitaciones</label>
+                        <select id="searchHabitaciones" name="habitaciones">
+                            <option value="">Cualquiera</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                            <option value="5">5+</option>
+                        </select>
+                    </div>
+                    <div class="search-field">
+                        <label for="searchBanos">Baños</label>
+                        <select id="searchBanos" name="banos">
+                            <option value="">Cualquiera</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-search">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="section" id="featuredSection">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Propiedades Destacadas</h2>
+                <a href="search.html" class="section-link">Ver todas <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="property-grid" id="featuredGrid">
+                <!-- Properties loaded dynamically by JS -->
+                <div class="loading-spinner" id="featuredLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando propiedades...</p>
+                </div>
+            </div>
+            <div class="text-center" id="featuredEmpty" style="display:none;">
+                <p class="text-muted">No hay propiedades destacadas en este momento.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Types Section -->
+    <section class="section section-light">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Explora por Tipo de Propiedad</h2>
+            </div>
+            <div class="types-grid">
+                <a href="search.html?tipo=Casa" class="type-card">
+                    <div class="type-icon"><i class="fas fa-house"></i></div>
+                    <h3>Casas</h3>
+                </a>
+                <a href="search.html?tipo=Apartamento" class="type-card">
+                    <div class="type-icon"><i class="fas fa-building"></i></div>
+                    <h3>Apartamentos</h3>
+                </a>
+                <a href="search.html?tipo=Terreno" class="type-card">
+                    <div class="type-icon"><i class="fas fa-mountain-sun"></i></div>
+                    <h3>Terrenos</h3>
+                </a>
+                <a href="search.html?tipo=Local+Comercial" class="type-card">
+                    <div class="type-icon"><i class="fas fa-store"></i></div>
+                    <h3>Locales Comerciales</h3>
+                </a>
+                <a href="search.html?tipo=Oficina" class="type-card">
+                    <div class="type-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3>Oficinas</h3>
+                </a>
+                <a href="search.html?tipo=Finca" class="type-card">
+                    <div class="type-icon"><i class="fas fa-tree"></i></div>
+                    <h3>Fincas</h3>
+                </a>
+                <a href="search.html?tipo=Hotel" class="type-card">
+                    <div class="type-icon"><i class="fas fa-hotel"></i></div>
+                    <h3>Hoteles</h3>
+                </a>
+                <a href="search.html?tipo=Galpón" class="type-card">
+                    <div class="type-icon"><i class="fas fa-warehouse"></i></div>
+                    <h3>Galpones</h3>
+                </a>
+                <a href="search.html?tipo=Estacionamiento" class="type-card">
+                    <div class="type-icon"><i class="fas fa-square-parking"></i></div>
+                    <h3>Estacionamientos</h3>
+                </a>
+                <a href="search.html?tipo=Otro" class="type-card">
+                    <div class="type-icon"><i class="fas fa-ellipsis"></i></div>
+                    <h3>Otros</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">¿Cómo funciona?</h2>
+                <p class="section-subtitle">Encuentra o publica tu propiedad en 3 sencillos pasos</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon"><i class="fas fa-plus-circle"></i></div>
+                    <h3>Publica</h3>
+                    <p>Regístrate y publica tu propiedad con fotos, detalles y precio de forma gratuita.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon"><i class="fas fa-search-location"></i></div>
+                    <h3>Busca</h3>
+                    <p>Explora propiedades usando filtros avanzados, mapa interactivo y búsqueda por zona.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon"><i class="fas fa-comments"></i></div>
+                    <h3>Contacta</h3>
+                    <p>Comunícate directamente con el propietario o agente inmobiliario sin intermediarios.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <i class="fas fa-home stat-icon"></i>
+                    <div class="stat-number" id="statProperties">0</div>
+                    <div class="stat-label">Propiedades</div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-users stat-icon"></i>
+                    <div class="stat-number" id="statUsers">0</div>
+                    <div class="stat-label">Usuarios</div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-map-marker-alt stat-icon"></i>
+                    <div class="stat-number">Barinas</div>
+                    <div class="stat-label">Venezuela</div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-handshake stat-icon"></i>
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Gratuito</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="footer-logo">
+                        <i class="fas fa-home"></i>
+                        <span>CasasBarinas</span>
+                    </a>
+                    <p>El portal inmobiliario más completo de Barinas, Venezuela. Conectamos compradores, vendedores y arrendatarios.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Navegación</h4>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="search.html">Propiedades</a></li>
+                        <li><a href="map.html">Mapa</a></li>
+                        <li><a href="new-property.html">Publicar Propiedad</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Tipo de Propiedad</h4>
+                    <ul>
+                        <li><a href="search.html?tipo=Casa">Casas</a></li>
+                        <li><a href="search.html?tipo=Apartamento">Apartamentos</a></li>
+                        <li><a href="search.html?tipo=Terreno">Terrenos</a></li>
+                        <li><a href="search.html?tipo=Local+Comercial">Locales Comerciales</a></li>
+                        <li><a href="search.html?tipo=Finca">Fincas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> info@casasbarinas.com</li>
+                        <li><i class="fas fa-phone"></i> +58 274-000-0000</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Barinas, Venezuela</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CasasBarinas. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
