@@ -39,7 +39,9 @@ async function verifyJWT(token, secret) {
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-const R2_PUBLIC_URL = 'https://6fc12c9a89723c0039cf189380c0b02f.r2.cloudflarestorage.com';
+// Images are served through our own /api/serve/ endpoint (no public R2 access needed)
+// The key is stored in DB; the serve endpoint reads from R2 binding
+const R2_SERVE_BASE = '/api/serve';
 
 export async function onRequestPost(context) {
   try {
@@ -155,7 +157,8 @@ export async function onRequestPost(context) {
     });
 
     // Construct public URL
-    const publicUrl = `${R2_PUBLIC_URL}/${key}`;
+    // Use our own serve endpoint URL (works without public R2 access)
+    const publicUrl = `${R2_SERVE_BASE}/${key}`;
 
     return new Response(JSON.stringify({
       message: 'Imagen subida exitosamente',
