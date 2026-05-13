@@ -68,6 +68,7 @@
                     <a href="#" class="sidebar-link" data-section="profile">
                         <i class="fas fa-user-edit"></i> Mi Perfil
                     </a>
+                    <!-- Admin link added dynamically in dashboard.js if user is admin -->
                 </nav>
             </aside>
 
@@ -238,6 +239,88 @@
                     </div>
                 </section>
 
+                <!-- Admin Section (only visible for admin users) -->
+                <section class="dashboard-section hidden" id="sectionAdmin">
+                    <div class="dash-card">
+                        <div class="dash-card-header">
+                            <h3><i class="fas fa-shield-alt"></i> Panel de Administracion</h3>
+                        </div>
+
+                        <!-- Admin Tabs -->
+                        <div class="admin-tabs">
+                            <button class="admin-tab active" id="adminTabPending">
+                                <i class="fas fa-clock"></i> Pendientes de Aprobacion <span class="badge badge-warning" id="adminPendingBadgeTop">0</span>
+                            </button>
+                            <button class="admin-tab" id="adminTabAll">
+                                <i class="fas fa-list"></i> Todas las Propiedades
+                            </button>
+                        </div>
+
+                        <!-- Pending Properties Panel -->
+                        <div id="adminPanelPending">
+                            <div class="dash-info-banner">
+                                <i class="fas fa-info-circle"></i>
+                                <p>Las propiedades nuevas aparecen aqui con estado <strong>Pendiente</strong>. Debes aprobarlas para que sean visibles publicamente en la plataforma.</p>
+                            </div>
+                            <div class="dash-table-responsive">
+                                <table class="dash-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Propiedad</th>
+                                            <th>Tipo</th>
+                                            <th>Precio</th>
+                                            <th>Ubicacion</th>
+                                            <th>Fecha</th>
+                                            <th>Propietario</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminPendingBody">
+                                        <tr class="empty-row">
+                                            <td colspan="7">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-spinner fa-spin"></i>
+                                                    <p>Cargando propiedades pendientes...</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- All Properties Panel -->
+                        <div id="adminPanelAll" class="hidden">
+                            <div class="dash-table-responsive">
+                                <table class="dash-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Propiedad</th>
+                                            <th>Tipo</th>
+                                            <th>Operacion</th>
+                                            <th>Precio</th>
+                                            <th>Estado</th>
+                                            <th>Propietario</th>
+                                            <th>Fecha</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminAllPropsBody">
+                                        <tr class="empty-row">
+                                            <td colspan="8">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-spinner fa-spin"></i>
+                                                    <p>Cargando...</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Profile Section -->
                 <section class="dashboard-section hidden" id="sectionProfile">
                     <div class="dash-card">
@@ -303,5 +386,6 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

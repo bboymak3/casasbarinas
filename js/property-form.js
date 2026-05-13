@@ -679,6 +679,8 @@
 
             // Upload new images (files that haven't been uploaded yet)
             const newFiles = uploadedImages.filter(img => !img.isExisting && img.file);
+            let imagesUploaded = 0;
+            let r2NotConfigured = false;
 
             if (newFiles.length > 0 && propertyId) {
                 for (let i = 0; i < newFiles.length; i++) {
@@ -699,16 +701,41 @@
                                 is_cover: isCover,
                                 order_index: uploadedImages.indexOf(img),
                             });
+                            imagesUploaded++;
                         }
                     } catch (uploadError) {
                         console.error('Error uploading image:', uploadError);
-                        showToast(`Error al subir imagen ${i + 1}: ${uploadError.message}`, 'warning');
+                        // Detect if R2 is not configured
+                        if (uploadError.message && (
+                            uploadError.message.includes('R2') ||
+                            uploadError.message.includes('Almacenamiento') ||
+                            uploadError.message.includes('r2')
+                        )) {
+                            r2NotConfigured = true;
+                        } else {
+                            showToast(`Error al subir imagen ${i + 1}: ${uploadError.message}`, 'warning');
+                        }
                     }
                 }
             }
 
-            // Show success
-            showToast(editingPropertyId ? 'Propiedad actualizada exitosamente' : 'Propiedad publicada exitosamente. Pendiente de aprobación.', 'success');
+            // Show success with appropriate message
+            if (editingPropertyId) {
+                showToast('Propiedad actualizada exitosamente', 'success');
+            } else {
+                showToast('Propiedad publicada exitosamente. Pendiente de aprobación.', 'success');
+            }
+
+            // Show R2 warning if needed
+            if (r2NotConfigured) {
+                setTimeout(() => {
+                    showToast('Las imágenes no se pudieron subir. Configura el bucket R2 en Cloudflare.', 'warning');
+                }, 500);
+            } else if (newFiles.length > 0 && imagesUploaded === 0 && newFiles.length > 0) {
+                setTimeout(() => {
+                    showToast('No se subieron imágenes. Revisa la configuración de R2.', 'warning');
+                }, 500);
+            }
 
             // Redirect to dashboard
             setTimeout(() => {
