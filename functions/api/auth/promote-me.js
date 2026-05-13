@@ -97,7 +97,15 @@ export async function onRequestPost(context) {
         });
       }
 
-      return new Response(JSON.stringify({ error: 'Ya existe un administrador en el sistema. Contacta al administrador actual.' }), {
+      // Return detailed info for debugging
+      const admins = await env.DB.prepare('SELECT id, name, email FROM users WHERE role = ?').bind('admin').all();
+      return new Response(JSON.stringify({
+        error: 'Ya existe un administrador en el sistema.',
+        debug_admin_count: adminCount.count,
+        debug_admins: admins.results,
+        debug_current_user_id: user.id,
+        debug_current_role: user.role,
+      }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
