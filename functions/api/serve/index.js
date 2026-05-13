@@ -1,6 +1,6 @@
-// functions/api/serve/[...path].js
+// functions/api/serve/index.js
 // GET: Serve images directly from R2 bucket through our API
-// Usage: /api/serve/properties/123/1234_photo.jpg
+// Usage: /api/serve?key=properties/123/1234_photo.jpg
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,25 +23,24 @@ export async function onRequestGet(context) {
       });
     }
 
-    // Get the path from the URL (everything after /api/serve/)
+    // Get the key from query parameter
     const url = new URL(request.url);
-    const pathname = url.pathname;
-    const prefix = '/api/serve/';
-    let key = '';
-
-    if (pathname.startsWith(prefix)) {
-      key = pathname.substring(prefix.length);
-    }
+    const key = url.searchParams.get('key');
 
     if (!key) {
-      return new Response('Missing file key', {
+      return new Response(JSON.stringify({ error: 'Missing file key parameter. Usage: /api/serve?key=path/to/file.jpg' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate key format (prevent path traversal)
+    if (key.includes('..') || key.startsWith('/')) {
+      return new Response('Invalid key format', {
         status: 400,
         headers: corsHeaders,
       });
     }
-
-    // Decode URI components (handle %2F -> /)
-    key = decodeURIComponent(key);
 
     // Fetch the object from R2
     const object = await env.R2.get(key);
@@ -56,7 +55,7 @@ export async function onRequestGet(context) {
     // Determine content type from metadata or key extension
     const contentType = object.httpMetadata?.contentType || getContentTypeFromKey(key);
 
-    // Set cache headers for browser caching (1 week)
+    // Cache headers (1 week for images)
     const cacheHeaders = {
       'Cache-Control': 'public, max-age=604800, immutable',
       'ETag': object.etag || '',

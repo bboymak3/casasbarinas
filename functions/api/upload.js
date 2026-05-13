@@ -156,9 +156,8 @@ export async function onRequestPost(context) {
       },
     });
 
-    // Construct public URL
     // Use our own serve endpoint URL (works without public R2 access)
-    const publicUrl = `${R2_SERVE_BASE}/${key}`;
+    const publicUrl = `${R2_SERVE_BASE}?key=${encodeURIComponent(key)}`;
 
     return new Response(JSON.stringify({
       message: 'Imagen subida exitosamente',
