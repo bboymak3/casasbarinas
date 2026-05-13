@@ -98,23 +98,32 @@ export async function onRequestPost(context) {
       });
     }
 
+    // Check if any admin exists - if not, first user becomes admin
+    const adminCheck = await env.DB.prepare('SELECT COUNT(*) as count FROM users WHERE role = ?').bind('admin').first();
+    const isFirstUser = !adminCheck || adminCheck.count === 0;
+    const assignedRole = isFirstUser ? 'admin' : 'user';
+
     // Insert user
     const result = await env.DB.prepare(
       'INSERT INTO users (name, email, phone, password_hash, role) VALUES (?, ?, ?, ?, ?)'
-    ).bind(name, email, phone || null, passwordHash, 'user').run();
+    ).bind(name, email, phone || null, passwordHash, assignedRole).run();
 
     const userId = result.meta.last_row_id;
 
     // Create JWT token
     const token = await createJWT(
-      { id: userId, name, email, role: 'user', iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 86400 * 7 },
+      { id: userId, name, email, role: assignedRole, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 86400 * 7 },
       jwtSecret
     );
 
+    const responseMsg = isFirstUser
+      ? 'Usuario registrado exitosamente. Como primer usuario, has sido asignado como Administrador.'
+      : 'Usuario registrado exitosamente';
+
     return new Response(JSON.stringify({
-      message: 'Usuario registrado exitosamente',
+      message: responseMsg,
       token,
-      user: { id: userId, name, email, role: 'user', phone },
+      user: { id: userId, name, email, role: assignedRole, phone },
     }), {
       status: 201,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

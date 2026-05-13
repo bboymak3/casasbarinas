@@ -66,6 +66,7 @@ export async function onRequestGet(context) {
     const limit = parseInt(params.get('limit')) || 12;
     const offset = (page - 1) * limit;
     const search = params.get('search');
+    const userId = params.get('user_id'); // Filter by owner
 
     // Build WHERE clause dynamically
     const conditions = [];
@@ -73,6 +74,12 @@ export async function onRequestGet(context) {
 
     conditions.push('p.status = ?');
     bindings.push(status);
+
+    // Filter by user_id if provided (for "my properties" view)
+    if (userId) {
+      conditions.push('p.user_id = ?');
+      bindings.push(parseInt(userId));
+    }
 
     if (propertyType) {
       conditions.push('p.property_type = ?');

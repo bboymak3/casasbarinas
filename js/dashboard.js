@@ -69,6 +69,22 @@
             return;
         }
 
+        // Auto-promote first user to admin if no admin exists
+        if (currentUser.role !== 'admin') {
+            try {
+                const promoteResult = await api.post('/auth/promote-me', {});
+                if (promoteResult.role === 'admin') {
+                    // Update cached user and token
+                    currentUser.role = 'admin';
+                    setCachedUser(currentUser);
+                    if (promoteResult.token) setToken(promoteResult.token);
+                    showToast('Has sido promovido a Administrador.', 'success');
+                }
+            } catch (promoteErr) {
+                // Silently ignore - not first user or already admin
+            }
+        }
+
         // Update user info
         updateUserDisplay();
 
@@ -179,9 +195,21 @@
     // ─── Overview Data ─────────────────────────────────────────
     async function loadOverviewData() {
         try {
-            // Get user properties (all statuses)
-            const data = await api.get(`/properties?limit=100`);
-            userProperties = data.properties || [];
+            const userId = currentUser?.id;
+
+            // Get user's approved properties
+            const approvedData = await api.get(`/properties?limit=100&user_id=${userId}&status=approved`);
+            const approvedProps = approvedData.properties || [];
+
+            // Get user's pending properties
+            const pendingData = await api.get(`/properties?limit=100&user_id=${userId}&status=pending`);
+            const pendingProps = pendingData.properties || [];
+
+            // Get user's rejected properties
+            const rejectedData = await api.get(`/properties?limit=100&user_id=${userId}&status=rejected`);
+            const rejectedProps = rejectedData.properties || [];
+
+            userProperties = [...approvedProps, ...pendingProps, ...rejectedProps];
 
             // Stats
             const total = userProperties.length;
@@ -239,17 +267,31 @@
     // ─── My Properties ─────────────────────────────────────────
     async function loadMyProperties(filter) {
         try {
-            let endpoint = `/properties?limit=100`;
+            const userId = currentUser?.id;
 
-            // Filter by status
+            let userPropertiesList;
+
             if (filter) {
+                // Filter by specific status
                 const statusMap = { 'publicada': 'approved', 'pendiente': 'pending', 'rechazada': 'rejected' };
                 const status = statusMap[filter] || filter;
-                endpoint += `&status=${status}`;
+                const data = await api.get(`/properties?limit=100&user_id=${userId}&status=${status}`);
+                userPropertiesList = data.properties || [];
+            } else {
+                // No filter: fetch ALL user properties (all statuses)
+                const [approvedData, pendingData, rejectedData] = await Promise.all([
+                    api.get(`/properties?limit=100&user_id=${userId}&status=approved`),
+                    api.get(`/properties?limit=100&user_id=${userId}&status=pending`),
+                    api.get(`/properties?limit=100&user_id=${userId}&status=rejected`),
+                ]);
+                userPropertiesList = [
+                    ...(approvedData.properties || []),
+                    ...(pendingData.properties || []),
+                    ...(rejectedData.properties || []),
+                ];
             }
 
-            const data = await api.get(endpoint);
-            userProperties = data.properties || [];
+            userProperties = userPropertiesList;
 
             if (allPropsBody) {
                 if (userProperties.length === 0) {
@@ -593,8 +635,13 @@
         if (!adminAllPropsBody) return;
 
         try {
-            const data = await api.get('/properties?limit=100');
-            const allProps = data.properties || [];
+            // Admin sees ALL properties regardless of status
+            const data = await api.get('/properties?status=approved&limit=100');
+            const approvedProps = data.properties || [];
+            // Also fetch pending and rejected
+            const pendingData = await api.get('/properties?status=pending&limit=100');
+            const rejectedData = await api.get('/properties?status=rejected&limit=100');
+            const allProps = [...approvedProps, ...(pendingData.properties || []), ...(rejectedData.properties || [])];
 
             if (allProps.length === 0) {
                 adminAllPropsBody.innerHTML = `
