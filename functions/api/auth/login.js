@@ -38,7 +38,25 @@ async function createJWT(payload, secret) {
 export async function onRequestPost(context) {
   try {
     const { request, env } = context;
-    const body = await request.json();
+
+    if (!env.DB) {
+      return new Response(JSON.stringify({ error: 'Error de configuración: Base de datos no disponible.' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const jwtSecret = env.JWT_SECRET || 'casasbarinas_default_secret_2024';
+
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseErr) {
+      return new Response(JSON.stringify({ error: 'Los datos enviados no son válidos.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const { email, password } = body;
 
@@ -79,7 +97,7 @@ export async function onRequestPost(context) {
     // Create JWT token
     const token = await createJWT(
       { id: user.id, name: user.name, email: user.email, role: user.role, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 86400 * 7 },
-      env.JWT_SECRET
+      jwtSecret
     );
 
     return new Response(JSON.stringify({
@@ -98,7 +116,14 @@ export async function onRequestPost(context) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error interno del servidor', details: error.message }), {
+    console.error('Login error:', error);
+    let errorMsg = 'Error interno del servidor';
+    if (error.message && error.message.includes('no such table')) {
+      errorMsg = 'Error: La tabla de usuarios no existe. Ejecuta el schema.sql en tu base de datos D1.';
+    } else if (error.message) {
+      errorMsg = `Error: ${error.message}`;
+    }
+    return new Response(JSON.stringify({ error: errorMsg, debug: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

@@ -255,12 +255,23 @@
         }
 
         try {
-            const data = await api.post('/auth/register', {
-                name,
-                email,
-                phone: phone || null,
-                password,
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone: phone || null, password }),
             });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Show detailed error message
+                let errorMsg = data.error || 'Error al registrar';
+                if (data.debug) {
+                    errorMsg += ` (${data.debug})`;
+                }
+                showMessage(registerMessage, errorMsg, 'error');
+                return;
+            }
 
             // Store token and user data
             setToken(data.token);
@@ -275,7 +286,7 @@
                 window.location.href = 'dashboard.html';
             }, 1000);
         } catch (error) {
-            showMessage(registerMessage, error.message, 'error');
+            showMessage(registerMessage, 'Error de conexión. Verifica tu internet e intenta de nuevo.', 'error');
         } finally {
             if (registerBtn) {
                 registerBtn.disabled = false;
