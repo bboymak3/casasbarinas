@@ -1,6 +1,8 @@
 // functions/api/auth/promote-me.js
 // POST: Auto-promote first user to admin (one-time setup)
-// If NO admin users exist in the database, promote the authenticated user to admin.
+// If NO admin users exist, promote the authenticated user to admin.
+// If admin exists but has DEFAULT credentials (password = sha256("admin123")),
+// allow takeover by any authenticated user.
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -54,6 +56,13 @@ async function createJWT(payload, secret) {
   return `${data}.${signatureB64}`;
 }
 
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
 export async function onRequestPost(context) {
   try {
     const { request, env } = context;
@@ -85,51 +94,43 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Check if any admin users already exist
-    const adminCount = await env.DB.prepare('SELECT COUNT(*) as count FROM users WHERE role = ?').bind('admin').first();
+    // Check existing admins
+    const existingAdmins = await env.DB.prepare('SELECT id, name, email, password_hash FROM users WHERE role = ?').bind('admin').all();
+    const admins = existingAdmins.results || [];
 
-    if (adminCount && adminCount.count > 0) {
-      // Check if the current user is already admin
-      if (user.role === 'admin') {
-        return new Response(JSON.stringify({ message: 'Ya eres administrador', role: 'admin' }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
+    if (admins.length === 0) {
+      // No admins - promote this user
+      return await promoteUser(env, user, jwtSecret);
+    }
 
-      // Return detailed info for debugging
-      const admins = await env.DB.prepare('SELECT id, name, email FROM users WHERE role = ?').bind('admin').all();
-      return new Response(JSON.stringify({
-        error: 'Ya existe un administrador en el sistema.',
-        debug_admin_count: adminCount.count,
-        debug_admins: admins.results,
-        debug_current_user_id: user.id,
-        debug_current_role: user.role,
-      }), {
-        status: 403,
+    // Check if current user is already admin
+    if (admins.some(a => a.id === user.id)) {
+      return new Response(JSON.stringify({ message: 'Ya eres administrador', role: 'admin' }), {
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // No admins exist - promote this user
-    await env.DB.prepare('UPDATE users SET role = ? WHERE id = ?').bind('admin', user.id).run();
+    // Check if ALL existing admins have default/placeholder credentials
+    // (password = sha256("admin123") or sha256("Admin123"))
+    const defaultHash1 = await sha256('admin123');
+    const defaultHash2 = await sha256('Admin123');
+    const allDefault = admins.every(a => a.password_hash === defaultHash1 || a.password_hash === defaultHash2);
 
-    // Generate new JWT with admin role
-    const newToken = await createJWT({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: 'admin',
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 86400 * 7,
-    }, jwtSecret);
+    if (allDefault) {
+      // Demote default admins to 'user' and promote the requesting user
+      for (const admin of admins) {
+        await env.DB.prepare('UPDATE users SET role = ? WHERE id = ?').bind('user', admin.id).run();
+      }
+      return await promoteUser(env, user, jwtSecret);
+    }
 
+    // Admins with real passwords exist - deny
     return new Response(JSON.stringify({
-      message: 'Has sido promovido a administrador. Recarga la página para ver el panel admin.',
-      role: 'admin',
-      token: newToken,
+      error: 'Ya existe un administrador activo en el sistema.',
+      admin_email: admins[0].email,
     }), {
-      status: 200,
+      status: 403,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
@@ -139,4 +140,27 @@ export async function onRequestPost(context) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+}
+
+async function promoteUser(env, user, jwtSecret) {
+  await env.DB.prepare('UPDATE users SET role = ? WHERE id = ?').bind('admin', user.id).run();
+
+  // Generate new JWT with admin role
+  const newToken = await createJWT({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: 'admin',
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 86400 * 7,
+  }, jwtSecret);
+
+  return new Response(JSON.stringify({
+    message: 'Has sido promovido a administrador. Recarga la página.',
+    role: 'admin',
+    token: newToken,
+  }), {
+    status: 200,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
 }
