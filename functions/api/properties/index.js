@@ -43,6 +43,14 @@ async function verifyJWT(token, secret) {
 export async function onRequestGet(context) {
   try {
     const { request, env } = context;
+
+    if (!env.DB) {
+      return new Response(JSON.stringify({ error: 'Base de datos no disponible. Verifica el binding D1 en Cloudflare Pages.', debug: 'DB binding missing' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const url = new URL(request.url);
     const params = url.searchParams;
 
@@ -137,7 +145,14 @@ export async function onRequestGet(context) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error interno del servidor', details: error.message }), {
+    console.error('Properties GET error:', error);
+    let errorMsg = 'Error interno del servidor';
+    if (error.message && error.message.includes('no such table')) {
+      errorMsg = 'Error: La tabla de propiedades no existe. Ejecuta el schema.sql en tu D1.';
+    } else if (error.message) {
+      errorMsg = `Error: ${error.message}`;
+    }
+    return new Response(JSON.stringify({ error: errorMsg, debug: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -149,6 +164,16 @@ export async function onRequestPost(context) {
   try {
     const { request, env } = context;
 
+    // Check D1 binding
+    if (!env.DB) {
+      return new Response(JSON.stringify({ error: 'Base de datos no disponible. Verifica el binding D1 en Cloudflare Pages.', debug: 'DB binding missing' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const jwtSecret = env.JWT_SECRET || 'casasbarinas_default_secret_2024';
+
     // Auth required
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -159,7 +184,7 @@ export async function onRequestPost(context) {
     }
 
     const token = authHeader.substring(7);
-    const payload = await verifyJWT(token, env.JWT_SECRET);
+    const payload = await verifyJWT(token, jwtSecret);
     if (!payload) {
       return new Response(JSON.stringify({ error: 'Token inválido o expirado' }), {
         status: 401,
@@ -245,7 +270,14 @@ export async function onRequestPost(context) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error interno del servidor', details: error.message }), {
+    console.error('Properties POST error:', error);
+    let errorMsg = 'Error interno del servidor';
+    if (error.message && error.message.includes('no such table')) {
+      errorMsg = 'Error: La tabla de propiedades no existe. Ejecuta el schema.sql en tu D1.';
+    } else if (error.message) {
+      errorMsg = `Error: ${error.message}`;
+    }
+    return new Response(JSON.stringify({ error: errorMsg, debug: error.message, stack: error.stack }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

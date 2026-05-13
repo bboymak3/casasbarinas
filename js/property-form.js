@@ -28,6 +28,152 @@
     const photoInput = document.getElementById('photoInput');
     const photosPreview = document.getElementById('photosPreview');
 
+    // ─── Location Picker Map ────────────────────────────────────
+    let locationMap = null;
+    let locationMarker = null;
+    let geocoder = null;
+    let selectedLat = BARINAS_DEFAULT.lat;
+    let selectedLng = BARINAS_DEFAULT.lng;
+
+    function initLocationPicker() {
+        const mapEl = document.getElementById('locationMap');
+        if (!mapEl || typeof L === 'undefined') return;
+
+        try {
+            // Initialize map centered on Barinas
+            locationMap = L.map('locationMap', {
+                center: [selectedLat, selectedLng],
+                zoom: 13,
+                zoomControl: true,
+                scrollWheelZoom: true,
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+            }).addTo(locationMap);
+
+            // Add a draggable marker
+            locationMarker = L.marker([selectedLat, selectedLng], {
+                draggable: true,
+            }).addTo(locationMap);
+
+            // Update coordinates when marker is dragged
+            locationMarker.on('dragend', function (e) {
+                const pos = e.target.getLatLng();
+                selectedLat = pos.lat;
+                selectedLng = pos.lng;
+                updateCoordinateFields();
+            });
+
+            // Click on map to place/move marker
+            locationMap.on('click', function (e) {
+                selectedLat = e.latlng.lat;
+                selectedLng = e.latlng.lng;
+                locationMarker.setLatLng(e.latlng);
+                updateCoordinateFields();
+            });
+
+            // Initialize geocoder for address search
+            if (typeof L.Control.Geocoder !== 'undefined') {
+                geocoder = L.Control.Geocoder.nominatim({
+                    geocodingQueryParams: { countrycodes: 've' },
+                });
+            }
+
+            // Search button
+            const searchBtn = document.getElementById('locationSearchBtn');
+            const searchInput = document.getElementById('locationSearchInput');
+
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', () => searchLocation(searchInput.value));
+                searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchLocation(searchInput.value);
+                    }
+                });
+            }
+
+            // Sync manual input fields with map
+            const latInput = document.getElementById('propLat');
+            const lngInput = document.getElementById('propLng');
+
+            if (latInput) {
+                latInput.addEventListener('change', () => {
+                    const val = parseFloat(latInput.value);
+                    if (!isNaN(val) && val >= -90 && val <= 90) {
+                        selectedLat = val;
+                        locationMarker.setLatLng([selectedLat, selectedLng]);
+                        updateCoordinateFields();
+                    }
+                });
+            }
+            if (lngInput) {
+                lngInput.addEventListener('change', () => {
+                    const val = parseFloat(lngInput.value);
+                    if (!isNaN(val) && val >= -180 && val <= 180) {
+                        selectedLng = val;
+                        locationMarker.setLatLng([selectedLat, selectedLng]);
+                        updateCoordinateFields();
+                    }
+                });
+            }
+
+            // Fix map size after container is visible
+            setTimeout(() => locationMap.invalidateSize(), 500);
+
+        } catch (error) {
+            console.error('Error initializing location picker:', error);
+        }
+    }
+
+    function updateCoordinateFields() {
+        const latInput = document.getElementById('propLat');
+        const lngInput = document.getElementById('propLng');
+        const latDisplay = document.getElementById('coordLatDisplay');
+        const lngDisplay = document.getElementById('coordLngDisplay');
+
+        if (latInput) latInput.value = selectedLat.toFixed(6);
+        if (lngInput) lngInput.value = selectedLng.toFixed(6);
+        if (latDisplay) latDisplay.textContent = selectedLat.toFixed(6);
+        if (lngDisplay) lngDisplay.textContent = selectedLng.toFixed(6);
+    }
+
+    async function searchLocation(query) {
+        if (!query || !query.trim() || !geocoder) return;
+
+        try {
+            const results = await geocoder.geocode(query);
+            if (results && results.length > 0) {
+                const loc = results[0].center;
+                selectedLat = loc.lat;
+                selectedLng = loc.lng;
+                locationMarker.setLatLng([selectedLat, selectedLng]);
+                locationMap.flyTo([selectedLat, selectedLng], 16, { duration: 1 });
+                updateCoordinateFields();
+
+                // Update address field if empty
+                const dirInput = document.getElementById('propDireccion');
+                if (dirInput && !dirInput.value.trim()) {
+                    dirInput.value = results[0].name || query;
+                }
+
+                // Update city if empty
+                const cityInput = document.getElementById('propCiudad');
+                if (cityInput && !cityInput.value.trim() && results[0].properties) {
+                    const city = results[0].properties.city || results[0].properties.town || '';
+                    if (city) cityInput.value = city;
+                }
+            } else {
+                showToast('No se encontró la ubicación. Intenta con otra búsqueda.', 'warning');
+            }
+        } catch (error) {
+            console.error('Geocoding error:', error);
+            showToast('Error al buscar la ubicación.', 'error');
+        }
+    }
+
     // ─── Initialization ─────────────────────────────────────────
     function initForm() {
         // Check authentication
@@ -44,6 +190,9 @@
         // Set up event listeners
         setupPhotoUpload();
         setupFormSubmit();
+
+        // Initialize location picker map
+        initLocationPicker();
     }
 
     // ─── Load Property for Editing ──────────────────────────────
@@ -83,6 +232,15 @@
         setValue('propEstado', property.state);
         setValue('propLat', property.lat);
         setValue('propLng', property.lng);
+
+        // Update map marker if coordinates exist
+        if (property.lat && property.lng && locationMap && locationMarker) {
+            selectedLat = property.lat;
+            selectedLng = property.lng;
+            locationMarker.setLatLng([selectedLat, selectedLng]);
+            locationMap.flyTo([selectedLat, selectedLng], 15, { duration: 0.5 });
+            updateCoordinateFields();
+        }
         setValue('propHabitaciones', property.bedrooms);
         setValue('propBanos', property.bathrooms);
         setValue('propEstacionamientos', property.parking_spaces);

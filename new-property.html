@@ -130,22 +130,32 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="propLat">Latitud</label>
-                            <input type="number" id="propLat" name="latitud" placeholder="8.6233" step="any">
+                    <!-- Interactive Map for Location Selection -->
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marked-alt"></i> Selecciona la ubicación en el mapa</label>
+                        <p class="form-hint mb-1">Haz clic en el mapa para marcar la ubicación exacta de tu propiedad.</p>
+                        <div class="location-map-search">
+                            <input type="text" id="locationSearchInput" placeholder="Buscar dirección o lugar..." autocomplete="off">
+                            <button type="button" class="btn btn-primary btn-sm" id="locationSearchBtn">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <label for="propLng">Longitud</label>
-                            <input type="number" id="propLng" name="longitud" placeholder="-70.2158" step="any">
+                        <div id="locationMap" class="location-picker-map"></div>
+                        <div id="locationMapCoords" class="location-coords-display">
+                            <span><i class="fas fa-crosshairs"></i> Lat: <strong id="coordLatDisplay">8.6233</strong></span>
+                            <span><i class="fas fa-crosshairs"></i> Lng: <strong id="coordLngDisplay">-70.2288</strong></span>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="propLat">Latitud</label>
+                                <input type="number" id="propLat" name="latitud" placeholder="8.6233" step="any">
+                            </div>
+                            <div class="form-group">
+                                <label for="propLng">Longitud</label>
+                                <input type="number" id="propLng" name="longitud" placeholder="-70.2288" step="any">
+                            </div>
                         </div>
                     </div>
-                    <small class="form-hint">
-                        <i class="fas fa-info-circle"></i>
-                        Puedes seleccionar la ubicación en el mapa después de publicar la propiedad, o usar
-                        <a href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps</a>
-                        para obtener las coordenadas.
-                    </small>
                 </div>
 
                 <!-- Section: Property Details -->
@@ -296,6 +306,12 @@
 
     <!-- Toast Notification -->
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Leaflet CSS & JS for location picker map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css">
+    <script src="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
 
     <script src="js/app.js"></script>
     <script src="js/property-form.js"></script>

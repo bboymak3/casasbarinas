@@ -45,6 +45,21 @@ export async function onRequestPost(context) {
   try {
     const { request, env } = context;
 
+    if (!env.DB) {
+      return new Response(JSON.stringify({ error: 'Base de datos no disponible.', debug: 'DB binding missing' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (!env.R2) {
+      return new Response(JSON.stringify({ error: 'Almacenamiento R2 no disponible.', debug: 'R2 binding missing' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const jwtSecret = env.JWT_SECRET || 'casasbarinas_default_secret_2024';
+
     // Auth required
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -55,7 +70,7 @@ export async function onRequestPost(context) {
     }
 
     const token = authHeader.substring(7);
-    const user = await verifyJWT(token, env.JWT_SECRET);
+    const user = await verifyJWT(token, jwtSecret);
     if (!user) {
       return new Response(JSON.stringify({ error: 'Token inválido o expirado' }), {
         status: 401,
@@ -151,7 +166,10 @@ export async function onRequestPost(context) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error interno del servidor', details: error.message }), {
+    console.error('Upload error:', error);
+    let errorMsg = 'Error interno del servidor';
+    if (error.message) errorMsg = `Error: ${error.message}`;
+    return new Response(JSON.stringify({ error: errorMsg, debug: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
