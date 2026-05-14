@@ -1929,6 +1929,72 @@ select.form-select {
     color: var(--color-primary);
 }
 
+/* ─── Google Sign-In ──────────────────────────────────────── */
+.google-signin-section {
+    margin-bottom: var(--space-md);
+}
+
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: var(--color-white);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: #3c4043;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.btn-google:hover {
+    background-color: var(--color-light);
+    border-color: var(--color-text-muted);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-google:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-google:active {
+    background-color: var(--color-light-dark);
+}
+
+.btn-google .google-icon {
+    flex-shrink: 0;
+}
+
+/* Auth Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    gap: var(--space-md);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-border-light);
+}
+
+.auth-divider span {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 
 /* ============================================================
    16. DASHBOARD
