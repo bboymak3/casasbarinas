@@ -54,7 +54,6 @@
             setupMapFilters();
         }
         setupMiniMapToggle();
-        setupDebugButton();
     }
 
     // ─── Initialize Full Map ────────────────────────────────────
@@ -568,66 +567,6 @@
             if (window._miniMap) window._miniMap.invalidateSize();
         },
     };
-
-    // ─── Debug Button (diagnose map errors) ─────────────────────
-    function setupDebugButton() {
-        var btn = document.getElementById('mapDebugBtn');
-        if (!btn) return;
-
-        btn.addEventListener('click', function () {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>...';
-
-            fetch('/api/debug/map-check?check=properties')
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    console.log('=== MAP DEBUG REPORT ===');
-                    console.log(JSON.stringify(data, null, 2));
-
-                    var msg = '=== MAP DEBUG ===\n';
-                    if (data.summary) {
-                        msg += 'Estado: ' + data.summary.status + '\n';
-                        msg += 'Errores: ' + data.summary.errors_found + '\n';
-                        msg += 'Warnings: ' + data.summary.warnings_found + '\n';
-                    }
-
-                    data.checks.forEach(function (c) {
-                        msg += '\n[' + c.status + '] ' + (c.check || '') + ': ' + c.message;
-                    });
-
-                    if (data.errors && data.errors.length > 0) {
-                        msg += '\n\n--- ERRORES ---';
-                        data.errors.forEach(function (e) {
-                            msg += '\n[' + e.level + '] ' + e.message;
-                            if (e.fix) msg += '\n  FIX: ' + e.fix;
-                            if (e.details) msg += '\n  DETALLES: ' + JSON.stringify(e.details);
-                        });
-                    }
-
-                    if (data.warnings && data.warnings.length > 0) {
-                        msg += '\n\n--- WARNINGS ---';
-                        data.warnings.forEach(function (w) {
-                            msg += '\n' + w.message;
-                        });
-                    }
-
-                    if (data.sample_property) {
-                        msg += '\n\n--- PROPIEDAD DE EJEMPLO ---';
-                        msg += '\n' + JSON.stringify(data.sample_property, null, 2);
-                    }
-
-                    alert(msg);
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-bug"></i> Debug';
-                })
-                .catch(function (err) {
-                    alert('Error al conectar con el endpoint de debug:\n' + err.message);
-                    console.error(err);
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-bug"></i> Debug';
-                });
-        });
-    }
 
     // ─── Start ──────────────────────────────────────────────────
     if (document.readyState === 'loading') {
