@@ -647,6 +647,97 @@ strong {
     line-height: 1.7;
 }
 
+/* Hero Compact — when hero is NOT the first section */
+.hero-compact {
+    min-height: auto;
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+    background-attachment: scroll;
+}
+
+.hero-compact .hero-content {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+}
+
+.hero-compact .hero-title {
+    font-size: var(--font-size-3xl);
+}
+
+.hero-compact .hero-subtitle {
+    margin-bottom: var(--space-lg);
+}
+
+/* ─── Home Mini Map ──────────────────────────────────────────── */
+.home-map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--color-border-light);
+}
+
+.home-map {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.home-map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(26, 26, 46, 0.5);
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    transition: opacity var(--transition);
+}
+
+.home-map-overlay:hover {
+    background: rgba(26, 26, 46, 0.4);
+}
+
+.home-map-overlay-content {
+    text-align: center;
+    color: var(--color-white);
+    padding: var(--space-xl);
+}
+
+.home-map-overlay-content i {
+    font-size: 48px;
+    margin-bottom: var(--space-md);
+    display: block;
+    opacity: 0.9;
+}
+
+.home-map-overlay-content p {
+    font-size: var(--font-size-md);
+    margin-bottom: var(--space-lg);
+    opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+    .home-map-wrapper {
+        height: 280px;
+    }
+
+    .hero-compact .hero-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .hero-compact .hero-subtitle {
+        font-size: var(--font-size-sm);
+    }
+}
+
 
 /* ============================================================
    7. SEARCH BAR

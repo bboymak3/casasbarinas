@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Leaflet for mini map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
     <!-- Navigation -->
@@ -39,8 +41,55 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- 1. Featured Properties (FIRST - what users see first) -->
+    <section class="section" id="featuredSection" style="padding-top: calc(var(--navbar-height) + var(--space-lg));">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Propiedades Destacadas</h2>
+                <a href="search.html" class="section-link">Ver todas <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="property-grid" id="featuredGrid">
+                <div class="loading-spinner" id="featuredLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando propiedades...</p>
+                </div>
+            </div>
+            <div class="text-center" id="featuredEmpty" style="display:none;">
+                <p class="text-muted">No hay propiedades destacadas en este momento.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Mini Map Section (SECOND) -->
+    <section class="section section-light" id="homeMapSection">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Propiedades en el Mapa</h2>
+                    <p class="section-subtitle">Explora las propiedades disponibles en Barinas</p>
+                </div>
+                <a href="map.html" class="btn btn-primary">
+                    <i class="fas fa-map-marked-alt"></i> Ver Mapa Completo
+                </a>
+            </div>
+            <div class="home-map-wrapper">
+                <div id="homeMap" class="home-map"></div>
+                <!-- Map overlay with "Ver Mapa" button -->
+                <div class="home-map-overlay" id="homeMapOverlay">
+                    <div class="home-map-overlay-content">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <p>Mapa interactivo con todas las propiedades</p>
+                        <a href="map.html" class="btn btn-primary btn-lg">
+                            <i class="fas fa-expand"></i> Abrir Mapa Completo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Hero + Search Bar (THIRD) -->
+    <section class="hero hero-compact">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="hero-title">Encuentra tu <span class="text-accent">hogar ideal</span> en Barinas</h1>
@@ -116,28 +165,8 @@
         </div>
     </section>
 
-    <!-- Featured Properties -->
-    <section class="section" id="featuredSection">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Propiedades Destacadas</h2>
-                <a href="search.html" class="section-link">Ver todas <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="property-grid" id="featuredGrid">
-                <!-- Properties loaded dynamically by JS -->
-                <div class="loading-spinner" id="featuredLoading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Cargando propiedades...</p>
-                </div>
-            </div>
-            <div class="text-center" id="featuredEmpty" style="display:none;">
-                <p class="text-muted">No hay propiedades destacadas en este momento.</p>
-            </div>
-        </div>
-    </section>
-
     <!-- Property Types Section -->
-    <section class="section section-light">
+    <section class="section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Explora por Tipo de Propiedad</h2>
@@ -188,7 +217,7 @@
     </section>
 
     <!-- How It Works -->
-    <section class="section">
+    <section class="section section-light">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">¿Cómo funciona?</h2>
@@ -296,6 +325,9 @@
         </div>
     </footer>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="js/app.js"></script>
+    <script src="js/home-map.js"></script>
 </body>
 </html>
