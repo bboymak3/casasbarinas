@@ -1074,7 +1074,7 @@ strong {
     width: 100%;
     padding-top: 65%;
     overflow: hidden;
-    background-color: var(--color-light-dark);
+    background-color: #f0f0f0;
     flex-shrink: 0;
 }
 
@@ -1085,14 +1085,15 @@ strong {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center center;
     transition: transform var(--transition-slow);
     display: block;
 }
 
 .property-card:hover .property-card-image img,
 .property-card:hover .card-img {
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 /* Card Badges */
