@@ -245,6 +245,21 @@
             .leaflet-popup-tip {
                 box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
             }
+
+            /* Debug button */
+            .map-debug-btn {
+                position: fixed;
+                top: 12px;
+                left: 12px;
+                z-index: 1001;
+                background: rgba(0,0,0,0.5);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                padding: 6px 10px;
+                font-size: 11px;
+                cursor: pointer;
+            }
         }
     </style>
 </head>
@@ -348,6 +363,11 @@
             <!-- Toggle Sidebar Button -->
             <button class="map-sidebar-toggle shifted" id="mapSidebarToggle" aria-label="Mostrar/Ocultar filtros">
                 <i class="fas fa-sliders-h"></i>
+            </button>
+
+            <!-- Debug Button (diagnose map errors) -->
+            <button class="map-debug-btn" id="mapDebugBtn" title="Diagnosticar errores del mapa">
+                <i class="fas fa-bug"></i> Debug
             </button>
 
             <!-- Map Container -->
