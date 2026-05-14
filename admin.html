@@ -64,6 +64,10 @@
                         <span>Mensajes</span>
                         <span class="badge" id="adminMsgBadge">0</span>
                     </a>
+                    <a href="#" class="admin-nav-link" data-tab="facebook">
+                        <i class="fab fa-facebook"></i>
+                        <span>Facebook Import</span>
+                    </a>
                 </nav>
             </aside>
 
@@ -298,6 +302,80 @@
                                 </table>
                             </div>
                             <div class="admin-pagination" id="adminUsersPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== FACEBOOK TAB ==================== -->
+                <div class="admin-tab hidden" id="tabFacebook">
+                    <!-- Facebook Config Card -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fab fa-facebook"></i> Importar desde Página de Facebook</h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <p style="margin-bottom:16px;color:#666;">Conecta tu página de Facebook para importar automáticamente las propiedades que publiques all&iacute;. Los posts con fotos se convertir&aacute;n en propiedades en tu web.</p>
+
+                            <div class="form-group">
+                                <label for="fbPageId"><i class="fab fa-facebook"></i> Page ID de Facebook</label>
+                                <input type="text" id="fbPageId" class="form-input" placeholder="Ej: 123456789012345">
+                                <small class="form-hint">El ID num&eacute;rico de tu p&aacute;gina. Lo encuentras en facebook.com/ TU-PAGINA &rarr; Informaci&oacute;n &rarr; ID de la p&aacute;gina.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fbAccessToken"><i class="fas fa-key"></i> Page Access Token</label>
+                                <input type="password" id="fbAccessToken" class="form-input" placeholder="EAAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                                <small class="form-hint">Token de acceso a la p&aacute;gina de Facebook. Se obtiene en developers.facebook.com.</small>
+                            </div>
+
+                            <div class="form-row" style="margin-bottom:16px;">
+                                <div class="form-group">
+                                    <label for="fbCity"><i class="fas fa-map-marker-alt"></i> Ciudad por defecto</label>
+                                    <input type="text" id="fbCity" class="form-input" value="Barinas">
+                                </div>
+                                <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:4px;">
+                                    <label class="feature-checkbox" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                        <input type="checkbox" id="fbAutoApprove" checked>
+                                        <span>Aprobar propiedades importadas autom&aacute;ticamente</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                                <button class="btn btn-primary" id="fbSaveConfig">
+                                    <i class="fas fa-save"></i> Guardar Configuraci&oacute;n
+                                </button>
+                                <button class="btn btn-secondary" id="fbTestConnection">
+                                    <i class="fas fa-plug"></i> Probar Conexi&oacute;n
+                                </button>
+                            </div>
+                            <div id="fbConfigStatus" style="margin-top:12px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Import Card -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-download"></i> Importaci&oacute;n Manual</h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <p style="margin-bottom:16px;color:#666;">Importa los &uacute;ltimos 25 posts de tu p&aacute;gina. Los posts que ya fueron importados se omitir&aacute;n autom&aacute;ticamente.</p>
+                            <button class="btn btn-primary btn-lg" id="fbImportNow">
+                                <i class="fab fa-facebook"></i> Importar Posts Ahora
+                            </button>
+                            <div id="fbImportStatus" style="margin-top:12px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Import History Card -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3><i class="fas fa-history"></i> Historial de Importaciones</h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <div id="fbHistoryContent">
+                                <p style="color:#999;">Cargando historial...</p>
+                            </div>
                         </div>
                     </div>
                 </div>

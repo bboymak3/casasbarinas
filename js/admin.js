@@ -28,6 +28,7 @@
     const tabProperties = document.getElementById('tabProperties');
     const tabUsers = document.getElementById('tabUsers');
     const tabMessages = document.getElementById('tabMessages');
+    const tabFacebook = document.getElementById('tabFacebook');
 
     // Stat elements
     const adminTotalProps = document.getElementById('adminTotalProps');
@@ -95,6 +96,7 @@
         setupSidebarToggle();
         setupModals();
         setupFilterListeners();
+        setupFacebookListeners();
 
         // Load initial data
         await loadDashboardStats();
@@ -132,7 +134,7 @@
         });
 
         // Hide all tab panels
-        const panels = { dashboard: tabDashboard, properties: tabProperties, users: tabUsers, messages: tabMessages };
+        const panels = { dashboard: tabDashboard, properties: tabProperties, users: tabUsers, messages: tabMessages, facebook: tabFacebook };
         for (const [key, panel] of Object.entries(panels)) {
             if (panel) {
                 panel.classList.toggle('hidden', key !== tab);
@@ -140,7 +142,7 @@
         }
 
         // Update page title
-        const titles = { dashboard: 'Dashboard', properties: 'Propiedades', users: 'Usuarios', messages: 'Mensajes' };
+        const titles = { dashboard: 'Dashboard', properties: 'Propiedades', users: 'Usuarios', messages: 'Mensajes', facebook: 'Facebook Import' };
         if (adminPageTitle) {
             adminPageTitle.textContent = titles[tab] || 'Dashboard';
         }
@@ -161,6 +163,10 @@
             case 'messages':
                 msgsPage = 1;
                 loadMessages();
+                break;
+            case 'facebook':
+                loadFacebookConfig();
+                loadFacebookHistory();
                 break;
         }
 
@@ -776,6 +782,167 @@
         });
     }
 
+    // ─── Facebook Integration ───────────────────────────────────
+    async function loadFacebookConfig() {
+        try {
+            const data = await api.get('/facebook/config');
+            const config = data.config || {};
+
+            if (config.page_id) document.getElementById('fbPageId').value = config.page_id;
+            if (config.page_access_token) document.getElementById('fbAccessToken').value = config.page_access_token;
+            if (config.default_city) document.getElementById('fbCity').value = config.default_city;
+            if (config.auto_approve === '1') document.getElementById('fbAutoApprove').checked = true;
+
+            const statusEl = document.getElementById('fbConfigStatus');
+            if (config.page_id && config.page_access_token) {
+                statusEl.innerHTML = '<div style="color:#28a745;"><i class="fas fa-check-circle"></i> Facebook conectado. Token: ' + (config.page_access_token_masked || '***') + '</div>';
+            }
+        } catch (error) {
+            // Config not set yet, that's fine
+            const statusEl = document.getElementById('fbConfigStatus');
+            if (statusEl) statusEl.innerHTML = '<div style="color:#999;"><i class="fas fa-info-circle"></i> No configurado. Ingresa tu Page ID y Token de Facebook.</div>';
+        }
+    }
+
+    async function saveFacebookConfig() {
+        const pageId = document.getElementById('fbPageId')?.value?.trim();
+        const accessToken = document.getElementById('fbAccessToken')?.value?.trim();
+        const city = document.getElementById('fbCity')?.value?.trim() || 'Barinas';
+        const autoApprove = document.getElementById('fbAutoApprove')?.checked;
+
+        if (!pageId || !accessToken) {
+            showToast('Page ID y Token son requeridos', 'error');
+            return;
+        }
+
+        const statusEl = document.getElementById('fbConfigStatus');
+        statusEl.innerHTML = '<div style="color:#1a73e8;"><i class="fas fa-spinner fa-spin"></i> Guardando...</div>';
+
+        try {
+            const data = await api.post('/facebook/config', {
+                page_id: pageId,
+                page_access_token: accessToken,
+                default_city: city,
+                auto_approve: autoApprove,
+            });
+
+            if (data.success) {
+                statusEl.innerHTML = '<div style="color:#28a745;"><i class="fas fa-check-circle"></i> ' + data.message + '</div>';
+                showToast(data.message, 'success');
+            } else {
+                statusEl.innerHTML = '<div style="color:#e74c3c;"><i class="fas fa-times-circle"></i> ' + (data.error || 'Error al guardar') + '</div>';
+                showToast(data.error || 'Error al guardar', 'error');
+            }
+        } catch (error) {
+            statusEl.innerHTML = '<div style="color:#e74c3c;"><i class="fas fa-times-circle"></i> ' + error.message + '</div>';
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function testFacebookConnection() {
+        const pageId = document.getElementById('fbPageId')?.value?.trim();
+        const accessToken = document.getElementById('fbAccessToken')?.value?.trim();
+
+        if (!pageId || !accessToken) {
+            showToast('Ingresa Page ID y Token primero', 'warning');
+            return;
+        }
+
+        const statusEl = document.getElementById('fbConfigStatus');
+        statusEl.innerHTML = '<div style="color:#1a73e8;"><i class="fas fa-spinner fa-spin"></i> Probando conexion con Facebook...</div>';
+
+        try {
+            const resp = await fetch(`https://graph.facebook.com/v18.0/${pageId}?fields=name,fan_count&access_token=${accessToken}`);
+            const data = await resp.json();
+
+            if (data.error) {
+                statusEl.innerHTML = '<div style="color:#e74c3c;"><i class="fas fa-times-circle"></i> Error: ' + data.error.message + ' (Codigo: ' + data.error.code + ')</div>';
+                showToast('Error de conexion con Facebook', 'error');
+            } else {
+                const fans = data.fan_count ? ' con ' + data.fan_count.toLocaleString() + ' seguidores' : '';
+                statusEl.innerHTML = '<div style="color:#28a745;"><i class="fas fa-check-circle"></i> Conexion exitosa! Pagina: <strong>' + (data.name || pageId) + '</strong>' + fans + '</div>';
+                showToast('Conexion exitosa con Facebook!', 'success');
+            }
+        } catch (error) {
+            statusEl.innerHTML = '<div style="color:#e74c3c;"><i class="fas fa-times-circle"></i> Error de conexion: ' + error.message + '</div>';
+            showToast('Error al conectar con Facebook', 'error');
+        }
+    }
+
+    async function importFromFacebook() {
+        const statusEl = document.getElementById('fbImportStatus');
+        statusEl.innerHTML = '<div style="color:#1a73e8;"><i class="fas fa-spinner fa-spin"></i> Importando posts desde Facebook... esto puede tomar unos segundos.</div>';
+
+        try {
+            const data = await api.post('/facebook/import', {});
+
+            if (data.success) {
+                let html = '<div style="color:#28a745;"><i class="fas fa-check-circle"></i> ' + data.message + '</div>';
+                if (data.results && data.results.length > 0) {
+                    html += '<div style="margin-top:12px;">';
+                    html += '<table class="admin-table" style="font-size:13px;"><thead><tr><th>Propiedad</th><th>Imagenes</th></tr></thead><tbody>';
+                    data.results.forEach(r => {
+                        html += '<tr><td><a href="property.html?id=' + r.property_id + '" target="_blank">' + (r.title || 'Sin titulo') + '</a></td><td>' + r.images + '</td></tr>';
+                    });
+                    html += '</tbody></table></div>';
+                }
+                statusEl.innerHTML = html;
+                showToast(data.message, 'success');
+                loadFacebookHistory();
+                loadDashboardStats();
+            } else {
+                statusEl.innerHTML = '<div style="color:#e74c3c;"><i class="fas fa-times-circle"></i> ' + (data.error || 'Error en la importacion') + '</div>';
+                showToast(data.error || 'Error al importar', 'error');
+            }
+        } catch (error) {
+            statusEl.innerHTML = '<div style="color:#e74c3c;"><i class="fas fa-times-circle"></i> ' + error.message + '</div>';
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function loadFacebookHistory() {
+        const container = document.getElementById('fbHistoryContent');
+        if (!container) return;
+
+        container.innerHTML = '<p style="color:#999;"><i class="fas fa-spinner fa-spin"></i> Cargando historial...</p>';
+
+        try {
+            const data = await api.get('/facebook/history?limit=30');
+
+            if (!data.history || data.history.length === 0) {
+                container.innerHTML = '<p style="color:#999;"><i class="fas fa-inbox"></i> No hay importaciones todavia. Configura Facebook y luego haz clic en "Importar Posts Ahora".</p>';
+                return;
+            }
+
+            let html = '<div style="margin-bottom:8px;color:#666;">';
+            html += '<strong>Total procesados:</strong> ' + data.total + ' | ';
+            html += '<strong>Importados como propiedad:</strong> ' + data.imported + ' | ';
+            html += '<strong>Omitidos (sin foto):</strong> ' + data.skipped;
+            html += '</div>';
+
+            html += '<div class="admin-table-responsive"><table class="admin-table" style="font-size:13px;">';
+            html += '<thead><tr><th>Fecha</th><th>Post</th><th>Propiedad</th><th>Estado</th></tr></thead><tbody>';
+
+            data.history.forEach(h => {
+                const statusHTML = h.property_id
+                    ? '<a href="property.html?id=' + h.property_id + '" target="_blank" class="badge badge-success">Ver Propiedad</a>'
+                    : '<span class="badge badge-warning">Omitido</span>';
+                const title = h.property_title || (h.post_message ? truncateText(h.post_message, 40) : 'Post sin texto');
+                html += '<tr>';
+                html += '<td>' + (h.imported_at ? formatDate(h.imported_at) : '--') + '</td>';
+                html += '<td>' + title + '</td>';
+                html += '<td>' + (h.property_id ? '#' + h.property_id : '--') + '</td>';
+                html += '<td>' + statusHTML + '</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        } catch (error) {
+            container.innerHTML = '<p style="color:#e74c3c;">Error al cargar historial: ' + error.message + '</p>';
+        }
+    }
+
     // ─── Expose functions for inline onclick handlers ───────────
     window.admin = {
         viewProperty,
@@ -788,6 +955,17 @@
         deleteUser,
         viewMessage,
     };
+
+    // ─── Facebook Event Listeners (set up in init) ─────────────
+    function setupFacebookListeners() {
+        const fbSaveConfigBtn = document.getElementById('fbSaveConfig');
+        const fbTestConnectionBtn = document.getElementById('fbTestConnection');
+        const fbImportNowBtn = document.getElementById('fbImportNow');
+
+        if (fbSaveConfigBtn) fbSaveConfigBtn.addEventListener('click', saveFacebookConfig);
+        if (fbTestConnectionBtn) fbTestConnectionBtn.addEventListener('click', testFacebookConnection);
+        if (fbImportNowBtn) fbImportNowBtn.addEventListener('click', importFromFacebook);
+    }
 
     // ─── Initialize on DOM Ready ────────────────────────────────
     if (document.readyState === 'loading') {
