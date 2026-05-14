@@ -267,23 +267,23 @@
                 flex-shrink: 0;
             }
 
-            /* Toggle button: floating blue circle */
+            /* Toggle button: top-right, first position */
             .map-sidebar-toggle {
                 position: fixed;
-                top: auto;
-                bottom: 24px;
-                right: 16px;
+                top: 16px;
+                bottom: auto;
+                right: 76px;
                 left: auto;
                 transform: none;
                 z-index: 1001;
                 border-radius: 50%;
-                width: 52px;
-                height: 52px;
+                width: 48px;
+                height: 48px;
                 padding: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 18px;
+                font-size: 16px;
                 box-shadow: 0 4px 16px rgba(0,0,0,0.25);
                 background: #1a73e8;
                 color: #fff;
@@ -291,9 +291,30 @@
             }
             .map-sidebar-toggle.shifted {
                 left: auto;
-                right: 16px;
+                right: 76px;
+                top: 16px;
             }
             .map-sidebar-toggle i { color: #fff; }
+
+            /* Chat button: top-right, second position (next to toggle) */
+            .cb-chat-btn {
+                top: 16px;
+                bottom: auto;
+                right: 16px;
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+                z-index: 1001;
+            }
+            .cb-chat-panel {
+                bottom: 0 !important;
+                top: auto !important;
+                right: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                max-height: 100vh !important;
+                border-radius: 0 !important;
+            }
 
             /* Ensure Leaflet popups are ABOVE everything on mobile */
             .leaflet-popup-pane {
