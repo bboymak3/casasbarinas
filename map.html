@@ -138,6 +138,18 @@
             color: #1a73e8 !important;
         }
 
+        /* --- HIDE LEAFLET DEBUG / ATTRIBUTION --- */
+        .leaflet-control-attribution,
+        .leaflet-control-attribution.leaflet-control {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+        }
+
         /* ========================================
            MOBILE - Full screen map
            ======================================== */

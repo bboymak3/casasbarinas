@@ -6580,6 +6580,18 @@ select.form-select {
     cursor: crosshair;
 }
 
+/* Hide Leaflet attribution/debug icon globally on all maps */
+.leaflet-control-attribution,
+.leaflet-control-attribution.leaflet-control {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
 .location-picker-map .leaflet-control-zoom {
     border: none;
     box-shadow: var(--shadow);
