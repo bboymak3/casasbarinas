@@ -5346,13 +5346,61 @@ select.form-select {
         min-width: 150px;
     }
 
-    /* Form */
+    /* Form - Property Page Tablet Enhancements */
+    .property-form-page {
+        padding-top: calc(var(--navbar-height) + var(--space-md));
+    }
+
+    .property-form {
+        max-width: 100%;
+    }
+
+    .form-section {
+        padding: var(--space-lg);
+        margin-bottom: var(--space-md);
+    }
+
+    .form-section-title {
+        font-size: var(--font-size-md);
+        margin-bottom: var(--space-md);
+    }
+
+    .form-section-title .title-icon {
+        width: 38px;
+        height: 38px;
+        font-size: var(--font-size-base);
+    }
+
+    .form-header h1 {
+        font-size: var(--font-size-xl);
+    }
+
     .form-row {
         grid-template-columns: 1fr;
     }
 
     .form-row-4 {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group input[type="tel"],
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
     }
 
     /* Map Page */
@@ -5547,21 +5595,147 @@ select.form-select {
         gap: var(--space-sm);
     }
 
-    /* Form */
-    .form-row-4 {
-        grid-template-columns: 1fr;
+    /* Form - Property Page Mobile Enhancements */
+    .property-form-page {
+        padding-top: calc(var(--navbar-height) + var(--space-md));
+        padding-bottom: var(--space-2xl);
+    }
+
+    .form-header {
+        margin-bottom: var(--space-lg);
+        padding: 0 var(--space-xs);
+    }
+
+    .form-header h1 {
+        font-size: var(--font-size-lg);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .form-header h1 i {
+        font-size: var(--font-size-md);
+    }
+
+    .form-subtitle {
+        font-size: var(--font-size-sm);
+        margin-top: var(--space-xs);
+    }
+
+    .property-form {
+        max-width: 100%;
     }
 
     .form-section {
-        padding: var(--space-md);
+        padding: var(--space-lg) var(--space-md);
+        margin-bottom: var(--space-md);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-border-light);
+        box-shadow: var(--shadow-sm);
     }
 
+    .form-section-title {
+        font-size: var(--font-size-base);
+        margin-bottom: var(--space-md);
+        padding-bottom: var(--space-sm);
+        gap: var(--space-sm);
+    }
+
+    .form-section-title .title-icon {
+        width: 34px;
+        height: 34px;
+        font-size: var(--font-size-sm);
+        border-radius: var(--radius-sm);
+        box-shadow: 0 3px 8px rgba(26, 115, 232, 0.25);
+    }
+
+    .form-section-title::after {
+        width: 40px;
+        height: 2px;
+    }
+
+    .form-group label {
+        font-size: var(--font-size-xs);
+        margin-bottom: 4px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group input[type="tel"],
+    .form-group select,
+    .form-group textarea {
+        padding: 10px 12px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+        border-radius: var(--radius-sm);
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+    }
+
+    .form-group select {
+        padding-right: 36px;
+    }
+
+    .form-hint {
+        font-size: 10px;
+        margin-top: 4px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+    }
+
+    .form-row-4 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+    }
+
+    /* Location map */
+    .location-picker-map {
+        height: 260px;
+        border-radius: var(--radius-sm);
+    }
+
+    .location-map-search input {
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+
+    .location-coords-display {
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+        padding: var(--space-xs) var(--space-sm);
+        font-size: 10px;
+    }
+
+    /* Upload area */
+    .upload-area {
+        padding: var(--space-lg) var(--space-md);
+        border-radius: var(--radius-md);
+    }
+
+    .upload-placeholder h3 {
+        font-size: var(--font-size-sm);
+    }
+
+    .upload-placeholder p {
+        font-size: var(--font-size-xs);
+    }
+
+    /* Form actions */
     .form-actions {
         flex-direction: column;
+        gap: var(--space-sm);
+        padding: var(--space-md) 0;
     }
 
     .form-actions .btn {
         width: 100%;
+        justify-content: center;
     }
 
     /* Property Detail */
