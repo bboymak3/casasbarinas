@@ -1320,21 +1320,12 @@ async function loadSiteStats() {
 
         const openChatBtn = document.getElementById('openChatBtn');
         const sideContactBtn = document.getElementById('sideContactBtn');
-        const chatClose = document.getElementById('chatClose');
-        const chatPanel = document.getElementById('chatPanel');
-        const chatForm = document.getElementById('chatForm');
-        const contactActions = document.getElementById('contactActions');
 
         function openChat() {
-            if (chatPanel) chatPanel.classList.remove('hidden');
-            if (contactActions) contactActions.classList.add('hidden');
-            const chatInput = document.getElementById('chatInput');
-            if (chatInput) setTimeout(() => chatInput.focus(), 100);
-        }
-
-        function closeChat() {
-            if (chatPanel) chatPanel.classList.add('hidden');
-            if (contactActions) contactActions.classList.remove('hidden');
+            // Use the floating chat widget
+            if (window.CasasBarinasChat) {
+                window.CasasBarinasChat.openChatWith(propertyId);
+            }
         }
 
         // Open chat buttons
@@ -1343,81 +1334,6 @@ async function loadSiteStats() {
             openChat();
             document.querySelector('.contact-section')?.scrollIntoView({ behavior: 'smooth' });
         });
-
-        // Close chat
-        if (chatClose) chatClose.addEventListener('click', closeChat);
-
-        // Send message in chat
-        if (chatForm) {
-            chatForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const chatInput = document.getElementById('chatInput');
-                const message = chatInput?.value?.trim();
-                if (!message) return;
-
-                // Get user info if logged in
-                let senderName = 'Visitante';
-                let senderEmail = '';
-                if (isAuthenticated()) {
-                    const user = getCachedUser();
-                    if (user) {
-                        senderName = user.name || 'Visitante';
-                        senderEmail = user.email || '';
-                    }
-                }
-
-                // Add message bubble visually
-                const chatMessages = document.getElementById('chatMessages');
-                if (chatMessages) {
-                    // Remove welcome message
-                    const welcome = chatMessages.querySelector('.chat-welcome');
-                    if (welcome) welcome.remove();
-
-                    const now = new Date();
-                    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-
-                    const bubble = document.createElement('div');
-                    bubble.className = 'chat-bubble sent';
-                    bubble.innerHTML = `${escapeHTML(message)}<span class="chat-time">${timeStr}</span>`;
-                    chatMessages.appendChild(bubble);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-
-                // Clear input
-                if (chatInput) chatInput.value = '';
-
-                // Send to API
-                try {
-                    await api.post('/contacts', {
-                        property_id: parseInt(propertyId),
-                        sender_name: senderName,
-                        sender_email: senderEmail || 'visitante@casasbarinas.com',
-                        sender_phone: null,
-                        message: message,
-                    });
-
-                    // Add confirmation bubble
-                    if (chatMessages) {
-                        const confirm = document.createElement('div');
-                        confirm.className = 'chat-bubble received';
-                        confirm.innerHTML = 'Mensaje recibido. El propietario te contactará pronto.';
-                        chatMessages.appendChild(confirm);
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }
-
-                    showToast('Mensaje enviado al propietario', 'success');
-                } catch (error) {
-                    showToast(error.message || 'Error al enviar mensaje', 'error');
-                    if (chatMessages) {
-                        const errBubble = document.createElement('div');
-                        errBubble.className = 'chat-bubble received';
-                        errBubble.innerHTML = 'Error al enviar. Intenta de nuevo.';
-                        chatMessages.appendChild(errBubble);
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }
-                }
-            });
-        }
     }
 
     function escapeHTML(str) {
@@ -1819,14 +1735,52 @@ async function loadSiteStats() {
 
         listEl.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>';
 
-        // The contacts API only has POST, no GET for user's messages
-        // Show placeholder
-        listEl.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-envelope-open"></i>
-                <p>Tus mensajes aparecerán aquí cuando alguien contacte sobre tus propiedades.</p>
-            </div>
-        `;
+        try {
+            const data = await api.get('/chat/conversations');
+            const conversations = data.conversations || [];
+
+            if (conversations.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-envelope-open"></i>
+                        <p>No tienes mensajes aun. Cuando alguien te contacte sobre tus propiedades, los mensajes apareceran aqui.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = conversations.map(conv => {
+                const otherUser = conv.other_user || { name: 'Usuario' };
+                const property = conv.property || {};
+                const timeStr = conv.last_message_at ? formatDateTime(conv.last_message_at) : '';
+                const unreadBadge = conv.unread > 0 ? `<span class="badge">${conv.unread}</span>` : '';
+                const imgSrc = property.image ? `<img src="${property.image}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'">` : '<div style="width:48px;height:36px;background:#e9ecef;border-radius:4px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-home" style="color:#999;"></i></div>';
+
+                return `
+                    <div class="dash-message-item" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--radius);border:1px solid var(--color-border-light);margin-bottom:8px;cursor:pointer;transition:background 0.15s;${conv.unread > 0 ? 'background:var(--color-primary-bg);border-color:var(--color-primary);' : ''}" onclick="window.CasasBarinasChat && window.CasasBarinasChat.openChatWith(${property.id})">
+                        ${imgSrc}
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                                <strong style="font-size:14px;color:var(--color-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHTML(otherUser.name)}</strong>
+                                <span style="font-size:11px;color:var(--color-text-muted);flex-shrink:0;">${timeStr}</span>
+                            </div>
+                            <div style="font-size:12px;color:var(--color-text-light);margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHTML(property.title || 'Propiedad')}</div>
+                            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                                <span style="font-size:13px;color:var(--color-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">${escapeHTML(conv.last_message || 'Sin mensajes')}</span>
+                                ${unreadBadge}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (error) {
+            listEl.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-envelope-open"></i>
+                    <p>Error al cargar mensajes. Intenta de nuevo.</p>
+                </div>
+            `;
+        }
     }
 
     async function loadMyFavorites() {
