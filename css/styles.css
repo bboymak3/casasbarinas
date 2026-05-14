@@ -6599,19 +6599,24 @@ select.form-select {
     margin-top: 10px;
     padding: 8px 18px;
     background: #1a73e8;
-    color: #fff;
+    color: #fff !important;
     border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
-    text-decoration: none;
+    text-decoration: none !important;
     transition: all 0.2s ease;
     border: none;
 }
 
 .map-popup-link:hover {
     background: #1557b0;
-    color: #fff;
-    text-decoration: none;
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+/* Override Leaflet default link color inside popups */
+.leaflet-popup-content a {
+    color: #fff !important;
 }
 
 /* Map Popup Responsive - Mobile */
