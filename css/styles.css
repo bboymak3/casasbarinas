@@ -2300,7 +2300,7 @@ select.form-select {
 /* Features Grid */
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
 }
 
@@ -5480,7 +5480,7 @@ select.form-select {
 
     /* Features Grid */
     .features-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     /* Contact section */
@@ -5809,21 +5809,21 @@ select.form-select {
         padding: var(--space-sm) var(--space-md);
     }
 
-    /* Features grid - keep 3 cols on mobile for compact buttons */
+    /* Features grid - 2 cols on mobile */
     .features-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 
     .feature-checkbox {
-        padding: 6px 4px;
-        font-size: 11px;
-        gap: 4px;
+        padding: 8px 6px;
+        font-size: 12px;
+        gap: 5px;
     }
 
     .feature-checkbox .feature-icon {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         font-size: 10px;
     }
 
