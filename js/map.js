@@ -440,47 +440,42 @@
 
         const marker = L.marker([property.lat, property.lng], { icon });
 
-        // Only bind popup on desktop (hidden on mobile via CSS)
-        if (!isMobile) {
-            // Popup content
-            const popupContent = `
-                <div class="map-popup">
-                    ${coverImage ? `<div class="map-popup-image"><img src="${coverImage}" alt="${title}" onerror="this.parentElement.style.display='none'"></div>` : ''}
-                    <div class="map-popup-content">
-                        <h4 class="map-popup-title">${title}</h4>
-                        <div class="map-popup-price">${priceStr}</div>
-                        <div class="map-popup-badges">
-                            <span class="map-popup-badge">${typeLabel}</span>
-                            <span class="map-popup-badge">${opLabel}</span>
-                        </div>
-                        ${property.bedrooms ? `<span class="map-popup-detail"><i class="fas fa-bed"></i> ${property.bedrooms}</span>` : ''}
-                        ${property.bathrooms ? `<span class="map-popup-detail"><i class="fas fa-bath"></i> ${property.bathrooms}</span>` : ''}
-                        ${property.area ? `<span class="map-popup-detail"><i class="fas fa-ruler-combined"></i> ${property.area}${property.area_unit || 'm²'}</span>` : ''}
-                        <a href="property.html?id=${property.id}" class="map-popup-link">Ver más <i class="fas fa-arrow-right"></i></a>
+        // Popup content - ALWAYS bound (works on mobile and desktop)
+        const popupContent = `
+            <div class="map-popup">
+                ${coverImage ? `<div class="map-popup-image"><img src="${coverImage}" alt="${title}" onerror="this.parentElement.style.display='none'"></div>` : ''}
+                <div class="map-popup-content">
+                    <h4 class="map-popup-title">${title}</h4>
+                    <div class="map-popup-price">${priceStr}</div>
+                    <div class="map-popup-badges">
+                        <span class="map-popup-badge">${typeLabel}</span>
+                        <span class="map-popup-badge">${opLabel}</span>
                     </div>
+                    ${property.bedrooms ? `<span class="map-popup-detail"><i class="fas fa-bed"></i> ${property.bedrooms}</span>` : ''}
+                    ${property.bathrooms ? `<span class="map-popup-detail"><i class="fas fa-bath"></i> ${property.bathrooms}</span>` : ''}
+                    ${property.area ? `<span class="map-popup-detail"><i class="fas fa-ruler-combined"></i> ${property.area}${property.area_unit || 'm²'}</span>` : ''}
+                    <a href="property.html?id=${property.id}" class="map-popup-link">Ver más <i class="fas fa-arrow-right"></i></a>
                 </div>
-            `;
+            </div>
+        `;
 
-            marker.bindPopup(popupContent, {
-                maxWidth: 300,
-                minWidth: 250,
-                closeButton: true,
-                autoPan: true,
-                autoPanPadding: [50, 50],
-            });
-        }
+        marker.bindPopup(popupContent, {
+            maxWidth: 300,
+            minWidth: 250,
+            closeButton: true,
+            autoPan: true,
+            autoPanPadding: isMobile ? [20, 20] : [50, 50],
+        });
 
-        // Click/tap event - works on both mobile and desktop
+        // Click/tap event
         marker.on('click', function (e) {
-            // Close sidebar on mobile to see the map
+            // Close sidebar on mobile so popup is visible
             if (isMobile && mapSidebar) {
                 mapSidebar.classList.add('collapsed');
                 if (mapSidebarToggle) mapSidebarToggle.classList.add('shifted');
                 setTimeout(() => { if (map) map.invalidateSize(); }, 350);
             }
             highlightCard(property.id);
-            // Always open modal on mobile, or also on desktop
-            openPropertyModal(property);
         });
 
         return marker;
@@ -591,9 +586,9 @@
             map.flyTo(found.marker.getLatLng(), 15, {
                 duration: 1,
             });
-            // Always open modal (works on both mobile and desktop)
+            // Open popup after fly animation
             setTimeout(() => {
-                openPropertyModal(found.property);
+                map.openPopup(found.marker);
             }, 1000);
         }
     }
