@@ -411,6 +411,28 @@ function getPropertyTypeIcon(type) {
     return icons[type?.toLowerCase()] || 'fa-home';
 }
 
+// ─── WhatsApp Share ────────────────────────────────────────────
+function sharePropertyWhatsApp(property) {
+    if (!property) return;
+    const type = getPropertyTypeLabel(property.property_type);
+    const op = getOperationTypeLabel(property.operation_type);
+    const price = formatPrice(property.price, property.currency);
+    const url = `https://millano.pages.dev/property.html?id=${property.id}`;
+    const title = property.title || 'Propiedad';
+
+    let msg = `🏠 *${title}*\n`;
+    msg += `📌 ${type} en ${op}\n`;
+    msg += `💰 ${price}\n`;
+    if (property.bedrooms) msg += `🛏️ ${property.bedrooms} hab.\n`;
+    if (property.bathrooms) msg += `🚿 ${property.bathrooms} baños\n`;
+    if (property.area) msg += `📐 ${property.area}${property.area_unit || 'm²'}\n`;
+    if (property.city) msg += `📍 ${property.city}${property.address ? ', ' + property.address : ''}\n`;
+    msg += `\n🔗 ${url}`;
+    msg += `\n\n📌 Publicado en CasasBarinas`;
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
 // ─── Status Helpers ────────────────────────────────────────────
 const STATUS_LABELS = {
     'pending': 'Pendiente',
@@ -470,6 +492,9 @@ function createPropertyCard(property) {
                     <button class="btn-favorite property-card-fav" data-property-id="${property.id}" aria-label="Agregar a favoritos" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(${property.id});">
                         <i class="far fa-heart"></i>
                     </button>
+                    <button class="btn-share-wa-card" data-property-id="${property.id}" aria-label="Compartir por WhatsApp" onclick="event.preventDefault(); event.stopPropagation();">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
                 </div>
                 <div class="property-card-body">
                     <div class="property-card-price">${priceStr}</div>
@@ -481,6 +506,22 @@ function createPropertyCard(property) {
         </article>
     `;
 }
+
+// ─── WhatsApp Share Delegation for Cards ─────────────────────
+document.addEventListener('click', (e) => {
+    const shareBtn = e.target.closest('.btn-share-wa-card');
+    if (!shareBtn) return;
+    const propertyId = parseInt(shareBtn.dataset.propertyId);
+    if (!propertyId) return;
+
+    // Fetch property data then share
+    api.get(`/properties/${propertyId}`).then(property => {
+        sharePropertyWhatsApp(property);
+    }).catch(() => {
+        // Minimal share with just the link
+        window.open(`https://wa.me/?text=${encodeURIComponent('🏠 Mira esta propiedad en CasasBarinas:\nhttps://millano.pages.dev/property.html?id=' + propertyId)}`, '_blank');
+    });
+});
 
 // ─── Search Params Helper ──────────────────────────────────────
 function getSearchParams() {
@@ -956,7 +997,7 @@ async function loadSiteStats() {
             setupGallery(property.images || []);
 
             // Setup contact form
-            setupContactForm(propertyId);
+            setupContactForm(propertyId, property);
 
             // Setup favorite buttons
             setupFavoriteButtons(propertyId);
@@ -1315,11 +1356,12 @@ async function loadSiteStats() {
     // ── Chat System ──
     let chatPropertyId = null;
 
-    function setupContactForm(propertyId) {
+    function setupContactForm(propertyId, property) {
         chatPropertyId = propertyId;
 
         const openChatBtn = document.getElementById('openChatBtn');
         const sideContactBtn = document.getElementById('sideContactBtn');
+        const shareWABtn = document.getElementById('shareWhatsAppBtn');
 
         function openChat() {
             // Use the floating chat widget
@@ -1334,6 +1376,11 @@ async function loadSiteStats() {
             openChat();
             document.querySelector('.contact-section')?.scrollIntoView({ behavior: 'smooth' });
         });
+
+        // Share WhatsApp button
+        if (shareWABtn && property) {
+            shareWABtn.addEventListener('click', () => sharePropertyWhatsApp(property));
+        }
     }
 
     function escapeHTML(str) {

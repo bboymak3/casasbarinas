@@ -1451,6 +1451,50 @@ strong {
     box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
 }
 
+/* Share WhatsApp button (property detail) */
+.btn-share-wa {
+    background-color: #fff;
+    color: #25d366;
+    border: 2px solid #25d366;
+    font-weight: 600;
+}
+.btn-share-wa:hover {
+    background-color: #25d366;
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+}
+
+/* Share WhatsApp button on property cards (floating icon) */
+.btn-share-wa-card {
+    position: absolute;
+    bottom: var(--space-sm);
+    left: var(--space-sm);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 211, 102, 0.9);
+    color: var(--color-white);
+    border: none;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all var(--transition-fast);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.property-card:hover .btn-share-wa-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+.btn-share-wa-card:hover {
+    background: #1ebe57;
+    transform: scale(1.15);
+}
+
 /* Button Sizes */
 .btn-sm {
     padding: 6px 12px;
@@ -7480,6 +7524,12 @@ select.form-select {
 
     .cb-msg-bubble {
         max-width: 88%;
+    }
+
+    /* WhatsApp share card button: always visible on mobile */
+    .btn-share-wa-card {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
