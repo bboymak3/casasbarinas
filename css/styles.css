@@ -5432,7 +5432,7 @@ select.form-select {
 
     /* Features Grid */
     .features-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 
     /* Contact section */
@@ -5635,9 +5635,22 @@ select.form-select {
         padding: var(--space-sm) var(--space-md);
     }
 
-    /* Features grid */
+    /* Features grid - keep 3 cols on mobile for compact buttons */
     .features-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+
+    .feature-checkbox {
+        padding: 6px 4px;
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    .feature-checkbox .feature-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
     }
 
     /* Map sidebar */
