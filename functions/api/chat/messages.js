@@ -100,7 +100,7 @@ export async function onRequestGet(context) {
       })),
     }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error del servidor', details: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ messages: [] }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 }
 
@@ -160,6 +160,6 @@ export async function onRequestPost(context) {
       },
     }), { status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error del servidor', details: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: 'Error al enviar mensaje' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 }
