@@ -90,74 +90,125 @@
         }
     }
 
+    // ─── Safe helpers (fallback if app.js functions not loaded) ──
+    function safeFormatPrice(price, currency) {
+        try {
+            if (typeof formatPrice === 'function') return formatPrice(price, currency);
+        } catch (e) { /* ignore */ }
+        var symbols = { 'USD': '$', 'EUR': '€', 'Bs': 'Bs' };
+        var s = symbols[currency] || '$';
+        return price != null ? s + Number(price).toLocaleString() : 'Precio no disponible';
+    }
+
+    function safeFormatShortPrice(price, currency) {
+        try {
+            if (typeof formatShortPrice === 'function') return formatShortPrice(price, currency);
+        } catch (e) { /* ignore */ }
+        if (!price || isNaN(price)) return '';
+        var symbols = { 'USD': '$', 'EUR': '€', 'Bs': 'Bs' };
+        var s = symbols[currency] || '$';
+        if (price >= 1000000) return s + (price / 1000000).toFixed(1) + 'M';
+        if (price >= 1000) return s + (price / 1000).toFixed(0) + 'K';
+        return s + price;
+    }
+
+    function safeGetTypeLabel(type) {
+        try {
+            if (typeof getPropertyTypeLabel === 'function') return getPropertyTypeLabel(type);
+        } catch (e) { /* ignore */ }
+        return type || 'Propiedad';
+    }
+
+    function safeGetOpLabel(op) {
+        try {
+            if (typeof getOperationTypeLabel === 'function') return getOperationTypeLabel(op);
+        } catch (e) { /* ignore */ }
+        return op || 'Operación';
+    }
+
     // ─── Create Marker ──────────────────────────────────────────
     function createMarker(property) {
         if (!property.lat || !property.lng || typeof L === 'undefined') return null;
 
-        var coverImage = property.cover_image || (property.images && property.images[0] && property.images[0].url) || '';
-        var priceStr = formatPrice(property.price, property.currency);
-        var typeLabel = getPropertyTypeLabel(property.property_type);
-        var opLabel = getOperationTypeLabel(property.operation_type);
-        var title = property.title || 'Sin título';
+        try {
+            var coverImage = '';
+            if (property.cover_image && typeof property.cover_image === 'string') {
+                coverImage = property.cover_image;
+            } else if (property.images && Array.isArray(property.images) && property.images.length > 0 && property.images[0].url) {
+                coverImage = property.images[0].url;
+            }
 
-        // Color by operation type
-        var iconColor = getMarkerColor(property.operation_type);
+            var priceStr = safeFormatPrice(property.price, property.currency);
+            var typeLabel = safeGetTypeLabel(property.property_type);
+            var opLabel = safeGetOpLabel(property.operation_type);
+            var title = property.title || 'Sin título';
 
-        // Custom pin icon with price
-        var icon = L.divIcon({
-            className: 'custom-map-marker',
-            html: '<div class="marker-pin" style="background-color: ' + iconColor + ';">'
-                + '<span class="marker-price">' + formatShortPrice(property.price, property.currency) + '</span>'
+            // Color by operation type
+            var iconColor = getMarkerColor(property.operation_type);
+
+            // Custom pin icon with price
+            var icon = L.divIcon({
+                className: 'custom-map-marker',
+                html: '<div class="marker-pin" style="background-color: ' + iconColor + ';">'
+                    + '<span class="marker-price">' + safeFormatShortPrice(property.price, property.currency) + '</span>'
+                    + '</div>'
+                    + '<div class="marker-shadow"></div>',
+                iconSize: [40, 52],
+                iconAnchor: [20, 52],
+                popupAnchor: [0, -56],
+            });
+
+            var marker = L.marker([property.lat, property.lng], { icon: icon });
+
+            // Build popup content — always a valid string
+            var imgTag = coverImage
+                ? '<div class="map-popup-image"><img src="' + coverImage + '" alt="' + title + '" onerror="this.parentElement.style.display=\'none\'"></div>'
+                : '';
+
+            var details = '';
+            if (property.bedrooms) details += '<span class="map-popup-detail"><i class="fas fa-bed"></i> ' + property.bedrooms + '</span>';
+            if (property.bathrooms) details += '<span class="map-popup-detail"><i class="fas fa-bath"></i> ' + property.bathrooms + '</span>';
+            if (property.area) details += '<span class="map-popup-detail"><i class="fas fa-ruler-combined"></i> ' + property.area + (property.area_unit || 'm²') + '</span>';
+
+            var popupHTML = '<div class="map-popup">'
+                + imgTag
+                + '<div class="map-popup-content">'
+                + '<h4 class="map-popup-title">' + title + '</h4>'
+                + '<div class="map-popup-price">' + priceStr + '</div>'
+                + '<div class="map-popup-badges">'
+                + '<span class="map-popup-badge">' + typeLabel + '</span>'
+                + '<span class="map-popup-badge">' + opLabel + '</span>'
                 + '</div>'
-                + '<div class="marker-shadow"></div>',
-            iconSize: [40, 52],
-            iconAnchor: [20, 52],
-            popupAnchor: [0, -56],
-        });
+                + details
+                + '<a href="property.html?id=' + property.id + '" class="map-popup-link">Ver más <i class="fas fa-arrow-right"></i></a>'
+                + '</div>'
+                + '</div>';
 
-        var marker = L.marker([property.lat, property.lng], { icon: icon });
+            // Safety check: popupHTML must be a non-empty string
+            if (typeof popupHTML !== 'string' || popupHTML.length === 0) {
+                popupHTML = '<div class="map-popup"><div class="map-popup-content"><h4>' + title + '</h4><p>Propiedad</p></div></div>';
+            }
 
-        // Build popup content
-        var popupHTML = '<div class="map-popup">'
-            + (coverImage ? '<div class="map-popup-image"><img src="' + coverImage + '" alt="' + title + '" onerror="this.parentElement.style.display=\'none\'"></div>' : '')
-            + '<div class="map-popup-content">'
-            + '<h4 class="map-popup-title">' + title + '</h4>'
-            + '<div class="map-popup-price">' + priceStr + '</div>'
-            + '<div class="map-popup-badges">'
-            + '<span class="map-popup-badge">' + typeLabel + '</span>'
-            + '<span class="map-popup-badge">' + opLabel + '</span>'
-            + '</div>';
+            // Bind popup to marker
+            marker.bindPopup(popupHTML, {
+                maxWidth: 300,
+                minWidth: 260,
+                closeButton: true,
+                autoPan: true,
+                autoPanPaddingTopLeft: [20, 60],
+                autoPanPaddingBottomRight: [20, 20],
+            });
 
-        if (property.bedrooms) {
-            popupHTML += '<span class="map-popup-detail"><i class="fas fa-bed"></i> ' + property.bedrooms + '</span>';
+            // On marker click, highlight card in sidebar
+            marker.on('click', function () {
+                highlightCard(property.id);
+            });
+
+            return marker;
+        } catch (err) {
+            console.error('Error creating marker for property ' + (property.id || '?') + ':', err);
+            return null;
         }
-        if (property.bathrooms) {
-            popupHTML += '<span class="map-popup-detail"><i class="fas fa-bath"></i> ' + property.bathrooms + '</span>';
-        }
-        if (property.area) {
-            popupHTML += '<span class="map-popup-detail"><i class="fas fa-ruler-combined"></i> ' + property.area + (property.area_unit || 'm²') + '</span>';
-        }
-
-        popupHTML += '<a href="property.html?id=' + property.id + '" class="map-popup-link">Ver más <i class="fas fa-arrow-right"></i></a>'
-            + '</div>'
-            + '</div>';
-
-        // Bind popup to marker — this is the NATIVE Leaflet popup that works on mobile
-        marker.bindPopup(popupHTML, {
-            maxWidth: 300,
-            minWidth: 260,
-            closeButton: true,
-            autoPan: true,
-            autoPanPaddingTopLeft: [20, 60],
-            autoPanPaddingBottomRight: [20, 20],
-        });
-
-        // On marker click, highlight card in sidebar
-        marker.on('click', function () {
-            highlightCard(property.id);
-        });
-
-        return marker;
     }
 
     function getMarkerColor(operationType) {
@@ -166,21 +217,11 @@
             'alquiler': '#28a745',
             'venta_alquiler': '#ff6b35',
         };
-        return (operationType && colors[operationType.toLowerCase()]) || '#1a73e8';
-    }
-
-    function formatShortPrice(price, currency) {
-        if (!price || isNaN(price)) return '';
-        var symbols = { 'USD': '$', 'EUR': '€', 'Bs': 'Bs' };
-        var symbol = symbols[currency] || '$';
-
-        if (price >= 1000000) {
-            return symbol + (price / 1000000).toFixed(1) + 'M';
+        try {
+            return (operationType && colors[operationType.toLowerCase()]) || '#1a73e8';
+        } catch (e) {
+            return '#1a73e8';
         }
-        if (price >= 1000) {
-            return symbol + (price / 1000).toFixed(0) + 'K';
-        }
-        return symbol + price;
     }
 
     // ─── Load Map Properties ────────────────────────────────────
@@ -297,9 +338,9 @@
 
         mapPropertyList.innerHTML = properties.map(function (p) {
             var coverImage = p.cover_image || (p.images && p.images[0] && p.images[0].url) || '';
-            var priceStr = formatPrice(p.price, p.currency);
-            var typeLabel = getPropertyTypeLabel(p.property_type);
-            var opLabel = getOperationTypeLabel(p.operation_type);
+            var priceStr = safeFormatPrice(p.price, p.currency);
+            var typeLabel = safeGetTypeLabel(p.property_type);
+            var opLabel = safeGetOpLabel(p.operation_type);
             var address = p.city ? (p.address ? p.address + ', ' + p.city : p.city) : '--';
 
             return '<div class="map-property-card" data-property-id="' + p.id + '" data-lat="' + (p.lat || '') + '" data-lng="' + (p.lng || '') + '">'
