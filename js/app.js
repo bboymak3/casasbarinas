@@ -1073,17 +1073,22 @@ async function loadSiteStats() {
             if (phoneLink) phoneLink.href = `tel:${property.owner_phone}`;
         }
 
-        // WhatsApp
+        // WhatsApp - set up all WhatsApp links
         const waMessage = encodeURIComponent(`Hola, estoy interesado(a) en la propiedad: ${property.title}`);
         const waPhone = (property.owner_phone || '').replace(/[^0-9]/g, '');
         if (waPhone) {
+            const waHref = `https://wa.me/${waPhone}?text=${waMessage}`;
             const waLink = document.getElementById('whatsappLink');
             const sideWA = document.getElementById('sideWhatsApp');
-            const contactWA = document.getElementById('contactWhatsapp');
-            if (waLink) waLink.href = `https://wa.me/${waPhone}?text=${waMessage}`;
-            if (sideWA) { sideWA.href = `https://wa.me/${waPhone}?text=${waMessage}`; sideWA.style.display = ''; }
-            if (contactWA) contactWA.style.display = '';
+            const mainWA = document.getElementById('mainWhatsApp');
+            if (waLink) waLink.href = waHref;
+            if (sideWA) { sideWA.href = waHref; sideWA.style.display = ''; }
+            if (mainWA) { mainWA.href = waHref; mainWA.style.display = ''; }
         }
+
+        // Chat owner name
+        const chatOwnerName = document.getElementById('chatOwnerName');
+        if (chatOwnerName) chatOwnerName.textContent = property.owner_name || 'Propietario';
 
         // Price per area
         if (property.price && property.area && property.area > 0) {
@@ -1281,72 +1286,118 @@ async function loadSiteStats() {
         updateLightbox(newIndex);
     }
 
-    // ── Contact Form ──
-    function setupContactForm(propertyId) {
-        const form = document.getElementById('contactForm');
-        if (!form) return;
+    // ── Chat System ──
+    let chatPropertyId = null;
 
-        // Pre-fill if logged in
-        if (isAuthenticated()) {
-            const user = getCachedUser();
-            if (user) {
-                const nameField = document.getElementById('contactName');
-                const emailField = document.getElementById('contactEmail');
-                if (nameField && !nameField.value) nameField.value = user.name || '';
-                if (emailField && !emailField.value) emailField.value = user.email || '';
-            }
+    function setupContactForm(propertyId) {
+        chatPropertyId = propertyId;
+
+        const openChatBtn = document.getElementById('openChatBtn');
+        const sideContactBtn = document.getElementById('sideContactBtn');
+        const chatClose = document.getElementById('chatClose');
+        const chatPanel = document.getElementById('chatPanel');
+        const chatForm = document.getElementById('chatForm');
+        const contactActions = document.getElementById('contactActions');
+
+        function openChat() {
+            if (chatPanel) chatPanel.classList.remove('hidden');
+            if (contactActions) contactActions.classList.add('hidden');
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) setTimeout(() => chatInput.focus(), 100);
         }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function closeChat() {
+            if (chatPanel) chatPanel.classList.add('hidden');
+            if (contactActions) contactActions.classList.remove('hidden');
+        }
 
-            const name = document.getElementById('contactName')?.value?.trim();
-            const email = document.getElementById('contactEmail')?.value?.trim();
-            const phone = document.getElementById('contactPhone')?.value?.trim();
-            const message = document.getElementById('contactMessage')?.value?.trim();
+        // Open chat buttons
+        if (openChatBtn) openChatBtn.addEventListener('click', openChat);
+        if (sideContactBtn) sideContactBtn.addEventListener('click', () => {
+            openChat();
+            document.querySelector('.contact-section')?.scrollIntoView({ behavior: 'smooth' });
+        });
 
-            if (!name || !email || !message) {
-                showToast('Nombre, email y mensaje son requeridos', 'error');
-                return;
-            }
+        // Close chat
+        if (chatClose) chatClose.addEventListener('click', closeChat);
 
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-            }
+        // Send message in chat
+        if (chatForm) {
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const chatInput = document.getElementById('chatInput');
+                const message = chatInput?.value?.trim();
+                if (!message) return;
 
-            try {
-                await api.post('/contacts', {
-                    property_id: parseInt(propertyId),
-                    sender_name: name,
-                    sender_email: email,
-                    sender_phone: phone || null,
-                    message,
-                });
-
-                showToast('Mensaje enviado exitosamente. El propietario te contactará pronto.', 'success');
-                form.reset();
-
-                // Re-fill if logged in
+                // Get user info if logged in
+                let senderName = 'Visitante';
+                let senderEmail = '';
                 if (isAuthenticated()) {
                     const user = getCachedUser();
                     if (user) {
-                        const nameField = document.getElementById('contactName');
-                        const emailField = document.getElementById('contactEmail');
-                        if (nameField) nameField.value = user.name || '';
-                        if (emailField) emailField.value = user.email || '';
+                        senderName = user.name || 'Visitante';
+                        senderEmail = user.email || '';
                     }
                 }
-            } catch (error) {
-                showToast(error.message || 'Error al enviar mensaje', 'error');
-            } finally {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Mensaje';
+
+                // Add message bubble visually
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    // Remove welcome message
+                    const welcome = chatMessages.querySelector('.chat-welcome');
+                    if (welcome) welcome.remove();
+
+                    const now = new Date();
+                    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+                    const bubble = document.createElement('div');
+                    bubble.className = 'chat-bubble sent';
+                    bubble.innerHTML = `${escapeHTML(message)}<span class="chat-time">${timeStr}</span>`;
+                    chatMessages.appendChild(bubble);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
-            }
-        });
+
+                // Clear input
+                if (chatInput) chatInput.value = '';
+
+                // Send to API
+                try {
+                    await api.post('/contacts', {
+                        property_id: parseInt(propertyId),
+                        sender_name: senderName,
+                        sender_email: senderEmail || 'visitante@casasbarinas.com',
+                        sender_phone: null,
+                        message: message,
+                    });
+
+                    // Add confirmation bubble
+                    if (chatMessages) {
+                        const confirm = document.createElement('div');
+                        confirm.className = 'chat-bubble received';
+                        confirm.innerHTML = 'Mensaje recibido. El propietario te contactará pronto.';
+                        chatMessages.appendChild(confirm);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+
+                    showToast('Mensaje enviado al propietario', 'success');
+                } catch (error) {
+                    showToast(error.message || 'Error al enviar mensaje', 'error');
+                    if (chatMessages) {
+                        const errBubble = document.createElement('div');
+                        errBubble.className = 'chat-bubble received';
+                        errBubble.innerHTML = 'Error al enviar. Intenta de nuevo.';
+                        chatMessages.appendChild(errBubble);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                }
+            });
+        }
+    }
+
+    function escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
 
     // ── Favorite Buttons ──
@@ -1423,9 +1474,13 @@ async function loadSiteStats() {
         if (!mapContainer || !mapSection) return;
 
         if (!property.lat || !property.lng || typeof L === 'undefined') {
-            mapContainer.innerHTML = '<p class="text-muted">Ubicación no disponible</p>';
+            // Hide entire section if no coordinates
+            mapSection.classList.add('hidden');
             return;
         }
+
+        // Show section and init map
+        mapSection.classList.remove('hidden');
 
         try {
             const detailMap = L.map('propertyMap', {
@@ -1446,7 +1501,7 @@ async function loadSiteStats() {
 
             setTimeout(() => detailMap.invalidateSize(), 300);
         } catch (error) {
-            mapContainer.innerHTML = '<p class="text-muted">Error al cargar el mapa</p>';
+            mapSection.classList.add('hidden');
         }
     }
 })();

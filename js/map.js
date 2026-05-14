@@ -290,6 +290,18 @@
                 }, 350);
             });
         }
+
+        // Close button (visible on mobile)
+        var closeBtn = document.getElementById('mapSidebarClose');
+        if (closeBtn && mapSidebar) {
+            closeBtn.addEventListener('click', function () {
+                mapSidebar.classList.add('collapsed');
+                if (mapSidebarToggle) mapSidebarToggle.classList.add('shifted');
+                setTimeout(function () {
+                    if (map) map.invalidateSize();
+                }, 350);
+            });
+        }
     }
 
     // ─── Map Filters ────────────────────────────────────────────

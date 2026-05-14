@@ -28,8 +28,8 @@
 
         /* --- SIDEBAR (Desktop) --- */
         .map-sidebar {
-            width: 360px;
-            min-width: 360px;
+            width: 320px;
+            min-width: 320px;
             background: #fff;
             border-right: 1px solid #e0e0e0;
             display: flex;
@@ -46,7 +46,7 @@
         .map-sidebar-toggle {
             position: absolute;
             top: 10px;
-            left: 370px;
+            left: 330px;
             z-index: 500;
             background: #fff;
             border: 1px solid #ddd;
@@ -60,28 +60,32 @@
         .map-sidebar-toggle.shifted {
             left: 10px;
         }
+        .map-sidebar-close {
+            display: none;
+        }
         .map-filters {
-            padding: 16px;
+            padding: 12px;
             border-bottom: 1px solid #e0e0e0;
             background: #f8f9fa;
+            position: relative;
         }
-        .map-filters h3 { margin: 0 0 12px 0; font-size: 16px; color: #1a1a2e; }
-        .map-filters .form-group { margin-bottom: 10px; }
+        .map-filters h3 { margin: 0 0 8px 0; font-size: 15px; color: #1a1a2e; }
+        .map-filters .form-group { margin-bottom: 6px; }
         .map-filters .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #555; }
         .map-filters .form-select, .map-filters input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
         .map-filters .filter-row { display: flex; gap: 8px; }
         .map-filters .filter-row .form-group { flex: 1; }
         .map-filters .btn { width: 100%; margin-top: 8px; }
         .map-results { flex: 1; overflow-y: auto; }
-        .map-result-count { padding: 10px 16px; font-size: 13px; color: #666; border-bottom: 1px solid #e0e0e0; background: #fff; }
-        .map-property-list { padding: 8px; }
-        .map-property-card { display: flex; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; margin-bottom: 6px; }
+        .map-result-count { padding: 8px 12px; font-size: 12px; color: #666; border-bottom: 1px solid #e0e0e0; background: #fff; }
+        .map-property-list { padding: 6px; }
+        .map-property-card { display: flex; gap: 8px; padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; margin-bottom: 4px; }
         .map-property-card:hover { background: #f0f4ff; }
         .map-property-card.active { background: #e8f0fe; border-color: #1a73e8; }
-        .map-property-card img { width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+        .map-property-card img { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
         .map-property-card .card-info { flex: 1; min-width: 0; }
-        .map-property-card .card-price { font-weight: 700; color: #1a73e8; font-size: 15px; }
-        .map-property-card .card-title { font-size: 13px; font-weight: 600; color: #1a1a2e; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .map-property-card .card-price { font-weight: 700; color: #1a73e8; font-size: 14px; }
+        .map-property-card .card-title { font-size: 12px; font-weight: 600; color: #1a1a2e; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .map-property-card .card-location { font-size: 11px; color: #888; }
         .map-property-card .card-badges { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
         .map-property-card .card-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; }
@@ -159,6 +163,31 @@
                 pointer-events: none;
             }
 
+            /* Close button inside sidebar */
+            .map-sidebar-close {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 32px;
+                height: 32px;
+                background: rgba(0,0,0,0.08);
+                border-radius: 50%;
+                color: #555;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 10;
+                border: none;
+                padding: 0;
+                transition: background 0.2s;
+            }
+            .map-sidebar-close:hover {
+                background: rgba(0,0,0,0.15);
+                color: #333;
+            }
+
             /* When sidebar is opened (no collapsed class) */
             .map-sidebar:not(.collapsed) {
                 transform: translateY(0);
@@ -175,11 +204,11 @@
             .map-sidebar::before {
                 content: '';
                 display: block;
-                width: 40px;
+                width: 36px;
                 height: 4px;
                 background: #ccc;
                 border-radius: 4px;
-                margin: 12px auto 0;
+                margin: 10px auto 0;
                 flex-shrink: 0;
             }
 
@@ -239,7 +268,7 @@
             }
             .leaflet-popup-content {
                 margin: 0 !important;
-                width: 280px !important;
+                width: 260px !important;
                 max-width: calc(100vw - 40px) !important;
             }
             .leaflet-popup-tip {
@@ -297,6 +326,7 @@
         <div class="map-layout">
             <!-- Sidebar -->
             <aside class="map-sidebar collapsed" id="mapSidebar">
+                <button class="map-sidebar-close" id="mapSidebarClose" aria-label="Cerrar">&times;</button>
                 <div class="map-filters">
                     <h3><i class="fas fa-filter"></i> Filtros</h3>
                     <div class="form-group">

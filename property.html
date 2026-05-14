@@ -155,46 +155,44 @@
                             </div>
                         </div>
 
-                        <!-- Map -->
-                        <div class="property-section" id="mapSection">
+                        <!-- Map (only shown if coordinates available) -->
+                        <div class="property-section hidden" id="mapSection">
                             <h2 class="property-section-title">Ubicación</h2>
-                            <div class="property-map" id="propertyMap">
-                                <p>Ubicación no disponible</p>
-                            </div>
+                            <div class="property-map" id="propertyMap"></div>
                         </div>
 
-                        <!-- Contact Form -->
+                        <!-- Contact Section - Chat + WhatsApp -->
                         <div class="property-section contact-section">
                             <h2 class="property-section-title">Contactar al Propietario</h2>
-                            <form class="contact-form" id="contactForm">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="contactName">Tu Nombre <span class="required">*</span></label>
-                                        <input type="text" id="contactName" name="nombre" required placeholder="Tu nombre">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contactEmail">Tu Email <span class="required">*</span></label>
-                                        <input type="email" id="contactEmail" name="email" required placeholder="tu@email.com">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="contactPhone">Tu Teléfono</label>
-                                    <input type="tel" id="contactPhone" name="telefono" placeholder="+58 274-000-0000">
-                                </div>
-                                <div class="form-group">
-                                    <label for="contactMessage">Mensaje <span class="required">*</span></label>
-                                    <textarea id="contactMessage" name="mensaje" rows="4" required placeholder="Hola, estoy interesado(a) en esta propiedad. ¿Podría darme más información?"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-lg btn-full">
-                                    <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                            <!-- WhatsApp direct + Message button -->
+                            <div class="contact-actions" id="contactActions">
+                                <a href="#" class="btn btn-whatsapp btn-full btn-lg" id="mainWhatsApp" style="display:none;" target="_blank" rel="noopener">
+                                    <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+                                </a>
+                                <button class="btn btn-primary btn-full btn-lg" id="openChatBtn" style="margin-top:8px;">
+                                    <i class="fas fa-comment-dots"></i> Enviar Mensaje
                                 </button>
-                                <div class="contact-whatsapp" id="contactWhatsapp" style="display:none;">
-                                    <span class="contact-divider">o contactar por</span>
-                                    <a href="#" class="btn btn-whatsapp" id="whatsappLink" target="_blank" rel="noopener">
-                                        <i class="fab fa-whatsapp"></i> WhatsApp
-                                    </a>
+                            </div>
+                            <!-- Chat panel (hidden by default) -->
+                            <div class="chat-panel hidden" id="chatPanel">
+                                <div class="chat-header">
+                                    <div class="chat-header-info">
+                                        <i class="fas fa-user-circle"></i>
+                                        <span id="chatOwnerName">Propietario</span>
+                                        <small class="chat-status">En línea</small>
+                                    </div>
+                                    <button class="chat-close" id="chatClose" aria-label="Cerrar chat"><i class="fas fa-times"></i></button>
                                 </div>
-                            </form>
+                                <div class="chat-messages" id="chatMessages">
+                                    <div class="chat-welcome">
+                                        <p>Escribe un mensaje sobre esta propiedad. El propietario lo recibirá directamente.</p>
+                                    </div>
+                                </div>
+                                <form class="chat-input-area" id="chatForm">
+                                    <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." required autocomplete="off">
+                                    <button type="submit" class="chat-send-btn" aria-label="Enviar"><i class="fas fa-paper-plane"></i></button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
@@ -240,8 +238,8 @@
                             <a href="#" class="btn btn-whatsapp btn-full btn-lg" id="sideWhatsApp" style="display:none;" target="_blank" rel="noopener">
                                 <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
                             </a>
-                            <button class="btn btn-primary btn-full btn-lg" id="sideContactBtn" onclick="document.querySelector('.contact-form').scrollIntoView({behavior:'smooth'})">
-                                <i class="fas fa-envelope"></i> Enviar Mensaje
+                            <button class="btn btn-primary btn-full btn-lg" id="sideContactBtn">
+                                <i class="fas fa-comment-dots"></i> Enviar Mensaje
                             </button>
                             <div class="sidebar-actions">
                                 <button class="btn btn-outline btn-sm btn-favorite" id="sideFavoriteBtn" data-property-id="">
