@@ -1037,8 +1037,8 @@ strong {
    ============================================================ */
 .property-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-md);
 }
 
 .property-card {
@@ -1047,24 +1047,38 @@ strong {
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition);
-    cursor: pointer;
     border: 1px solid var(--color-border-light);
+    display: flex;
+    flex-direction: column;
 }
 
 .property-card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
     border-color: var(--color-primary);
 }
 
+/* Card Link — wraps the entire card */
+.property-card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Card Image */
+.property-card-image,
 .property-card .card-img-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 66.67%;
+    padding-top: 65%;
     overflow: hidden;
     background-color: var(--color-light-dark);
+    flex-shrink: 0;
 }
 
+.property-card-image img,
 .property-card .card-img {
     position: absolute;
     top: 0;
@@ -1073,102 +1087,137 @@ strong {
     height: 100%;
     object-fit: cover;
     transition: transform var(--transition-slow);
+    display: block;
 }
 
+.property-card:hover .property-card-image img,
 .property-card:hover .card-img {
     transform: scale(1.05);
 }
 
+/* Card Badges */
+.property-card-badges,
 .property-card .card-badges {
     position: absolute;
     top: var(--space-sm);
     left: var(--space-sm);
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs);
+    gap: 4px;
     z-index: 2;
 }
 
+/* Card Favorite Button */
+.property-card-fav,
 .property-card .card-fav {
     position: absolute;
     top: var(--space-sm);
     right: var(--space-sm);
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: var(--radius-full);
     color: var(--color-text-muted);
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     transition: all var(--transition-fast);
     z-index: 2;
     cursor: pointer;
     border: none;
+    padding: 0;
 }
 
+.property-card-fav:hover,
 .property-card .card-fav:hover,
+.property-card-fav.active,
 .property-card .card-fav.active {
     color: var(--color-danger);
     background-color: var(--color-white);
-    transform: scale(1.15);
+    transform: scale(1.1);
 }
 
+/* Card Body */
+.property-card-body,
 .property-card .card-body {
-    padding: var(--space-md);
+    padding: 10px var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
 }
 
+/* Card Price */
+.property-card-price,
 .property-card .card-price {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     color: var(--color-primary);
-    margin-bottom: var(--space-xs);
+    margin-bottom: 2px;
+    line-height: 1.2;
 }
 
+/* Card Title */
+.property-card-title,
 .property-card .card-title {
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     color: var(--color-dark);
-    margin-bottom: var(--space-xs);
-    line-height: 1.4;
+    margin-bottom: 2px;
+    line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    min-height: 2.6em;
 }
 
+/* Card Location */
+.property-card-location,
 .property-card .card-location {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     color: var(--color-text-muted);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 4px;
+    line-height: 1.2;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
+.property-card-location i,
 .property-card .card-location i {
     color: var(--color-primary);
+    flex-shrink: 0;
 }
 
+/* Card Features */
+.property-card-features,
 .property-card .card-features {
     display: flex;
-    gap: var(--space-md);
-    padding-top: var(--space-sm);
+    gap: var(--space-sm);
+    padding-top: var(--space-xs);
     border-top: 1px solid var(--color-border-light);
-    margin-top: var(--space-sm);
+    margin-top: auto;
 }
 
+.property-card-features span,
 .property-card .card-feature {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 3px;
     font-size: var(--font-size-xs);
     color: var(--color-text-light);
+    white-space: nowrap;
 }
 
+.property-card-features i,
 .property-card .card-feature i {
     color: var(--color-text-muted);
+    font-size: 11px;
 }
 
 .property-card .card-footer {
@@ -5804,11 +5853,45 @@ select.form-select {
 
     /* Property Grid */
     .property-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
     }
 
     .property-grid.list-view .property-card {
         grid-template-columns: 1fr;
+    }
+
+    /* Compact cards on mobile */
+    .property-card-image,
+    .property-card .card-img-wrapper {
+        padding-top: 60%;
+    }
+
+    .property-card-body,
+    .property-card .card-body {
+        padding: 6px 8px;
+    }
+
+    .property-card-price,
+    .property-card .card-price {
+        font-size: var(--font-size-base);
+    }
+
+    .property-card-title,
+    .property-card .card-title {
+        font-size: var(--font-size-xs);
+        -webkit-line-clamp: 1;
+        min-height: 1.3em;
+    }
+
+    .property-card-location,
+    .property-card .card-location {
+        font-size: 10px;
+    }
+
+    .property-card-features span,
+    .property-card .card-feature {
+        font-size: 10px;
     }
 
     /* Sections */
