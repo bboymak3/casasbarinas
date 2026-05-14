@@ -80,7 +80,7 @@ export async function onRequestGet(context) {
       try {
         // Get all approved properties
         const allProps = await env.DB.prepare(
-          "SELECT id, title, lat, lng, price, currency, property_type, operation_type, cover_image FROM properties WHERE status = 'approved'"
+          "SELECT p.id, p.title, p.lat, p.lng, p.price, p.currency, p.property_type, p.operation_type, (SELECT url FROM images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image, (SELECT COUNT(*) FROM images WHERE property_id = p.id) as image_count FROM properties p WHERE p.status = 'approved'"
         ).all();
 
         const properties = allProps.results || [];
