@@ -163,6 +163,22 @@
             /* Hide navbar on map page for full screen */
             .navbar { display: none; }
 
+            /* FORCE hide Leaflet attribution/debug on mobile */
+            .leaflet-control-attribution,
+            .leaflet-control-attribution.leaflet-control,
+            .leaflet-bottom.leaflet-left,
+            #map .leaflet-control-container .leaflet-bottom.leaflet-left {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+                pointer-events: none !important;
+                position: absolute !important;
+                z-index: -9999 !important;
+            }
+
             .map-layout {
                 flex-direction: column;
                 position: relative;
