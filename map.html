@@ -85,15 +85,15 @@
                 transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
                 border-radius: 20px 20px 0 0;
                 overflow: hidden;
+                pointer-events: none; /* COLLAPSED = no touch */
             }
             .map-sidebar:not(.collapsed) {
                 transform: translateY(0);
+                pointer-events: auto; /* OPEN = allow touch */
             }
             .map-sidebar.collapsed {
                 transform: translateY(100%);
-                max-height: none;
-                overflow: hidden;
-                height: auto;
+                pointer-events: none; /* COLLAPSED = no touch */
             }
 
             /* Handle bar on sidebar */
