@@ -19,6 +19,7 @@
     let allProperties = [];
     let activeCardId = null;
     let miniMapInitialized = false;
+    let isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
     // ─── DOM Elements ───────────────────────────────────────────
     const mapContainer = document.getElementById('map');
@@ -50,8 +51,94 @@
     function initMap() {
         if (isMapView) {
             initFullMap();
+            createPropertyModal();
         }
         setupMiniMapToggle();
+    }
+
+    // ─── Property Detail Modal (for mobile) ────────────────────
+    function createPropertyModal() {
+        if (document.getElementById('propertyDetailModal')) return;
+
+        const modal = document.createElement('div');
+        modal.id = 'propertyDetailModal';
+        modal.className = 'property-detail-modal';
+        modal.innerHTML = `
+            <div class="modal-backdrop" id="modalBackdrop"></div>
+            <div class="modal-sheet" id="modalSheet">
+                <div class="modal-sheet-handle"><span></span></div>
+                <div class="modal-sheet-content" id="modalSheetContent">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Close on backdrop click
+        document.getElementById('modalBackdrop').addEventListener('click', closePropertyModal);
+        // Close on swipe down or handle click
+        const handle = modal.querySelector('.modal-sheet-handle');
+        handle.addEventListener('click', closePropertyModal);
+
+        // Swipe down to close
+        let startY = 0;
+        const sheet = document.getElementById('modalSheet');
+        sheet.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+        sheet.addEventListener('touchmove', (e) => {
+            const deltaY = e.touches[0].clientY - startY;
+            if (deltaY > 60) {
+                closePropertyModal();
+            }
+        }, { passive: true });
+    }
+
+    function openPropertyModal(property) {
+        const modal = document.getElementById('propertyDetailModal');
+        const content = document.getElementById('modalSheetContent');
+        if (!modal || !content) return;
+
+        const coverImage = property.cover_image || property.images?.[0]?.url || '';
+        const priceStr = formatPrice(property.price, property.currency);
+        const typeLabel = getPropertyTypeLabel(property.property_type);
+        const opLabel = getOperationTypeLabel(property.operation_type);
+        const title = property.title || 'Sin título';
+        const address = property.city ? (property.address ? `${property.address}, ${property.city}` : property.city) : '--';
+        const description = property.description ? (property.description.length > 120 ? property.description.substring(0, 120) + '...' : property.description) : '';
+
+        content.innerHTML = `
+            ${coverImage ? `<div class="modal-property-image"><img src="${coverImage}" alt="${title}" onerror="this.parentElement.style.display='none'"></div>` : '<div class="modal-property-image modal-no-image"><i class="fas fa-image"></i></div>'}
+            <div class="modal-property-info">
+                <h3 class="modal-property-title">${title}</h3>
+                <div class="modal-property-price">${priceStr}</div>
+                <div class="modal-property-address"><i class="fas fa-map-marker-alt"></i> ${address}</div>
+                <div class="modal-property-badges">
+                    <span class="modal-badge badge-type">${typeLabel}</span>
+                    <span class="modal-badge badge-operation">${opLabel}</span>
+                </div>
+                <div class="modal-property-features">
+                    ${property.bedrooms ? `<div class="modal-feature"><i class="fas fa-bed"></i><span>${property.bedrooms} Hab.</span></div>` : ''}
+                    ${property.bathrooms ? `<div class="modal-feature"><i class="fas fa-bath"></i><span>${property.bathrooms} Baños</span></div>` : ''}
+                    ${property.area ? `<div class="modal-feature"><i class="fas fa-ruler-combined"></i><span>${property.area}${property.area_unit || 'm²'}</span></div>` : ''}
+                    ${property.parking_spaces ? `<div class="modal-feature"><i class="fas fa-car"></i><span>${property.parking_spaces} Estac.</span></div>` : ''}
+                </div>
+                ${description ? `<p class="modal-property-description">${description}</p>` : ''}
+                <a href="property.html?id=${property.id}" class="modal-property-btn">
+                    <i class="fas fa-eye"></i> Ver Detalles Completos
+                </a>
+            </div>
+        `;
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePropertyModal() {
+        const modal = document.getElementById('propertyDetailModal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
     }
 
     function initFullMap() {
@@ -363,6 +450,10 @@
         // Click event to highlight sidebar card
         marker.on('click', () => {
             highlightCard(property.id);
+            // On mobile, show bottom-sheet modal instead of popup
+            if (isMobile) {
+                openPropertyModal(property);
+            }
         });
 
         return marker;
@@ -473,9 +564,13 @@
             map.flyTo(found.marker.getLatLng(), 15, {
                 duration: 1,
             });
-            // Open popup
+            // Open popup or modal
             setTimeout(() => {
-                map.openPopup(found.marker);
+                if (isMobile) {
+                    openPropertyModal(found.property);
+                } else {
+                    map.openPopup(found.marker);
+                }
             }, 1000);
         }
     }
