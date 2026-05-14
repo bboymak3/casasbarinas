@@ -65,7 +65,7 @@
             map = L.map('map', {
                 center: BARINAS_CENTER,
                 zoom: DEFAULT_ZOOM,
-                zoomControl: true,
+                zoomControl: false,     // Removed default zoom — using custom controls
                 scrollWheelZoom: true,
                 tap: true,           // Enable tap events for mobile
                 closePopupOnClick: true,
@@ -73,9 +73,51 @@
 
             // OpenStreetMap tiles (free)
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                attribution: false,
                 maxZoom: 19,
             }).addTo(map);
+
+            // Remove the small attribution icon in the corner
+            map.attributionControl.remove();
+
+            // ─── Custom map controls ─────────────────────────────
+            var Lc = L.control;
+
+            // Zoom controls
+            var zoomCtrl = Lc.zoom({ position: 'bottomright' });
+            zoomCtrl.addTo(map);
+
+            // Center map button
+            var centerBtn = Lc({ position: 'bottomright' });
+            centerBtn.onAdd = function () {
+                var div = L.DomUtil.create('div', 'leaflet-bar map-ctrl-center');
+                div.innerHTML = '<a href="#" title="Centrar mapa" role="button" aria-label="Centrar mapa"><i class="fas fa-crosshairs"></i></a>';
+                div.onclick = function (e) {
+                    L.DomEvent.stopPropagation(e);
+                    L.DomEvent.preventDefault(e);
+                    fitAllMarkers();
+                };
+                return div;
+            };
+            centerBtn.addTo(map);
+
+            // Go back button
+            var backBtn = Lc({ position: 'bottomright' });
+            backBtn.onAdd = function () {
+                var div = L.DomUtil.create('div', 'leaflet-bar map-ctrl-back');
+                div.innerHTML = '<a href="#" title="Ir atrás" role="button" aria-label="Ir atrás"><i class="fas fa-arrow-left"></i></a>';
+                div.onclick = function (e) {
+                    L.DomEvent.stopPropagation(e);
+                    L.DomEvent.preventDefault(e);
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                };
+                return div;
+            };
+            backBtn.addTo(map);
 
             // Marker layer group
             markerLayer = L.layerGroup().addTo(map);
@@ -463,14 +505,16 @@
             window._miniMap = L.map('searchMiniMap', {
                 center: BARINAS_CENTER,
                 zoom: DEFAULT_ZOOM,
-                zoomControl: true,
+                zoomControl: false,
                 scrollWheelZoom: true,
             });
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                attribution: false,
                 maxZoom: 19,
             }).addTo(window._miniMap);
+            window._miniMap.attributionControl.remove();
+            L.control.zoom({ position: 'bottomright' }).addTo(window._miniMap);
 
             window._miniMarkerLayer = L.layerGroup().addTo(window._miniMap);
             loadMiniMapProperties();
