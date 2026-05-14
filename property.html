@@ -7,6 +7,7 @@
     <title>Propiedad - CasasBarinas</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -87,182 +88,104 @@
                     </div>
                 </div>
 
-                <!-- Main Info Row -->
-                <div class="property-detail-grid">
-                    <div class="property-detail-main">
-                        <!-- Title & Price -->
-                        <div class="property-header-info">
-                            <div class="property-title-row">
-                                <h1 id="propDetailTitle">Cargando...</h1>
-                                <button class="btn-favorite" id="btnFavorite" aria-label="Agregar a favoritos" data-property-id="">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                            <div class="property-price" id="propDetailPrice">--</div>
-                            <div class="property-location" id="propDetailLocation">
-                                <i class="fas fa-map-marker-alt"></i> <span>Cargando...</span>
-                            </div>
-                            <div class="property-type-badges" id="propDetailBadges"></div>
+                <!-- Compact Info Card -->
+                <div class="compact-info-card">
+                    <!-- Top row: Badges + Price + Favorite -->
+                    <div class="compact-top-row">
+                        <div class="compact-price-row">
+                            <span id="propDetailBadges"></span>
                         </div>
+                        <button class="btn-favorite" id="btnFavorite" aria-label="Agregar a favoritos" data-property-id="">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    <h1 class="compact-title" id="propDetailTitle">Cargando...</h1>
+                    <div class="compact-price" id="propDetailPrice">--</div>
+                    <!-- Address -->
+                    <div class="compact-address" id="propDetailLocation">
+                        <i class="fas fa-map-marker-alt"></i> <span>Cargando...</span>
+                    </div>
 
-                        <!-- Quick Stats -->
-                        <div class="property-quick-stats" id="propQuickStats">
-                            <div class="quick-stat">
-                                <i class="fas fa-bed"></i>
-                                <span id="statBedrooms">--</span>
-                                <label>Habitaciones</label>
-                            </div>
-                            <div class="quick-stat">
-                                <i class="fas fa-bath"></i>
-                                <span id="statBathrooms">--</span>
-                                <label>Baños</label>
-                            </div>
-                            <div class="quick-stat">
-                                <i class="fas fa-car"></i>
-                                <span id="statParking">--</span>
-                                <label>Estacionamientos</label>
-                            </div>
-                            <div class="quick-stat">
-                                <i class="fas fa-ruler-combined"></i>
-                                <span id="statArea">--</span>
-                                <label id="statAreaLabel">Área</label>
-                            </div>
-                            <div class="quick-stat" id="statYearWrap" style="display:none;">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span id="statYear">--</span>
-                                <label>Año</label>
-                            </div>
-                            <div class="quick-stat" id="statFloorsWrap" style="display:none;">
-                                <i class="fas fa-layer-group"></i>
-                                <span id="statFloors">--</span>
-                                <label>Pisos</label>
-                            </div>
+                    <!-- Feature Chips -->
+                    <div class="feature-chips">
+                        <div class="feature-chip" title="Habitaciones">
+                            <i class="fas fa-bed"></i> <span id="statBedrooms">--</span>
                         </div>
-
-                        <!-- Description -->
-                        <div class="property-section">
-                            <h2 class="property-section-title">Descripción</h2>
-                            <div class="property-description" id="propDescription">
-                                <p>Cargando descripción...</p>
-                            </div>
+                        <div class="feature-chip" title="Baños">
+                            <i class="fas fa-bath"></i> <span id="statBathrooms">--</span>
                         </div>
-
-                        <!-- Features -->
-                        <div class="property-section hidden" id="featuresSection">
-                            <h2 class="property-section-title">Características</h2>
-                            <div class="features-list" id="featuresList">
-                                <!-- Features loaded dynamically -->
-                            </div>
+                        <div class="feature-chip" title="Estacionamientos">
+                            <i class="fas fa-car"></i> <span id="statParking">--</span>
                         </div>
-
-                        <!-- Map (only shown if coordinates available) -->
-                        <div class="property-section hidden" id="mapSection">
-                            <h2 class="property-section-title">Ubicación</h2>
-                            <div class="property-map" id="propertyMap"></div>
+                        <div class="feature-chip" title="Área">
+                            <i class="fas fa-ruler-combined"></i> <span id="statArea">--</span>
                         </div>
-
-                        <!-- Contact Section - Chat + WhatsApp -->
-                        <div class="property-section contact-section">
-                            <h2 class="property-section-title">Contactar al Propietario</h2>
-                            <!-- WhatsApp direct + Message button -->
-                            <div class="contact-actions" id="contactActions">
-                                <a href="#" class="btn btn-whatsapp btn-full btn-lg" id="mainWhatsApp" style="display:none;" target="_blank" rel="noopener">
-                                    <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
-                                </a>
-                                <button class="btn btn-primary btn-full btn-lg" id="openChatBtn" style="margin-top:8px;">
-                                    <i class="fas fa-comment-dots"></i> Enviar Mensaje
-                                </button>
-                            </div>
-                            <!-- Chat panel (hidden by default) -->
-                            <div class="chat-panel hidden" id="chatPanel">
-                                <div class="chat-header">
-                                    <div class="chat-header-info">
-                                        <i class="fas fa-user-circle"></i>
-                                        <span id="chatOwnerName">Propietario</span>
-                                        <small class="chat-status">En línea</small>
-                                    </div>
-                                    <button class="chat-close" id="chatClose" aria-label="Cerrar chat"><i class="fas fa-times"></i></button>
-                                </div>
-                                <div class="chat-messages" id="chatMessages">
-                                    <div class="chat-welcome">
-                                        <p>Escribe un mensaje sobre esta propiedad. El propietario lo recibirá directamente.</p>
-                                    </div>
-                                </div>
-                                <form class="chat-input-area" id="chatForm">
-                                    <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." required autocomplete="off">
-                                    <button type="submit" class="chat-send-btn" aria-label="Enviar"><i class="fas fa-paper-plane"></i></button>
-                                </form>
-                            </div>
+                        <div class="feature-chip" id="statYearWrap" style="display:none;" title="Año">
+                            <i class="fas fa-calendar-alt"></i> <span id="statYear">--</span>
+                        </div>
+                        <div class="feature-chip" id="statFloorsWrap" style="display:none;" title="Pisos">
+                            <i class="fas fa-layer-group"></i> <span id="statFloors">--</span>
                         </div>
                     </div>
 
-                    <!-- Sidebar -->
-                    <aside class="property-detail-sidebar">
-                        <!-- Owner Card -->
-                        <div class="owner-card" id="ownerCard">
-                            <div class="owner-avatar" id="ownerAvatar">
+                    <!-- Description (collapsible) -->
+                    <div class="compact-description collapsed" id="propDescription">
+                        <p>Cargando descripción...</p>
+                    </div>
+                    <button class="description-toggle" id="descriptionToggle" style="display:none;">
+                        Leer más <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+
+                <!-- Features Section -->
+                <div class="property-section hidden" id="featuresSection">
+                    <h2 class="property-section-title">Características</h2>
+                    <div class="features-list" id="featuresList">
+                        <!-- Features loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Map Section -->
+                <div class="property-section map-section-wrapper hidden" id="mapSection">
+                    <h2 class="property-section-title">Ubicación</h2>
+                    <div class="property-map" id="propertyMap"></div>
+                    <button class="open-map-modal-btn" id="openMapModalBtn">
+                        <i class="fas fa-expand"></i> Ver en Mapa Completo
+                    </button>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="property-section contact-section">
+                    <h2 class="property-section-title">Contactar al Propietario</h2>
+                    <!-- WhatsApp direct + Message button -->
+                    <div class="contact-actions" id="contactActions">
+                        <a href="#" class="btn btn-whatsapp btn-full btn-lg" id="mainWhatsApp" style="display:none;" target="_blank" rel="noopener">
+                            <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+                        </a>
+                        <button class="btn btn-primary btn-full btn-lg" id="openChatBtn" style="margin-top:8px;">
+                            <i class="fas fa-comment-dots"></i> Enviar Mensaje
+                        </button>
+                    </div>
+                    <!-- Chat panel (hidden by default) -->
+                    <div class="chat-panel hidden" id="chatPanel">
+                        <div class="chat-header">
+                            <div class="chat-header-info">
                                 <i class="fas fa-user-circle"></i>
+                                <span id="chatOwnerName">Propietario</span>
+                                <small class="chat-status">En línea</small>
                             </div>
-                            <h3 class="owner-name" id="ownerName">Propietario</h3>
-                            <p class="owner-since" id="ownerSince">Miembro desde --</p>
-                            <div class="owner-stats" id="ownerStats">
-                                <div class="owner-stat">
-                                    <span class="owner-stat-number" id="ownerPropCount">0</span>
-                                    <span class="owner-stat-label">Propiedades</span>
-                                </div>
-                            </div>
-                            <div class="owner-contact" id="ownerPhoneWrap" style="display:none;">
-                                <a href="tel:" class="owner-phone" id="ownerPhoneLink">
-                                    <i class="fas fa-phone"></i> <span id="ownerPhone">--</span>
-                                </a>
+                            <button class="chat-close" id="chatClose" aria-label="Cerrar chat"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-welcome">
+                                <p>Escribe un mensaje sobre esta propiedad. El propietario lo recibirá directamente.</p>
                             </div>
                         </div>
-
-                        <!-- Price Summary -->
-                        <div class="sidebar-card">
-                            <h4>Resumen del Precio</h4>
-                            <div class="price-summary" id="priceSummary">
-                                <span class="price-big" id="sidePrice">--</span>
-                                <span class="price-operation" id="sideOperation">--</span>
-                            </div>
-                            <div class="price-details">
-                                <div class="price-detail-item" id="pricePerArea" style="display:none;">
-                                    <span>Precio por m²:</span>
-                                    <strong id="pricePerAreaValue">--</strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="sidebar-card">
-                            <a href="#" class="btn btn-whatsapp btn-full btn-lg" id="sideWhatsApp" style="display:none;" target="_blank" rel="noopener">
-                                <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
-                            </a>
-                            <button class="btn btn-primary btn-full btn-lg" id="sideContactBtn">
-                                <i class="fas fa-comment-dots"></i> Enviar Mensaje
-                            </button>
-                            <div class="sidebar-actions">
-                                <button class="btn btn-outline btn-sm btn-favorite" id="sideFavoriteBtn" data-property-id="">
-                                    <i class="far fa-heart"></i> Guardar
-                                </button>
-                                <button class="btn btn-outline btn-sm" id="shareBtn">
-                                    <i class="fas fa-share-alt"></i> Compartir
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Quick Info -->
-                        <div class="sidebar-card">
-                            <h4>Información Rápida</h4>
-                            <ul class="quick-info-list" id="quickInfoList">
-                                <li><i class="fas fa-tag"></i> <span id="qiType">--</span></li>
-                                <li><i class="fas fa-exchange-alt"></i> <span id="qiOperation">--</span></li>
-                                <li><i class="fas fa-map-marker-alt"></i> <span id="qiLocation">--</span></li>
-                                <li><i class="fas fa-calendar-alt"></i> Publicado: <span id="qiPublished">--</span></li>
-                                <li><i class="fas fa-eye"></i> Vistas: <span id="qiViews">0</span></li>
-                            </ul>
-                        </div>
-                    </aside>
+                        <form class="chat-input-area" id="chatForm">
+                            <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." required autocomplete="off">
+                            <button type="submit" class="chat-send-btn" aria-label="Enviar"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -292,9 +215,26 @@
         <div class="lightbox-counter" id="lightboxCounter"></div>
     </div>
 
+    <!-- Full-Screen Map Modal -->
+    <div class="map-modal" id="mapModal">
+        <div class="map-modal-header">
+            <h3><i class="fas fa-map-marker-alt"></i> Ubicación de la Propiedad</h3>
+            <button class="map-modal-close" id="mapModalClose" aria-label="Cerrar mapa">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="map-modal-body">
+            <div id="mapModalMap"></div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Hidden elements for app.js compatibility (IDs referenced by JS but no longer in visible layout) -->
+    <span id="statAreaLabel" class="hidden"></span>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

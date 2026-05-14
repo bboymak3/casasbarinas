@@ -964,6 +964,8 @@ async function loadSiteStats() {
 
             // Setup mini map
             setupDetailMap(property);
+            // Also setup map modal if coordinates exist
+            setupMapModal(property);
 
         } catch (error) {
             if (loadingEl) loadingEl.classList.add('hidden');
@@ -1038,6 +1040,25 @@ async function loadSiteStats() {
         const descEl = document.getElementById('propDescription');
         if (descEl) {
             descEl.innerHTML = `<p>${(property.description || 'Sin descripción.').replace(/\n/g, '</p><p>')}</p>`;
+        }
+
+        // Setup description toggle
+        const descToggle = document.getElementById('descriptionToggle');
+        if (descEl && descToggle) {
+            const fullText = descEl.innerHTML;
+            if (fullText.length > 300) {
+                descEl.classList.add('collapsed');
+                descToggle.style.display = '';
+                descToggle.addEventListener('click', () => {
+                    const isCollapsed = descEl.classList.contains('collapsed');
+                    descEl.classList.toggle('collapsed');
+                    descToggle.innerHTML = isCollapsed 
+                        ? 'Ver menos <i class="fas fa-chevron-up"></i>' 
+                        : 'Leer más <i class="fas fa-chevron-down"></i>';
+                });
+            } else {
+                descToggle.style.display = 'none';
+            }
         }
 
         // Features
@@ -1503,6 +1524,70 @@ async function loadSiteStats() {
         } catch (error) {
             mapSection.classList.add('hidden');
         }
+    }
+
+    // ── Full-Screen Map Modal ──
+    function setupMapModal(property) {
+        const mapModal = document.getElementById('mapModal');
+        const mapModalClose = document.getElementById('mapModalClose');
+        const mapModalMapEl = document.getElementById('mapModalMap');
+        const openMapBtn = document.getElementById('openMapModalBtn');
+        
+        if (!mapModal || !mapModalMapEl) return;
+        if (!property.lat || !property.lng || typeof L === 'undefined') {
+            if (openMapBtn) openMapBtn.style.display = 'none';
+            return;
+        }
+        
+        let modalMap = null;
+        
+        function openModal() {
+            mapModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            if (!modalMap) {
+                setTimeout(() => {
+                    modalMap = L.map('mapModalMap', {
+                        center: [property.lat, property.lng],
+                        zoom: 16,
+                        zoomControl: true,
+                        dragging: true,
+                        scrollWheelZoom: true,
+                    });
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors',
+                        maxZoom: 19,
+                    }).addTo(modalMap);
+                    
+                    const marker = L.marker([property.lat, property.lng]).addTo(modalMap);
+                    marker.bindPopup('<strong>' + (property.title || 'Propiedad') + '</strong><br>' + formatPrice(property.price, property.currency)).openPopup();
+                    
+                    setTimeout(() => modalMap.invalidateSize(), 200);
+                }, 100);
+            } else {
+                setTimeout(() => {
+                    modalMap.invalidateSize();
+                    modalMap.flyTo([property.lat, property.lng], 16, { duration: 0.5 });
+                }, 100);
+            }
+        }
+        
+        function closeModal() {
+            mapModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        if (openMapBtn) openMapBtn.addEventListener('click', openModal);
+        if (mapModalClose) mapModalClose.addEventListener('click', closeModal);
+        
+        mapModal.addEventListener('click', (e) => {
+            if (e.target === mapModal) closeModal();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mapModal.classList.contains('active')) closeModal();
+        });
     }
 })();
 
