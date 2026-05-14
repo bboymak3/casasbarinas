@@ -1193,14 +1193,14 @@ async function loadSiteStats() {
         if (prevBtn) prevBtn.addEventListener('click', () => navigateGallery(-1));
         if (nextBtn) nextBtn.addEventListener('click', () => navigateGallery(1));
 
-        // Fullscreen
+        // Fullscreen -> opens lightbox
         if (fullscreenBtn) {
-            fullscreenBtn.addEventListener('click', () => {
-                const galleryEl = document.getElementById('propertyGallery');
-                if (galleryEl && galleryEl.requestFullscreen) {
-                    galleryEl.requestFullscreen();
-                }
-            });
+            fullscreenBtn.addEventListener('click', () => openLightbox(currentGalleryIndex));
+        }
+
+        // Click on main image -> opens lightbox
+        if (mainImage) {
+            mainImage.addEventListener('click', () => openLightbox(currentGalleryIndex));
         }
 
         // Lightbox

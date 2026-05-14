@@ -3386,17 +3386,19 @@ select.form-select {
 .gallery-main {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    background-color: var(--color-dark);
+    aspect-ratio: 16 / 10;
+    background-color: #f0f0f0;
     overflow: hidden;
     border-radius: var(--radius-md);
+    cursor: zoom-in;
 }
 
 .gallery-main-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+    object-fit: contain;
+    object-position: center center;
+    transition: opacity 0.2s ease;
 }
 
 .gallery-nav {
@@ -5945,7 +5947,8 @@ select.form-select {
 
     /* Gallery */
     .gallery-main {
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 16 / 10;
+        border-radius: var(--radius-sm);
     }
 
     /* Admin Panel */
@@ -6433,12 +6436,12 @@ select.form-select {
 
     /* Gallery */
     .gallery-main {
-        aspect-ratio: 1;
+        aspect-ratio: 16 / 10;
     }
 
     .gallery-thumb {
-        width: 60px;
-        height: 45px;
+        width: 56px;
+        height: 42px;
     }
 
     /* Admin */
