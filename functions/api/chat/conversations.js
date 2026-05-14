@@ -38,40 +38,48 @@ async function verifyJWT(token, secret) {
 }
 
 async function ensureTables(db) {
-  await db.prepare(`
-    CREATE TABLE IF NOT EXISTS conversations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      property_id INTEGER NOT NULL,
-      buyer_id INTEGER NOT NULL,
-      seller_id INTEGER NOT NULL,
-      last_message TEXT,
-      last_message_at TEXT,
-      buyer_unread INTEGER DEFAULT 0,
-      seller_unread INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (property_id) REFERENCES properties(id),
-      FOREIGN KEY (buyer_id) REFERENCES users(id),
-      FOREIGN KEY (seller_id) REFERENCES users(id),
-      UNIQUE(buyer_id, seller_id, property_id)
-    )
-  `).run();
+  try {
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS conversations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        property_id INTEGER NOT NULL,
+        buyer_id INTEGER NOT NULL,
+        seller_id INTEGER NOT NULL,
+        last_message TEXT,
+        last_message_at TEXT,
+        buyer_unread INTEGER DEFAULT 0,
+        seller_unread INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT (datetime('now')),
+        FOREIGN KEY (property_id) REFERENCES properties(id),
+        FOREIGN KEY (buyer_id) REFERENCES users(id),
+        FOREIGN KEY (seller_id) REFERENCES users(id),
+        UNIQUE(buyer_id, seller_id, property_id)
+      )
+    `).run();
+  } catch (e) {
+    // Table may already exist with different schema — ignore
+  }
 
-  await db.prepare(`
-    CREATE TABLE IF NOT EXISTS messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      conversation_id INTEGER NOT NULL,
-      sender_id INTEGER NOT NULL,
-      content TEXT NOT NULL,
-      is_read INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
-      FOREIGN KEY (sender_id) REFERENCES users(id)
-    )
-  `).run();
+  try {
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        conversation_id INTEGER NOT NULL,
+        sender_id INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        is_read INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT (datetime('now')),
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+        FOREIGN KEY (sender_id) REFERENCES users(id)
+      )
+    `).run();
+  } catch (e) {
+    // Table may already exist with different schema — ignore
+  }
 
-  await db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id)').run();
-  await db.prepare('CREATE INDEX IF NOT EXISTS idx_conv_buyer ON conversations(buyer_id)').run();
-  await db.prepare('CREATE INDEX IF NOT EXISTS idx_conv_seller ON conversations(seller_id)').run();
+  try { await db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id)').run(); } catch (e) {}
+  try { await db.prepare('CREATE INDEX IF NOT EXISTS idx_conv_buyer ON conversations(buyer_id)').run(); } catch (e) {}
+  try { await db.prepare('CREATE INDEX IF NOT EXISTS idx_conv_seller ON conversations(seller_id)').run(); } catch (e) {}
 }
 
 // GET: List conversations
