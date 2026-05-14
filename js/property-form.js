@@ -314,7 +314,7 @@
     function setupPhotoUpload() {
         if (!uploadArea || !photoInput) return;
 
-        // Click to upload
+        // Click to upload (gallery)
         uploadArea.addEventListener('click', () => {
             photoInput.click();
         });
@@ -348,6 +348,29 @@
             const files = Array.from(e.dataTransfer.files);
             handlePhotoUpload(files);
         });
+
+        // Gallery button
+        const galleryBtn = document.getElementById('galleryBtn');
+        if (galleryBtn) {
+            galleryBtn.addEventListener('click', () => {
+                photoInput.click();
+            });
+        }
+
+        // Camera button
+        const cameraBtn = document.getElementById('cameraBtn');
+        const cameraInput = document.getElementById('cameraInput');
+        if (cameraBtn && cameraInput) {
+            cameraBtn.addEventListener('click', () => {
+                cameraInput.click();
+            });
+            cameraInput.addEventListener('change', (e) => {
+                if (e.target.files) {
+                    handlePhotoUpload(Array.from(e.target.files));
+                    cameraInput.value = '';
+                }
+            });
+        }
     }
 
     // ─── Handle Photo Upload ────────────────────────────────────

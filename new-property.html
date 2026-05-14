@@ -282,6 +282,16 @@
                         <input type="file" id="photoInput" name="fotos" accept="image/*" multiple hidden>
                     </div>
 
+                    <div class="upload-actions">
+                        <button type="button" class="btn btn-outline btn-upload-gallery" id="galleryBtn">
+                            <i class="fas fa-images"></i> Galería
+                        </button>
+                        <button type="button" class="btn btn-primary btn-upload-camera" id="cameraBtn">
+                            <i class="fas fa-camera"></i> Cámara
+                        </button>
+                        <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
+                    </div>
+
                     <div class="photos-preview" id="photosPreview">
                         <!-- Preview thumbnails added dynamically -->
                     </div>
