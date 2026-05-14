@@ -69,15 +69,10 @@ async function apiCall(endpoint, options = {}) {
 
         if (!response.ok) {
             // Handle 401 - token expired or invalid
+            // Only clear the token; do NOT auto-redirect.
+            // Each page decides if it needs auth via requireAuth().
             if (response.status === 401) {
                 removeToken();
-                // Only redirect if not already on login page
-                if (!window.location.pathname.includes('login.html')) {
-                    showToast('Sesión expirada. Por favor inicia sesión nuevamente.', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                }
             }
             throw new Error(data.error || `Error ${response.status}: ${response.statusText}`);
         }
@@ -170,6 +165,16 @@ function updateNav() {
     } else {
         navLoginItem.classList.remove('hidden');
         navUserItem.classList.add('hidden');
+
+        // Make "Publicar" link require login
+        const publishLinks = document.querySelectorAll('a[href="new-property.html"]');
+        publishLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const redirect = encodeURIComponent('new-property.html');
+                window.location.href = `login.html?redirect=${redirect}`;
+            });
+        });
     }
 }
 
