@@ -10,12 +10,12 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <style>
-        /* Map-specific overrides */
+        /* Map-specific overrides - DESKTOP */
         .map-page { display: flex; flex-direction: column; height: calc(100vh - 70px); margin-top: 70px; }
-        .map-layout { display: flex; flex: 1; overflow: hidden; }
+        .map-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
         .map-sidebar { width: 360px; min-width: 360px; background: #fff; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; z-index: 400; }
         .map-sidebar.collapsed { width: 0; min-width: 0; overflow: hidden; border-right: none; }
-        .map-sidebar-toggle { position: absolute; top: 10px; left: 370px; z-index: 500; background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: left 0.3s ease; }
+        .map-sidebar-toggle { position: absolute; top: 10px; left: 370px; z-index: 500; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: left 0.3s ease; font-size: 14px; }
         .map-sidebar-toggle.shifted { left: 10px; }
         .map-filters { padding: 16px; border-bottom: 1px solid #e0e0e0; background: #f8f9fa; }
         .map-filters h3 { margin: 0 0 12px 0; font-size: 16px; color: #1a1a2e; }
@@ -43,13 +43,99 @@
         .map-no-results { text-align: center; padding: 40px 20px; color: #888; }
         .map-no-results i { font-size: 48px; color: #ddd; margin-bottom: 12px; display: block; }
 
+        /* ===== MOBILE: Full-screen map with overlay sidebar ===== */
         @media (max-width: 768px) {
-            .map-page { margin-top: 60px; height: calc(100vh - 60px); }
-            .map-layout { flex-direction: column; }
-            .map-sidebar { width: 100%; min-width: 100%; max-height: 50vh; }
-            .map-sidebar.collapsed { max-height: 0; }
-            .map-sidebar-toggle { top: auto; bottom: 10px; left: 50%; transform: translateX(-50%); }
-            .map-sidebar-toggle.shifted { left: 50%; }
+            .map-page {
+                margin-top: 0;
+                height: 100vh;
+                height: 100dvh;
+            }
+            .map-layout {
+                flex-direction: column;
+                position: relative;
+            }
+
+            /* Map takes FULL screen */
+            #map {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1;
+            }
+
+            /* Sidebar becomes a bottom sheet overlay */
+            .map-sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                min-width: 100%;
+                max-height: none;
+                height: auto;
+                z-index: 450;
+                display: flex;
+                flex-direction: column;
+                background: #fff;
+                border-right: none;
+                transform: translateY(100%);
+                transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+                border-radius: 20px 20px 0 0;
+                overflow: hidden;
+            }
+            .map-sidebar:not(.collapsed) {
+                transform: translateY(0);
+            }
+            .map-sidebar.collapsed {
+                transform: translateY(100%);
+                max-height: none;
+                overflow: hidden;
+                height: auto;
+            }
+
+            /* Handle bar on sidebar */
+            .map-sidebar::before {
+                content: '';
+                display: block;
+                width: 40px;
+                height: 4px;
+                background: #ccc;
+                border-radius: 4px;
+                margin: 12px auto 0;
+                flex-shrink: 0;
+            }
+
+            /* Toggle button repositioned */
+            .map-sidebar-toggle {
+                top: auto;
+                bottom: 24px;
+                right: 16px;
+                left: auto;
+                transform: none;
+                z-index: 500;
+                border-radius: 50%;
+                width: 52px;
+                height: 52px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+                background: #1a73e8;
+                color: #fff;
+                border: none;
+            }
+            .map-sidebar-toggle.shifted {
+                left: auto;
+                right: 16px;
+            }
+            .map-sidebar-toggle i {
+                color: #fff;
+            }
         }
     </style>
 </head>

@@ -6253,12 +6253,6 @@ select.form-select {
     .marker-price {
         font-size: 10px;
     }
-
-    /* Hide Leaflet popups on mobile, use modal instead */
-    .leaflet-popup-content-wrapper,
-    .leaflet-popup-tip {
-        display: none !important;
-    }
 }
 
 

@@ -20,6 +20,7 @@
     let activeCardId = null;
     let miniMapInitialized = false;
     let isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    let modalElement = null;
 
     // ─── DOM Elements ───────────────────────────────────────────
     const mapContainer = document.getElementById('map');
@@ -52,6 +53,7 @@
         if (isMapView) {
             initFullMap();
             createPropertyModal();
+            setupMobileSidebar();
         }
         setupMiniMapToggle();
     }
@@ -73,10 +75,11 @@
             </div>
         `;
         document.body.appendChild(modal);
+        modalElement = modal;
 
         // Close on backdrop click
         document.getElementById('modalBackdrop').addEventListener('click', closePropertyModal);
-        // Close on swipe down or handle click
+        // Close on handle click
         const handle = modal.querySelector('.modal-sheet-handle');
         handle.addEventListener('click', closePropertyModal);
 
@@ -95,9 +98,9 @@
     }
 
     function openPropertyModal(property) {
-        const modal = document.getElementById('propertyDetailModal');
+        if (!modalElement) return;
         const content = document.getElementById('modalSheetContent');
-        if (!modal || !content) return;
+        if (!content) return;
 
         const coverImage = property.cover_image || property.images?.[0]?.url || '';
         const priceStr = formatPrice(property.price, property.currency);
@@ -130,15 +133,23 @@
             </div>
         `;
 
-        modal.classList.add('active');
+        modalElement.classList.add('active');
         document.body.style.overflow = 'hidden';
+
+        // Force map to lose focus so modal is on top
+        if (map) {
+            map.closePopup();
+        }
     }
 
     function closePropertyModal() {
-        const modal = document.getElementById('propertyDetailModal');
-        if (!modal) return;
-        modal.classList.remove('active');
+        if (!modalElement) return;
+        modalElement.classList.remove('active');
         document.body.style.overflow = '';
+        // Let map resume interaction
+        setTimeout(() => {
+            if (map) map.invalidateSize();
+        }, 100);
     }
 
     function initFullMap() {
@@ -150,6 +161,7 @@
                 zoom: DEFAULT_ZOOM,
                 zoomControl: true,
                 scrollWheelZoom: true,
+                tap: true,
             });
 
             // OpenStreetMap tiles (free, no API key needed)
@@ -180,6 +192,14 @@
                 mapContainer.innerHTML = '<div class="map-no-results"><i class="fas fa-exclamation-circle"></i><p>Error al cargar el mapa</p></div>';
             }
         }
+    }
+
+    // ─── Mobile Sidebar Setup ───────────────────────────────────
+    function setupMobileSidebar() {
+        if (!isMobile || !mapSidebar) return;
+        // Start sidebar collapsed on mobile
+        mapSidebar.classList.add('collapsed');
+        if (mapSidebarToggle) mapSidebarToggle.classList.add('shifted');
     }
 
     // ─── Mini Map (search.html) ─────────────────────────────────
@@ -420,40 +440,47 @@
 
         const marker = L.marker([property.lat, property.lng], { icon });
 
-        // Popup content
-        const popupContent = `
-            <div class="map-popup">
-                ${coverImage ? `<div class="map-popup-image"><img src="${coverImage}" alt="${title}" onerror="this.parentElement.style.display='none'"></div>` : ''}
-                <div class="map-popup-content">
-                    <h4 class="map-popup-title">${title}</h4>
-                    <div class="map-popup-price">${priceStr}</div>
-                    <div class="map-popup-badges">
-                        <span class="map-popup-badge">${typeLabel}</span>
-                        <span class="map-popup-badge">${opLabel}</span>
+        // Only bind popup on desktop (hidden on mobile via CSS)
+        if (!isMobile) {
+            // Popup content
+            const popupContent = `
+                <div class="map-popup">
+                    ${coverImage ? `<div class="map-popup-image"><img src="${coverImage}" alt="${title}" onerror="this.parentElement.style.display='none'"></div>` : ''}
+                    <div class="map-popup-content">
+                        <h4 class="map-popup-title">${title}</h4>
+                        <div class="map-popup-price">${priceStr}</div>
+                        <div class="map-popup-badges">
+                            <span class="map-popup-badge">${typeLabel}</span>
+                            <span class="map-popup-badge">${opLabel}</span>
+                        </div>
+                        ${property.bedrooms ? `<span class="map-popup-detail"><i class="fas fa-bed"></i> ${property.bedrooms}</span>` : ''}
+                        ${property.bathrooms ? `<span class="map-popup-detail"><i class="fas fa-bath"></i> ${property.bathrooms}</span>` : ''}
+                        ${property.area ? `<span class="map-popup-detail"><i class="fas fa-ruler-combined"></i> ${property.area}${property.area_unit || 'm²'}</span>` : ''}
+                        <a href="property.html?id=${property.id}" class="map-popup-link">Ver más <i class="fas fa-arrow-right"></i></a>
                     </div>
-                    ${property.bedrooms ? `<span class="map-popup-detail"><i class="fas fa-bed"></i> ${property.bedrooms}</span>` : ''}
-                    ${property.bathrooms ? `<span class="map-popup-detail"><i class="fas fa-bath"></i> ${property.bathrooms}</span>` : ''}
-                    ${property.area ? `<span class="map-popup-detail"><i class="fas fa-ruler-combined"></i> ${property.area}${property.area_unit || 'm²'}</span>` : ''}
-                    <a href="property.html?id=${property.id}" class="map-popup-link">Ver más <i class="fas fa-arrow-right"></i></a>
                 </div>
-            </div>
-        `;
+            `;
 
-        marker.bindPopup(popupContent, {
-            maxWidth: 300,
-            minWidth: 250,
-            closeButton: true,
-            autoPan: true,
-            autoPanPadding: [50, 50],
-        });
+            marker.bindPopup(popupContent, {
+                maxWidth: 300,
+                minWidth: 250,
+                closeButton: true,
+                autoPan: true,
+                autoPanPadding: [50, 50],
+            });
+        }
 
-        // Click event to highlight sidebar card
-        marker.on('click', () => {
-            highlightCard(property.id);
-            // On mobile, show bottom-sheet modal instead of popup
-            if (isMobile) {
-                openPropertyModal(property);
+        // Click/tap event - works on both mobile and desktop
+        marker.on('click', function (e) {
+            // Close sidebar on mobile to see the map
+            if (isMobile && mapSidebar) {
+                mapSidebar.classList.add('collapsed');
+                if (mapSidebarToggle) mapSidebarToggle.classList.add('shifted');
+                setTimeout(() => { if (map) map.invalidateSize(); }, 350);
             }
+            highlightCard(property.id);
+            // Always open modal on mobile, or also on desktop
+            openPropertyModal(property);
         });
 
         return marker;
@@ -564,13 +591,9 @@
             map.flyTo(found.marker.getLatLng(), 15, {
                 duration: 1,
             });
-            // Open popup or modal
+            // Always open modal (works on both mobile and desktop)
             setTimeout(() => {
-                if (isMobile) {
-                    openPropertyModal(found.property);
-                } else {
-                    map.openPopup(found.marker);
-                }
+                openPropertyModal(found.property);
             }, 1000);
         }
     }
