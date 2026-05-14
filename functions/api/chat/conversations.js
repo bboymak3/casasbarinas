@@ -91,7 +91,7 @@ export async function onRequestGet(context) {
     const url = new URL(request.url);
     const unreadOnly = url.searchParams.get('unread') === '1';
 
-    // Get conversations where user is buyer or seller
+    // Get conversations where user is buyer or seller (LEFT JOIN in case property was deleted)
     const conversations = await env.DB.prepare(`
       SELECT c.id, c.property_id, c.buyer_id, c.seller_id, c.last_message, c.last_message_at,
              c.buyer_unread, c.seller_unread, c.created_at,
@@ -102,9 +102,9 @@ export async function onRequestGet(context) {
              u_buyer.name as buyer_name,
              u_seller.name as seller_name
       FROM conversations c
-      JOIN properties p ON c.property_id = p.id
-      JOIN users u_buyer ON c.buyer_id = u_buyer.id
-      JOIN users u_seller ON c.seller_id = u_seller.id
+      LEFT JOIN properties p ON c.property_id = p.id
+      LEFT JOIN users u_buyer ON c.buyer_id = u_buyer.id
+      LEFT JOIN users u_seller ON c.seller_id = u_seller.id
       WHERE (c.buyer_id = ? OR c.seller_id = ?)
       ${unreadOnly ? 'AND ((c.buyer_id = ? AND c.buyer_unread > 0) OR (c.seller_id = ? AND c.seller_unread > 0))' : ''}
       ORDER BY c.last_message_at DESC NULLS LAST, c.created_at DESC
