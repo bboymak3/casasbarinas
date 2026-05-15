@@ -4294,6 +4294,227 @@ select.form-select {
     animation: fadeIn 0.3s ease;
 }
 
+/* ─── Admin Users Panel ─────────────────────────────────── */
+.admin-users-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.admin-users-stats {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.admin-stat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin-stat-chip i {
+    font-size: 11px;
+}
+
+.admin-stat-chip-blue {
+    background: linear-gradient(135deg, #e8f0fe, #d2e3fc);
+    color: #1a73e8;
+}
+
+.admin-stat-chip-red {
+    background: linear-gradient(135deg, #fce8e6, #f9dedc);
+    color: #d93025;
+}
+
+.admin-stat-chip-green {
+    background: linear-gradient(135deg, #e6f4ea, #ceead6);
+    color: #137333;
+}
+
+.admin-users-search {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+}
+
+.admin-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.admin-search-wrapper i {
+    position: absolute;
+    left: 12px;
+    color: #aaa;
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.admin-search-wrapper input {
+    width: 100%;
+    padding: 8px 14px 8px 36px;
+    border: 2px solid #e8e8e8;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    outline: none;
+    background: #fafbfc;
+    transition: all 0.2s;
+}
+
+.admin-search-wrapper input:focus {
+    border-color: var(--color-primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+/* ─── Role Toggle ────────────────────────────────────────── */
+.role-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #e8e8e8;
+    background: #f5f5f5;
+}
+
+.role-toggle-btn {
+    padding: 5px 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: #888;
+    position: relative;
+}
+
+.role-toggle-btn:first-child {
+    border-right: 1px solid #e0e0e0;
+}
+
+.role-toggle-btn:hover {
+    background: rgba(0,0,0,0.04);
+}
+
+.role-toggle-btn.active-admin {
+    background: linear-gradient(135deg, #d93025, #c5221f);
+    color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.role-toggle-btn.active-user {
+    background: linear-gradient(135deg, #1a73e8, #4285f4);
+    color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.role-toggle-btn.active-agent {
+    background: linear-gradient(135deg, #137333, #43a047);
+    color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.role-toggle-btn.self-badge {
+    cursor: default;
+    opacity: 0.8;
+}
+
+.role-toggle-btn.saving-role {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* ─── User Table Row ────────────────────────────────────── */
+.admin-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8e8e8, #d0d0d0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.admin-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-user-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    line-height: 1.2;
+}
+
+.admin-user-date {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+}
+
+.admin-role-badge-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.admin-role-badge-inline.role-admin {
+    background: #fce8e6;
+    color: #d93025;
+}
+
+.admin-role-badge-inline.role-user {
+    background: #e8f0fe;
+    color: #1a73e8;
+}
+
+.admin-role-badge-inline.role-agent {
+    background: #e6f4ea;
+    color: #137333;
+}
+
+/* Admin Users Responsive */
+@media (max-width: 768px) {
+    .admin-users-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-users-search {
+        max-width: 100%;
+    }
+}
+
 /* Admin Stats Grid */
 .admin-stats-grid {
     display: grid;

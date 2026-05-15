@@ -249,10 +249,13 @@
                         <!-- Admin Tabs -->
                         <div class="admin-tabs">
                             <button class="admin-tab active" id="adminTabPending">
-                                <i class="fas fa-clock"></i> Pendientes de Aprobacion <span class="badge badge-warning" id="adminPendingBadgeTop">0</span>
+                                <i class="fas fa-clock"></i> Pendientes <span class="badge badge-warning" id="adminPendingBadgeTop">0</span>
                             </button>
                             <button class="admin-tab" id="adminTabAll">
-                                <i class="fas fa-list"></i> Todas las Propiedades
+                                <i class="fas fa-list"></i> Propiedades
+                            </button>
+                            <button class="admin-tab" id="adminTabUsers">
+                                <i class="fas fa-users-cog"></i> Usuarios
                             </button>
                         </div>
 
@@ -311,6 +314,54 @@
                                                 <div class="empty-state">
                                                     <i class="fas fa-spinner fa-spin"></i>
                                                     <p>Cargando...</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Users Panel -->
+                        <div id="adminPanelUsers" class="hidden">
+                            <div class="admin-users-header">
+                                <div class="admin-users-stats" id="adminUsersStats">
+                                    <div class="admin-stat-chip admin-stat-chip-blue">
+                                        <i class="fas fa-users"></i> <span id="statTotalUsers">0</span> Usuarios
+                                    </div>
+                                    <div class="admin-stat-chip admin-stat-chip-red">
+                                        <i class="fas fa-shield-alt"></i> <span id="statAdminUsers">0</span> Admins
+                                    </div>
+                                    <div class="admin-stat-chip admin-stat-chip-green">
+                                        <i class="fas fa-user"></i> <span id="statNormalUsers">0</span> Normales
+                                    </div>
+                                </div>
+                                <div class="admin-users-search">
+                                    <div class="admin-search-wrapper">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" id="adminUsersSearchInput" placeholder="Buscar por nombre o email...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dash-table-responsive">
+                                <table class="dash-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Email</th>
+                                            <th>Teléfono</th>
+                                            <th>Rol</th>
+                                            <th>Propiedades</th>
+                                            <th>Registro</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminUsersBody">
+                                        <tr class="empty-row">
+                                            <td colspan="7">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-spinner fa-spin"></i>
+                                                    <p>Cargando usuarios...</p>
                                                 </div>
                                             </td>
                                         </tr>
