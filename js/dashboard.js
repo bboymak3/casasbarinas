@@ -433,10 +433,14 @@
         const nameField = document.getElementById('profileName');
         const emailField = document.getElementById('profileEmail');
         const phoneField = document.getElementById('profilePhone');
+        const whatsappField = document.getElementById('profileWhatsApp');
+        const bioField = document.getElementById('profileBio');
 
         if (nameField) nameField.value = currentUser.name || '';
         if (emailField) emailField.value = currentUser.email || '';
         if (phoneField) phoneField.value = currentUser.phone || '';
+        if (whatsappField) whatsappField.value = currentUser.whatsapp || '';
+        if (bioField) bioField.value = currentUser.bio || '';
 
         // Submit handler
         profileForm.addEventListener('submit', async (e) => {
@@ -447,6 +451,7 @@
                     name: formData.get('name'),
                     email: formData.get('email'),
                     phone: formData.get('phone'),
+                    whatsapp: formData.get('whatsapp'),
                     bio: formData.get('bio'),
                 };
 

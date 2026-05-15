@@ -1140,9 +1140,9 @@ async function loadSiteStats() {
             if (phoneLink) phoneLink.href = `tel:${property.owner_phone}`;
         }
 
-        // WhatsApp - set up all WhatsApp links
+        // WhatsApp - use whatsapp field first, fallback to phone
         const waMessage = encodeURIComponent(`Hola, estoy interesado(a) en la propiedad: ${property.title}`);
-        const waPhone = (property.owner_phone || '').replace(/[^0-9]/g, '');
+        const waPhone = ((property.owner_whatsapp || property.owner_phone) || '').replace(/[^0-9]/g, '');
         if (waPhone) {
             const waHref = `https://wa.me/${waPhone}?text=${waMessage}`;
             const waLink = document.getElementById('whatsappLink');

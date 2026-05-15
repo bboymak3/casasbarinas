@@ -52,7 +52,7 @@ export async function onRequestGet(context) {
     const { id } = params;
 
     const property = await env.DB.prepare(`
-      SELECT p.*, u.name as owner_name, u.phone as owner_phone, u.email as owner_email, u.avatar as owner_avatar
+      SELECT p.*, u.name as owner_name, u.phone as owner_phone, u.whatsapp as owner_whatsapp, u.email as owner_email, u.avatar as owner_avatar, u.bio as owner_bio
       FROM properties p
       LEFT JOIN users u ON p.user_id = u.id
       WHERE p.id = ?

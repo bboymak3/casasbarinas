@@ -2459,6 +2459,24 @@ select.form-select {
     padding: var(--space-lg);
 }
 
+.profile-info-note {
+    background: #e8f4fd;
+    border-left: 3px solid var(--color-primary);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: var(--space-md);
+    font-size: 13px;
+    color: #333;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+.profile-info-note i {
+    color: var(--color-primary);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
 
 /* ============================================================
    17. PROPERTY FORM (Publish)

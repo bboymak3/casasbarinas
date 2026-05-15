@@ -69,8 +69,12 @@ export async function onRequestPut(context) {
 
     const body = await request.json();
 
+    // Ensure new columns exist
+    try { await env.DB.prepare('ALTER TABLE users ADD COLUMN whatsapp TEXT').run(); } catch (e) {}
+    try { await env.DB.prepare('ALTER TABLE users ADD COLUMN bio TEXT').run(); } catch (e) {}
+
     // Build dynamic UPDATE
-    const allowedFields = ['name', 'email', 'phone', 'avatar', 'bio'];
+    const allowedFields = ['name', 'email', 'phone', 'whatsapp', 'avatar', 'bio'];
     const setClauses = [];
     const bindings = [];
 
