@@ -3217,6 +3217,1174 @@ select.form-select {
     padding: var(--space-lg) 0;
 }
 
+/* ============================================================
+   17-B. PROPERTY FORM V2 (Modern Redesign)
+   ============================================================ */
+
+/* --- Hero Header --- */
+.pf-hero {
+    position: relative;
+    padding: 60px 20px 40px;
+    text-align: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+.pf-hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(26, 115, 232, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(107, 66, 193, 0.1) 0%, transparent 40%);
+    z-index: 0;
+}
+
+.pf-hero-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+.pf-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.pf-hero-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1a73e8, #4a90e8);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(26, 115, 232, 0.4);
+    animation: pf-float 3s ease-in-out infinite;
+}
+
+@keyframes pf-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.pf-hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.pf-hero-subtitle {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+}
+
+/* --- Step Progress --- */
+.pf-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.pf-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+.pf-step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pf-step span {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    transition: color 0.3s;
+}
+
+.pf-step.active .pf-step-circle {
+    background: linear-gradient(135deg, #1a73e8, #4a90e8);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(26, 115, 232, 0.5);
+    transform: scale(1.1);
+}
+
+.pf-step.active span {
+    color: #fff;
+}
+
+.pf-step.completed .pf-step-circle {
+    background: linear-gradient(135deg, #28a745, #5cb85c);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(40, 167, 69, 0.4);
+}
+
+.pf-step.completed span {
+    color: rgba(255,255,255,0.7);
+}
+
+.pf-step-line {
+    width: 40px;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    margin: 0 4px;
+    margin-bottom: 22px;
+    border-radius: 1px;
+    transition: background 0.4s;
+}
+
+.pf-step-line.active {
+    background: linear-gradient(90deg, #28a745, #1a73e8);
+}
+
+/* --- Form Sections --- */
+.pf-section {
+    background: #fff;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.pf-section:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.pf-section.in-focus {
+    box-shadow: 0 0 0 2px #1a73e8, 0 8px 30px rgba(26, 115, 232, 0.12);
+}
+
+.pf-section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: #fafbfc;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pf-section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.pf-section-text {
+    flex: 1;
+}
+
+.pf-section-text h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.pf-section-text p {
+    font-size: 0.8rem;
+    color: #999;
+    margin: 2px 0 0;
+}
+
+.pf-section-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #e8f0fe;
+    color: #1a73e8;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.pf-section-body {
+    padding: 24px;
+}
+
+/* --- Fields --- */
+.pf-field {
+    margin-bottom: 20px;
+}
+
+.pf-field:last-child {
+    margin-bottom: 0;
+}
+
+.pf-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.pf-label i {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+.pf-required {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.pf-field input[type="text"],
+.pf-field input[type="number"],
+.pf-field input[type="email"],
+.pf-field input[type="tel"],
+.pf-field input[type="password"],
+.pf-field textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #1f2937;
+    background: #fff;
+    transition: all 0.25s;
+    outline: none;
+    font-family: inherit;
+}
+
+.pf-field input:focus,
+.pf-field textarea:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.pf-field input::placeholder,
+.pf-field textarea::placeholder {
+    color: #c4c9d4;
+}
+
+.pf-field textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.pf-field-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+}
+
+.pf-field-footer .form-hint {
+    margin: 0;
+    font-size: 0.72rem;
+}
+
+.pf-field-footer .form-hint i {
+    color: #f59e0b;
+}
+
+.pf-char-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+/* --- Select Wrapper --- */
+.pf-select-wrapper {
+    position: relative;
+}
+
+.pf-select-wrapper select {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #1f2937;
+    background: #fff;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+}
+
+.pf-select-wrapper select:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.pf-select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+/* --- Grids --- */
+.pf-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.pf-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+
+.pf-grid-collapse {
+    margin-top: 16px;
+}
+
+/* --- Price Card --- */
+.pf-price-card {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.pf-price-main {
+    flex: 1;
+}
+
+.pf-price-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.pf-price-symbol {
+    position: absolute;
+    left: 16px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #28a745;
+    z-index: 1;
+}
+
+.pf-price-input-wrapper input {
+    padding-left: 42px !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    height: 56px !important;
+    border-color: #28a745 !important;
+    border-width: 2px !important;
+}
+
+.pf-price-input-wrapper input:focus {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
+    border-color: #28a745 !important;
+}
+
+.pf-currency-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 140px;
+}
+
+.pf-currency-option {
+    cursor: pointer;
+}
+
+.pf-currency-option input[type="radio"] {
+    display: none;
+}
+
+.pf-currency-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    transition: all 0.25s;
+    background: #fff;
+}
+
+.pf-currency-option input:checked + .pf-currency-card {
+    border-color: #28a745;
+    background: #f0fdf4;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.pf-currency-card:hover {
+    border-color: #9ca3af;
+}
+
+.pf-currency-flag {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.pf-currency-code {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.pf-currency-name {
+    font-size: 0.7rem;
+    color: #9ca3af;
+}
+
+/* --- Map Container --- */
+.pf-map-container {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+}
+
+.pf-map-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
+.pf-map-header i {
+    color: #ff6b35;
+}
+
+.pf-map-hint {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    margin-bottom: 12px;
+}
+
+.pf-coords-display {
+    display: flex;
+    gap: 16px;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin-top: 10px;
+}
+
+.pf-coords-display strong {
+    color: #1f2937;
+    font-weight: 700;
+}
+
+/* --- Quick Stats Cards --- */
+.pf-quick-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.pf-stat-card {
+    background: #f8fafc;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.25s;
+}
+
+.pf-stat-card:hover {
+    border-color: #6f42c1;
+    background: #faf5ff;
+}
+
+.pf-stat-card:focus-within {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+}
+
+.pf-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #6f42c1;
+    margin-bottom: 8px;
+}
+
+.pf-stat-card label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pf-stat-card input {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    outline: none;
+    transition: all 0.25s;
+    background: #fff;
+}
+
+.pf-stat-card input:focus {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+}
+
+/* --- Features Chips --- */
+.pf-features-section {
+    margin-top: 4px;
+}
+
+.pf-features-section > .pf-label {
+    margin-bottom: 14px;
+}
+
+.pf-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.pf-feature-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+.pf-feature-chip:hover {
+    border-color: #a78bfa;
+    background: #faf5ff;
+}
+
+.pf-feature-chip input[type="checkbox"] {
+    display: none;
+}
+
+.pf-feature-chip-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #9ca3af;
+    flex-shrink: 0;
+    transition: all 0.25s;
+}
+
+.pf-feature-chip-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6b7280;
+    flex: 1;
+    transition: color 0.25s;
+}
+
+.pf-feature-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: transparent;
+    flex-shrink: 0;
+    transition: all 0.25s;
+}
+
+.pf-feature-chip:has(input:checked) {
+    border-color: #6f42c1;
+    background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+}
+
+.pf-feature-chip:has(input:checked) .pf-feature-chip-icon {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+.pf-feature-chip:has(input:checked) .pf-feature-chip-text {
+    color: #fff;
+    font-weight: 600;
+}
+
+.pf-feature-chip:has(input:checked) .pf-feature-check {
+    background: rgba(255,255,255,0.3);
+    color: #fff;
+}
+
+/* --- Upload Zone --- */
+.pf-upload-zone {
+    position: relative;
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #fafbfc;
+    overflow: hidden;
+}
+
+.pf-upload-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #1a73e8, #e91e63, #ff6b35, #28a745);
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 0.4s;
+    background-size: 300% 300%;
+    animation: pf-glow-shift 4s ease infinite;
+}
+
+@keyframes pf-glow-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.pf-upload-zone:hover .pf-upload-glow,
+.pf-upload-zone.active .pf-upload-glow {
+    opacity: 1;
+}
+
+.pf-upload-zone:hover,
+.pf-upload-zone.active {
+    border-color: transparent;
+    background: #fff;
+}
+
+.pf-upload-content {
+    position: relative;
+    z-index: 1;
+}
+
+.pf-upload-icon-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #1a73e8;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+}
+
+.pf-upload-zone:hover .pf-upload-icon-ring {
+    background: linear-gradient(135deg, #1a73e8, #4a90e8);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 8px 24px rgba(26, 115, 232, 0.3);
+}
+
+.pf-upload-content h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.pf-upload-content p {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 12px;
+}
+
+.pf-upload-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.pf-upload-meta span {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pf-upload-meta span i {
+    color: #d1d5db;
+}
+
+/* --- Upload Buttons --- */
+.pf-upload-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pf-upload-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+}
+
+.pf-upload-btn-gallery {
+    background: #fff;
+    border-color: #e5e7eb;
+    color: #374151;
+}
+
+.pf-upload-btn-gallery:hover {
+    border-color: #1a73e8;
+    color: #1a73e8;
+    background: #eff6ff;
+}
+
+.pf-upload-btn-camera {
+    background: linear-gradient(135deg, #1a73e8, #4a90e8);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+.pf-upload-btn-camera:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4);
+}
+
+.pf-upload-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    margin-top: 12px;
+}
+
+.pf-upload-hint i {
+    color: #f59e0b;
+}
+
+/* --- Form Actions --- */
+.pf-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 0;
+    margin-top: 8px;
+}
+
+.pf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    border: none;
+    font-family: inherit;
+}
+
+.pf-btn-cancel {
+    background: #fff;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+}
+
+.pf-btn-cancel:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+.pf-btn-publish {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a73e8, #4a90e8);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(26, 115, 232, 0.4);
+}
+
+.pf-btn-publish-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1557b0, #1a73e8);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.pf-btn-publish:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(26, 115, 232, 0.5);
+}
+
+.pf-btn-publish:hover .pf-btn-publish-bg {
+    opacity: 1;
+}
+
+.pf-btn-publish i,
+.pf-btn-publish span {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- Responsive: Tablet --- */
+@media (max-width: 768px) {
+    .pf-hero {
+        padding: 40px 16px 30px;
+    }
+
+    .pf-hero-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 22px;
+        border-radius: 16px;
+    }
+
+    .pf-hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .pf-step-line {
+        width: 24px;
+    }
+
+    .pf-step-circle {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+    }
+
+    .pf-step span {
+        font-size: 10px;
+    }
+
+    .pf-section-header {
+        padding: 16px 18px;
+        gap: 12px;
+    }
+
+    .pf-section-body {
+        padding: 18px;
+    }
+
+    .pf-grid-2,
+    .pf-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .pf-price-card {
+        flex-direction: column;
+    }
+
+    .pf-currency-selector {
+        flex-direction: row;
+        min-width: auto;
+    }
+
+    .pf-currency-card {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 8px;
+    }
+
+    .pf-currency-name {
+        display: none;
+    }
+
+    .pf-quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pf-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pf-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    .pf-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+    }
+
+    .pf-field input[type="text"],
+    .pf-field input[type="number"],
+    .pf-field input[type="email"],
+    .pf-field input[type="tel"],
+    .pf-field input[type="password"],
+    .pf-field textarea,
+    .pf-select-wrapper select {
+        font-size: 16px; /* Prevent iOS zoom */
+    }
+
+    .pf-field textarea {
+        min-height: 100px;
+    }
+
+    .pf-step span {
+        display: none;
+    }
+
+    .pf-step-line {
+        margin-bottom: 0;
+    }
+}
+
+/* --- Responsive: Mobile --- */
+@media (max-width: 480px) {
+    .pf-hero {
+        padding: 32px 12px 24px;
+    }
+
+    .pf-hero-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        border-radius: 14px;
+        margin-bottom: 14px;
+    }
+
+    .pf-hero h1 {
+        font-size: 1.25rem;
+    }
+
+    .pf-hero-subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 24px;
+    }
+
+    .pf-step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 11px;
+    }
+
+    .pf-step-line {
+        width: 16px;
+    }
+
+    .pf-section-header {
+        padding: 14px 14px;
+        gap: 10px;
+    }
+
+    .pf-section-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .pf-section-text h2 {
+        font-size: 0.95rem;
+    }
+
+    .pf-section-badge {
+        display: none;
+    }
+
+    .pf-section-body {
+        padding: 14px;
+    }
+
+    .pf-label {
+        font-size: 0.8rem;
+    }
+
+    .pf-field input[type="text"],
+    .pf-field input[type="number"],
+    .pf-field input[type="email"],
+    .pf-field input[type="tel"],
+    .pf-field input[type="password"],
+    .pf-field textarea,
+    .pf-select-wrapper select {
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .pf-quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .pf-stat-card {
+        padding: 12px 8px;
+    }
+
+    .pf-stat-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+    }
+
+    .pf-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .pf-feature-chip {
+        padding: 8px 10px;
+        gap: 6px;
+    }
+
+    .pf-feature-chip-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+    }
+
+    .pf-feature-chip-text {
+        font-size: 0.75rem;
+    }
+
+    .pf-feature-check {
+        display: none;
+    }
+
+    .pf-upload-zone {
+        padding: 28px 16px;
+    }
+
+    .pf-upload-icon-ring {
+        width: 52px;
+        height: 52px;
+        font-size: 20px;
+    }
+
+    .pf-upload-content h3 {
+        font-size: 0.9rem;
+    }
+
+    .pf-upload-meta {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .pf-upload-buttons {
+        flex-direction: column;
+    }
+
+    .pf-upload-btn {
+        padding: 12px 16px;
+    }
+
+    .pf-btn {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+    }
+
+    .pf-currency-selector {
+        flex-direction: row;
+    }
+
+    .pf-currency-card {
+        flex-direction: column;
+        gap: 4px;
+        padding: 10px;
+    }
+
+    .pf-map-container {
+        padding: 14px;
+    }
+
+    .pf-price-input-wrapper input {
+        font-size: 1.1rem !important;
+        height: 48px !important;
+    }
+
+    .pf-price-symbol {
+        font-size: 1.1rem;
+        left: 14px;
+    }
+}
+
 
 /* ============================================================
    18. PROPERTY DETAIL PAGE

@@ -174,6 +174,105 @@
         }
     }
 
+    // ─── Character Counters ────────────────────────────────────
+    function setupCharCounters() {
+        const titleInput = document.getElementById('propTitle');
+        const descInput = document.getElementById('propDescription');
+        const titleCount = document.getElementById('titleCharCount');
+        const descCount = document.getElementById('descCharCount');
+
+        if (titleInput && titleCount) {
+            titleInput.addEventListener('input', () => {
+                const len = titleInput.value.length;
+                titleCount.textContent = len + '/150';
+                titleCount.style.color = len > 140 ? '#ef4444' : len > 100 ? '#f59e0b' : '#9ca3af';
+            });
+        }
+
+        if (descInput && descCount) {
+            descInput.addEventListener('input', () => {
+                const len = descInput.value.length;
+                descCount.textContent = len + '/2000';
+                descCount.style.color = len > 1800 ? '#ef4444' : len > 1500 ? '#f59e0b' : '#9ca3af';
+            });
+        }
+    }
+
+    // ─── Step Progress ──────────────────────────────────────────
+    function setupStepProgress() {
+        const sections = document.querySelectorAll('.pf-section');
+        const steps = document.querySelectorAll('.pf-step');
+        const stepLines = document.querySelectorAll('.pf-step-line');
+
+        if (!sections.length || !steps.length) return;
+
+        // IntersectionObserver to highlight active step
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionNum = parseInt(entry.target.dataset.section);
+                    updateStepIndicator(sectionNum);
+                }
+            });
+        }, { threshold: 0.3, rootMargin: '-100px 0px -50% 0px' });
+
+        sections.forEach(section => observer.observe(section));
+
+        // Focus tracking on inputs within sections
+        sections.forEach(section => {
+            const inputs = section.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    sections.forEach(s => s.classList.remove('in-focus'));
+                    section.classList.add('in-focus');
+                    const sectionNum = parseInt(section.dataset.section);
+                    updateStepIndicator(sectionNum);
+                });
+            });
+        });
+    }
+
+    function updateStepIndicator(activeStep) {
+        const steps = document.querySelectorAll('.pf-step');
+        const stepLines = document.querySelectorAll('.pf-step-line');
+
+        steps.forEach((step, i) => {
+            const stepNum = i + 1;
+            step.classList.remove('active', 'completed');
+            if (stepNum < activeStep) {
+                step.classList.add('completed');
+            } else if (stepNum === activeStep) {
+                step.classList.add('active');
+            }
+        });
+
+        stepLines.forEach((line, i) => {
+            const lineStep = i + 1;
+            line.classList.toggle('active', lineStep < activeStep);
+        });
+    }
+
+    // ─── Currency Radio Buttons ─────────────────────────────────
+    function setupCurrencySelector() {
+        const radios = document.querySelectorAll('input[name="moneda"]');
+        const priceSymbol = document.getElementById('priceSymbol');
+
+        const symbols = { 'USD': '$', 'EUR': '€', 'Bs': 'Bs' };
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (priceSymbol) {
+                    priceSymbol.textContent = symbols[radio.value] || '$';
+                }
+            });
+        });
+    }
+
+    function getSelectedCurrency() {
+        const checked = document.querySelector('input[name="moneda"]:checked');
+        return checked ? checked.value : 'USD';
+    }
+
     // ─── Initialization ─────────────────────────────────────────
     function initForm() {
         // Check authentication
@@ -190,6 +289,9 @@
         // Set up event listeners
         setupPhotoUpload();
         setupFormSubmit();
+        setupCharCounters();
+        setupStepProgress();
+        setupCurrencySelector();
 
         // Initialize location picker map
         initLocationPicker();
@@ -201,7 +303,7 @@
             const property = await api.get(`/properties/${propertyId}`);
 
             if (formTitle) {
-                formTitle.innerHTML = '<i class="fas fa-edit"></i> Editar Propiedad';
+                formTitle.textContent = 'Editar Propiedad';
             }
             if (submitBtnText) {
                 submitBtnText.textContent = 'Guardar Cambios';
@@ -226,7 +328,14 @@
         setValue('propTitle', property.title);
         setValue('propDescription', property.description);
         setValue('propPrecio', property.price);
-        setValue('propMoneda', property.currency);
+        // Currency - now uses radio buttons
+        const currencyRadio = document.querySelector(`input[name="moneda"][value="${property.currency || 'USD'}"]`);
+        if (currencyRadio) currencyRadio.checked = true;
+        const priceSymbol = document.getElementById('priceSymbol');
+        if (priceSymbol) {
+            const symbols = { 'USD': '$', 'EUR': '€', 'Bs': 'Bs' };
+            priceSymbol.textContent = symbols[property.currency || 'USD'] || '$';
+        }
         setValue('propDireccion', property.address);
         setValue('propCiudad', property.city);
         setValue('propEstado', property.state);
@@ -308,6 +417,20 @@
             }));
             renderPhotoPreviews();
         }
+
+        // Trigger char counters for edit mode
+        const titleInput = document.getElementById('propTitle');
+        const descInput = document.getElementById('propDescription');
+        const titleCount = document.getElementById('titleCharCount');
+        const descCount = document.getElementById('descCharCount');
+        if (titleInput && titleCount) {
+            const len = (titleInput.value || '').length;
+            titleCount.textContent = len + '/150';
+        }
+        if (descInput && descCount) {
+            const len = (descInput.value || '').length;
+            descCount.textContent = len + '/2000';
+        }
     }
 
     // ─── Photo Upload Setup ─────────────────────────────────────
@@ -331,19 +454,19 @@
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.classList.add('drag-over');
+            uploadArea.classList.add('active');
         });
 
         uploadArea.addEventListener('dragleave', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.classList.remove('drag-over');
+            uploadArea.classList.remove('active');
         });
 
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.classList.remove('drag-over');
+            uploadArea.classList.remove('active');
 
             const files = Array.from(e.dataTransfer.files);
             handlePhotoUpload(files);
@@ -544,7 +667,7 @@
         const tipo = getValue('propTipo');
         const operacion = getValue('propOperacion');
         const precio = getValueNum('propPrecio');
-        const moneda = getValue('propMoneda');
+        const moneda = getSelectedCurrency();
         const direccion = getValue('propDireccion');
         const ciudad = getValue('propCiudad');
         const estado = getValue('propEstado');
