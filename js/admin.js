@@ -547,9 +547,8 @@
                         <td><span class="admin-user-date">${formatDate(u.created_at)}</span></td>
                         <td>
                             ${toggleHTML}
-                            <div style="margin-top:6px;">
-                                <button class="btn btn-xs btn-outline" onclick="window.admin.editUser(${u.id})" title="Editar"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-xs btn-outline" onclick="window.admin.toggleUserStatus(${u.id}, ${u.is_active ? 0 : 1})" title="${u.is_active ? 'Desactivar' : 'Activar'}"><i class="fas fa-${u.is_active ? 'toggle-on' : 'toggle-off'}"></i></button>
+                            <div style="margin-top:6px; display:flex; gap:4px;">
+                                <button class="btn btn-xs btn-outline" onclick="window.admin.editUser(${u.id})" title="Editar usuario"><i class="fas fa-edit"></i> Editar</button>
                                 <button class="btn btn-xs btn-danger" onclick="window.admin.deleteUser(${u.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
@@ -624,21 +623,116 @@
     async function editUser(userId) {
         if (!adminUserModal) return;
 
-        // Populate form
+        // Show loading state
+        const modalBody = adminUserModal.querySelector('.modal-body');
+        if (modalBody) {
+            modalBody.innerHTML = '<div class="loading-spinner" style="padding:40px;text-align:center;"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#1a73e8;"></i><p style="margin-top:12px;color:#888;">Cargando datos del usuario...</p></div>';
+        }
+        adminUserModal.classList.remove('hidden');
+
         try {
-            const data = await api.get(`/users/${userId}`);
-            const user = data;
+            const user = await api.get(`/users/${userId}`);
 
-            document.getElementById('editUserName').value = user.name || '';
-            document.getElementById('editUserEmail').value = user.email || '';
-            document.getElementById('editUserRole').value = user.role || 'user';
-            document.getElementById('editUserStatus').value = user.is_active ? 'activo' : 'inactivo';
+            // Rebuild the modal body with the user data
+            if (modalBody) {
+                const initials = (user.name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+                const avatarHTML = user.avatar
+                    ? `<div class="edit-user-avatar"><img src="${user.avatar}" alt=""></div>`
+                    : `<div class="edit-user-avatar"><span>${initials}</span></div>`;
+                const date = user.created_at ? new Date(user.created_at).toLocaleDateString('es-VE', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
 
-            // Store user ID for saving
+                modalBody.innerHTML = `
+                    <!-- User Header -->
+                    <div class="edit-user-header">
+                        ${avatarHTML}
+                        <div class="edit-user-meta">
+                            <div class="edit-user-id">ID: <strong>${user.id}</strong></div>
+                            <div class="edit-user-joined"><i class="fas fa-calendar"></i> Registro: ${date}</div>
+                            <div class="edit-user-props"><i class="fas fa-building"></i> ${user.property_count || 0} propiedades</div>
+                        </div>
+                    </div>
+
+                    <form id="adminUserEditForm">
+                        <!-- Datos Básicos -->
+                        <div class="edit-user-section">
+                            <div class="edit-user-section-title"><i class="fas fa-id-card"></i> Datos Básicos</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editUserName">Nombre Completo</label>
+                                    <div class="profile-input-wrapper">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="editUserName" name="name" class="form-control" required value="${(user.name || '').replace(/"/g, '&quot;')}" placeholder="Nombre del usuario">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editUserEmail">Correo Electrónico</label>
+                                    <div class="profile-input-wrapper">
+                                        <i class="fas fa-envelope"></i>
+                                        <input type="email" id="editUserEmail" name="email" class="form-control" required value="${(user.email || '').replace(/"/g, '&quot;')}" placeholder="correo@ejemplo.com">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Teléfonos -->
+                        <div class="edit-user-section">
+                            <div class="edit-user-section-title"><i class="fas fa-phone-alt"></i> Teléfonos de Contacto</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editUserPhone">Teléfono</label>
+                                    <div class="profile-input-wrapper">
+                                        <i class="fas fa-phone"></i>
+                                        <input type="tel" id="editUserPhone" name="phone" class="form-control" value="${(user.phone || '').replace(/"/g, '&quot;')}" placeholder="+58 414 0000000">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editUserWhatsApp"><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp</label>
+                                    <div class="profile-input-wrapper">
+                                        <i class="fab fa-whatsapp" style="color:#25d366"></i>
+                                        <input type="tel" id="editUserWhatsApp" name="whatsapp" class="form-control" value="${(user.whatsapp || '').replace(/"/g, '&quot;')}" placeholder="+58 414 0000000">
+                                    </div>
+                                    <small class="form-hint">Número visible para compradores</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Biografía -->
+                        <div class="edit-user-section">
+                            <div class="edit-user-section-title"><i class="fas fa-align-left"></i> Biografía</div>
+                            <div class="form-group">
+                                <textarea id="editUserBio" name="bio" class="form-control" rows="3" placeholder="Descripción del usuario..." maxlength="500">${user.bio || ''}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Administración -->
+                        <div class="edit-user-section edit-user-section-admin">
+                            <div class="edit-user-section-title"><i class="fas fa-shield-alt"></i> Administración</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editUserRole">Rol</label>
+                                    <select id="editUserRole" name="role" class="form-control">
+                                        <option value="user" ${user.role === 'user' ? 'selected' : ''}>Usuario</option>
+                                        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrador</option>
+                                        <option value="agent" ${user.role === 'agent' ? 'selected' : ''}>Agente</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editUserStatus">Estado</label>
+                                    <select id="editUserStatus" name="status" class="form-control">
+                                        <option value="activo" ${user.is_active ? 'selected' : ''}>Activo</option>
+                                        <option value="inactivo" ${!user.is_active ? 'selected' : ''}>Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                `;
+            }
+
             adminUserModal.dataset.userId = userId;
-            adminUserModal.classList.remove('hidden');
         } catch (error) {
             showToast('Error al cargar datos del usuario', 'error');
+            adminUserModal.classList.add('hidden');
         }
     }
 
@@ -650,6 +744,9 @@
 
         const name = document.getElementById('editUserName')?.value?.trim();
         const email = document.getElementById('editUserEmail')?.value?.trim();
+        const phone = document.getElementById('editUserPhone')?.value?.trim();
+        const whatsapp = document.getElementById('editUserWhatsApp')?.value?.trim();
+        const bio = document.getElementById('editUserBio')?.value?.trim();
         const role = document.getElementById('editUserRole')?.value;
         const statusVal = document.getElementById('editUserStatus')?.value;
 
@@ -658,10 +755,19 @@
             return;
         }
 
+        const saveBtn = document.getElementById('adminUserModalSave');
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        }
+
         try {
             await api.put(`/users/${userId}`, {
                 name,
                 email,
+                phone,
+                whatsapp,
+                bio,
                 role,
                 is_active: statusVal === 'activo',
             });
@@ -672,17 +778,23 @@
             loadDashboardStats();
         } catch (error) {
             showToast(error.message, 'error');
+        } finally {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+            }
         }
     }
 
     function toggleUserStatus(userId, active) {
-        if (!adminUserModal) return;
-        document.getElementById('editUserName').value = '';
-        document.getElementById('editUserEmail').value = '';
-        document.getElementById('editUserRole').value = 'user';
-        document.getElementById('editUserStatus').value = active ? 'activo' : 'inactivo';
-        adminUserModal.dataset.userId = userId;
-        adminUserModal.classList.remove('hidden');
+        // Direct API call instead of opening modal
+        api.put(`/users/${userId}`, { is_active: !!active })
+            .then(() => {
+                showToast(active ? 'Usuario activado' : 'Usuario desactivado', 'success');
+                loadUsers();
+                loadDashboardStats();
+            })
+            .catch(error => showToast(error.message, 'error'));
     }
 
     function deleteUser(id) {

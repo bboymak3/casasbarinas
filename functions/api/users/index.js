@@ -74,7 +74,7 @@ export async function onRequestGet(context) {
     const search = url.searchParams.get('search');
     const roleFilter = url.searchParams.get('role');
 
-    let query = 'SELECT id, name, email, phone, role, avatar, is_active, created_at, updated_at FROM users WHERE 1=1';
+    let query = 'SELECT id, name, email, phone, whatsapp, bio, role, avatar, is_active, created_at, updated_at FROM users WHERE 1=1';
     let countQuery = 'SELECT COUNT(*) as total FROM users WHERE 1=1';
     const bindings = [];
 

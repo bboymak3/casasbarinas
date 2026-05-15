@@ -445,41 +445,114 @@
     <!-- User Edit Modal -->
     <div class="modal hidden" id="adminUserModal">
         <div class="modal-overlay"></div>
-        <div class="modal-content">
+        <div class="modal-content modal-lg">
             <div class="modal-header">
-                <h3>Editar Usuario</h3>
+                <h3><i class="fas fa-user-edit" style="color:#1a73e8"></i> Editar Usuario</h3>
                 <button class="modal-close" id="adminUserModalClose">&times;</button>
             </div>
             <div class="modal-body">
+                <!-- User Header -->
+                <div class="edit-user-header" id="editUserHeader">
+                    <div class="edit-user-avatar" id="editUserAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="edit-user-meta">
+                        <div class="edit-user-id">ID: <span id="editUserIdDisplay">—</span></div>
+                        <div class="edit-user-joined">Registro: <span id="editUserJoined">—</span></div>
+                    </div>
+                </div>
+
                 <form id="adminUserEditForm">
-                    <div class="form-group">
-                        <label for="editUserName">Nombre</label>
-                        <input type="text" id="editUserName" name="name" required>
+                    <!-- Datos Básicos -->
+                    <div class="edit-user-section">
+                        <div class="edit-user-section-title">
+                            <i class="fas fa-id-card"></i> Datos Básicos
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editUserName">Nombre Completo</label>
+                                <div class="profile-input-wrapper">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="editUserName" name="name" class="form-control" required placeholder="Nombre del usuario">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editUserEmail">Correo Electrónico</label>
+                                <div class="profile-input-wrapper">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="editUserEmail" name="email" class="form-control" required placeholder="correo@ejemplo.com">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editUserEmail">Email</label>
-                        <input type="email" id="editUserEmail" name="email" required>
+
+                    <!-- Teléfonos -->
+                    <div class="edit-user-section">
+                        <div class="edit-user-section-title">
+                            <i class="fas fa-phone-alt"></i> Teléfonos de Contacto
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editUserPhone">Teléfono</label>
+                                <div class="profile-input-wrapper">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="editUserPhone" name="phone" class="form-control" placeholder="+58 414 0000000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editUserWhatsApp">
+                                    <i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp
+                                </label>
+                                <div class="profile-input-wrapper">
+                                    <i class="fab fa-whatsapp" style="color:#25d366"></i>
+                                    <input type="tel" id="editUserWhatsApp" name="whatsapp" class="form-control" placeholder="+58 414 0000000">
+                                </div>
+                                <small class="form-hint">Número que verán los compradores al contactar por WhatsApp</small>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editUserRole">Rol</label>
-                        <select id="editUserRole" name="role">
-                            <option value="user">Usuario</option>
-                            <option value="admin">Administrador</option>
-                        </select>
+
+                    <!-- Biografía -->
+                    <div class="edit-user-section">
+                        <div class="edit-user-section-title">
+                            <i class="fas fa-align-left"></i> Biografía
+                        </div>
+                        <div class="form-group">
+                            <textarea id="editUserBio" name="bio" class="form-control" rows="3" placeholder="Descripción del usuario..." maxlength="500"></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editUserStatus">Estado</label>
-                        <select id="editUserStatus" name="status">
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
-                        </select>
+
+                    <!-- Administración -->
+                    <div class="edit-user-section edit-user-section-admin">
+                        <div class="edit-user-section-title">
+                            <i class="fas fa-shield-alt"></i> Administración
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editUserRole">Rol</label>
+                                <select id="editUserRole" name="role" class="form-control">
+                                    <option value="user">Usuario</option>
+                                    <option value="admin">Administrador</option>
+                                    <option value="agent">Agente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editUserStatus">Estado</label>
+                                <select id="editUserStatus" name="status" class="form-control">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="adminUserModalCancel">Cancelar</button>
+                <button class="btn btn-secondary" id="adminUserModalCancel">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
                 <button class="btn btn-primary" id="adminUserModalSave">
-                    <i class="fas fa-save"></i> Guardar
+                    <i class="fas fa-save"></i> Guardar Cambios
                 </button>
             </div>
         </div>

@@ -54,7 +54,7 @@ export async function onRequestGet(context) {
     const { id } = params;
 
     const user = await env.DB.prepare(
-      'SELECT id, name, email, phone, role, avatar, is_active, created_at, updated_at FROM users WHERE id = ?'
+      'SELECT id, name, email, phone, whatsapp, bio, role, avatar, is_active, created_at, updated_at FROM users WHERE id = ?'
     ).bind(id).first();
 
     if (!user) {
@@ -106,7 +106,7 @@ export async function onRequestPut(context) {
 
     const body = await request.json();
 
-    const allowedFields = ['name', 'email', 'phone', 'role', 'is_active', 'avatar'];
+    const allowedFields = ['name', 'email', 'phone', 'whatsapp', 'bio', 'role', 'is_active', 'avatar'];
     const setClauses = [];
     const bindings = [];
 
