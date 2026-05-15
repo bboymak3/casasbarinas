@@ -162,9 +162,29 @@ function updateNav() {
         if (user && navUserName) {
             navUserName.innerHTML = `<i class="fas fa-user-circle"></i> ${user.name || 'Mi Cuenta'}`;
         }
+
+        // Show admin link for admin users
+        let adminLinkItem = document.getElementById('navAdminItem');
+        if (user && user.role === 'admin') {
+            if (!adminLinkItem) {
+                adminLinkItem = document.createElement('li');
+                adminLinkItem.id = 'navAdminItem';
+                adminLinkItem.innerHTML = `<a href="admin.html" class="nav-link nav-admin-link"><i class="fas fa-shield-alt"></i> Admin</a>`;
+                // Insert before the user item
+                navUserItem.parentNode.insertBefore(adminLinkItem, navUserItem);
+            } else {
+                adminLinkItem.classList.remove('hidden');
+            }
+        } else if (adminLinkItem) {
+            adminLinkItem.remove();
+        }
     } else {
         navLoginItem.classList.remove('hidden');
         navUserItem.classList.add('hidden');
+
+        // Remove admin link if exists
+        const adminLinkItem = document.getElementById('navAdminItem');
+        if (adminLinkItem) adminLinkItem.remove();
 
         // Make "Publicar" link require login
         const publishLinks = document.querySelectorAll('a[href="new-property.html"]');
