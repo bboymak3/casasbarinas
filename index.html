@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <!-- Leaflet for mini map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
@@ -41,12 +40,131 @@
         </div>
     </nav>
 
-    <!-- 1. Featured Properties (FIRST - what users see first) -->
-    <section class="section" id="featuredSection" style="padding-top: calc(var(--navbar-height) + var(--space-lg));">
+    <!-- ===== 1. HERO SECTION ===== -->
+    <section class="idx-hero">
+        <div class="idx-hero-bg"></div>
+        <div class="idx-hero-particles"></div>
+        <div class="idx-hero-content">
+            <div class="idx-hero-badge">
+                <i class="fas fa-star"></i> El portal inmobiliario #1 de Barinas
+            </div>
+            <h1 class="idx-hero-title">Encuentra tu <span class="idx-hero-highlight">hogar ideal</span> en Barinas</h1>
+            <p class="idx-hero-subtitle">Casas, apartamentos, terrenos y mucho más. Publica gratis y conecta directamente con compradores.</p>
+
+            <!-- Search Bar -->
+            <form class="idx-search-bar" id="heroSearchForm" action="search.html" method="GET">
+                <div class="idx-search-row">
+                    <div class="idx-search-field">
+                        <label><i class="fas fa-home"></i> Tipo</label>
+                        <div class="idx-select-wrap">
+                            <select id="searchTipo" name="tipo">
+                                <option value="">Todas</option>
+                                <option value="Casa">Casas</option>
+                                <option value="Apartamento">Apartamentos</option>
+                                <option value="Terreno">Terrenos</option>
+                                <option value="Local Comercial">Locales Comerciales</option>
+                                <option value="Oficina">Oficinas</option>
+                                <option value="Hotel">Hoteles</option>
+                                <option value="Finca">Fincas</option>
+                                <option value="Galpón">Galpones</option>
+                                <option value="Estacionamiento">Estacionamientos</option>
+                                <option value="Otro">Otros</option>
+                            </select>
+                            <i class="fas fa-chevron-down idx-select-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="idx-search-field">
+                        <label><i class="fas fa-exchange-alt"></i> Operación</label>
+                        <div class="idx-select-wrap">
+                            <select id="searchOperacion" name="operacion">
+                                <option value="">Ambos</option>
+                                <option value="Venta">Venta</option>
+                                <option value="Alquiler">Alquiler</option>
+                            </select>
+                            <i class="fas fa-chevron-down idx-select-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="idx-search-field">
+                        <label><i class="fas fa-map-marker-alt"></i> Ciudad</label>
+                        <input type="text" id="searchCiudad" name="ciudad" placeholder="Barinas">
+                    </div>
+                </div>
+                <div class="idx-search-row idx-search-row-2">
+                    <div class="idx-search-field">
+                        <label><i class="fas fa-dollar-sign"></i> Precio Mín</label>
+                        <input type="number" id="searchPrecioMin" name="precio_min" placeholder="0" min="0">
+                    </div>
+                    <div class="idx-search-field">
+                        <label><i class="fas fa-dollar-sign"></i> Precio Máx</label>
+                        <input type="number" id="searchPrecioMax" name="precio_max" placeholder="Sin límite" min="0">
+                    </div>
+                    <div class="idx-search-field">
+                        <label><i class="fas fa-bed"></i> Habitaciones</label>
+                        <div class="idx-select-wrap">
+                            <select id="searchHabitaciones" name="habitaciones">
+                                <option value="">Cualquiera</option>
+                                <option value="1">1+</option>
+                                <option value="2">2+</option>
+                                <option value="3">3+</option>
+                                <option value="4">4+</option>
+                                <option value="5">5+</option>
+                            </select>
+                            <i class="fas fa-chevron-down idx-select-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="idx-search-field">
+                        <label><i class="fas fa-bath"></i> Baños</label>
+                        <div class="idx-select-wrap">
+                            <select id="searchBanos" name="banos">
+                                <option value="">Cualquiera</option>
+                                <option value="1">1+</option>
+                                <option value="2">2+</option>
+                                <option value="3">3+</option>
+                                <option value="4">4+</option>
+                            </select>
+                            <i class="fas fa-chevron-down idx-select-arrow"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="idx-search-btn">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick Links -->
+            <div class="idx-quick-links">
+                <a href="search.html?tipo=Casa&operacion=Venta" class="idx-quick-link">
+                    <i class="fas fa-fire"></i> Casas en Venta
+                </a>
+                <a href="search.html?tipo=Apartamento&operacion=Alquiler" class="idx-quick-link">
+                    <i class="fas fa-key"></i> Apartamentos en Alquiler
+                </a>
+                <a href="search.html?tipo=Terreno" class="idx-quick-link">
+                    <i class="fas fa-mountain-sun"></i> Terrenos
+                </a>
+                <a href="new-property.html" class="idx-quick-link idx-quick-link-publish">
+                    <i class="fas fa-plus-circle"></i> Publicar Gratis
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 2. FEATURED PROPERTIES ===== -->
+    <section class="idx-section" id="featuredSection">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Propiedades Destacadas</h2>
-                <a href="search.html" class="section-link">Ver todas <i class="fas fa-arrow-right"></i></a>
+            <div class="idx-section-header">
+                <div class="idx-section-header-left">
+                    <div class="idx-section-icon" style="background: linear-gradient(135deg, #1a73e8, #4a90e8);">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div>
+                        <h2 class="idx-section-title">Propiedades Destacadas</h2>
+                        <p class="idx-section-subtitle">Las mejores oportunidades inmobiliarias en Barinas</p>
+                    </div>
+                </div>
+                <a href="search.html" class="idx-section-link">
+                    Ver todas <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
             <div class="property-grid" id="featuredGrid">
                 <div class="loading-spinner" id="featuredLoading">
@@ -60,26 +178,121 @@
         </div>
     </section>
 
-    <!-- 2. Mini Map Section (SECOND) -->
-    <section class="section section-light" id="homeMapSection">
+    <!-- ===== 3. EXPLORE BY TYPE ===== -->
+    <section class="idx-section idx-section-alt">
         <div class="container">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Propiedades en el Mapa</h2>
-                    <p class="section-subtitle">Explora las propiedades disponibles en Barinas</p>
+            <div class="idx-section-header">
+                <div class="idx-section-header-left">
+                    <div class="idx-section-icon" style="background: linear-gradient(135deg, #6f42c1, #8b5cf6);">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <div>
+                        <h2 class="idx-section-title">Explora por Tipo</h2>
+                        <p class="idx-section-subtitle">Encuentra exactamente lo que buscas</p>
+                    </div>
                 </div>
-                <a href="map.html" class="btn btn-primary">
-                    <i class="fas fa-map-marked-alt"></i> Ver Mapa Completo
+            </div>
+            <div class="idx-types-grid">
+                <a href="search.html?tipo=Casa" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1a73e8;">
+                        <i class="fas fa-house"></i>
+                    </div>
+                    <h3>Casas</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Apartamento" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); color: #28a745;">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Apartamentos</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Terreno" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #fff7ed, #fed7aa); color: #ff6b35;">
+                        <i class="fas fa-mountain-sun"></i>
+                    </div>
+                    <h3>Terrenos</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Local+Comercial" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #fef2f2, #fecaca); color: #dc3545;">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Locales Comerciales</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Oficina" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); color: #6f42c1;">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Oficinas</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Finca" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #ecfdf5, #a7f3d0); color: #059669;">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <h3>Fincas</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Hotel" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #fef9c3, #fde68a); color: #d97706;">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h3>Hoteles</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Galpón" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #f1f5f9, #cbd5e1); color: #475569;">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <h3>Galpones</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Estacionamiento" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #fce7f3, #fbcfe8); color: #db2777;">
+                        <i class="fas fa-square-parking"></i>
+                    </div>
+                    <h3>Estacionamientos</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="search.html?tipo=Otro" class="idx-type-card">
+                    <div class="idx-type-icon" style="background: linear-gradient(135deg, #f0f9ff, #bae6fd); color: #0284c7;">
+                        <i class="fas fa-ellipsis"></i>
+                    </div>
+                    <h3>Otros</h3>
+                    <span class="idx-type-arrow"><i class="fas fa-arrow-right"></i></span>
                 </a>
             </div>
-            <div class="home-map-wrapper">
-                <div id="homeMap" class="home-map"></div>
-                <!-- Map overlay with "Ver Mapa" button -->
-                <div class="home-map-overlay" id="homeMapOverlay">
-                    <div class="home-map-overlay-content">
+        </div>
+    </section>
+
+    <!-- ===== 4. MAP SECTION ===== -->
+    <section class="idx-section" id="homeMapSection">
+        <div class="container">
+            <div class="idx-section-header">
+                <div class="idx-section-header-left">
+                    <div class="idx-section-icon" style="background: linear-gradient(135deg, #ff6b35, #ff8c5a);">
                         <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="idx-section-title">Mapa de Propiedades</h2>
+                        <p class="idx-section-subtitle">Explora las propiedades disponibles en Barinas visualmente</p>
+                    </div>
+                </div>
+                <a href="map.html" class="idx-section-link">
+                    <i class="fas fa-expand"></i> Ver Mapa Completo
+                </a>
+            </div>
+            <div class="idx-map-wrapper">
+                <div id="homeMap" class="home-map"></div>
+                <div class="idx-map-overlay" id="homeMapOverlay">
+                    <div class="idx-map-overlay-content">
+                        <div class="idx-map-overlay-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
                         <p>Mapa interactivo con todas las propiedades</p>
-                        <a href="map.html" class="btn btn-primary btn-lg">
+                        <a href="map.html" class="idx-map-btn">
                             <i class="fas fa-expand"></i> Abrir Mapa Completo
                         </a>
                     </div>
@@ -88,187 +301,103 @@
         </div>
     </section>
 
-    <!-- 3. Hero + Search Bar (THIRD) -->
-    <section class="hero hero-compact">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1 class="hero-title">Encuentra tu <span class="text-accent">hogar ideal</span> en Barinas</h1>
-            <p class="hero-subtitle">El portal inmobiliario más completo de Barinas, Venezuela. Casas, apartamentos, terrenos y mucho más.</p>
-
-            <!-- Search Bar -->
-            <form class="search-bar" id="heroSearchForm" action="search.html" method="GET">
-                <div class="search-row">
-                    <div class="search-field">
-                        <label for="searchTipo">Tipo</label>
-                        <select id="searchTipo" name="tipo">
-                            <option value="">Todas</option>
-                            <option value="Casa">Casas</option>
-                            <option value="Apartamento">Apartamentos</option>
-                            <option value="Terreno">Terrenos</option>
-                            <option value="Local Comercial">Locales Comerciales</option>
-                            <option value="Oficina">Oficinas</option>
-                            <option value="Hotel">Hoteles</option>
-                            <option value="Finca">Fincas</option>
-                            <option value="Galpón">Galpones</option>
-                            <option value="Estacionamiento">Estacionamientos</option>
-                            <option value="Otro">Otros</option>
-                        </select>
-                    </div>
-                    <div class="search-field">
-                        <label for="searchOperacion">Operación</label>
-                        <select id="searchOperacion" name="operacion">
-                            <option value="">Ambos</option>
-                            <option value="Venta">Venta</option>
-                            <option value="Alquiler">Alquiler</option>
-                        </select>
-                    </div>
-                    <div class="search-field">
-                        <label for="searchCiudad">Ciudad</label>
-                        <input type="text" id="searchCiudad" name="ciudad" placeholder="Barinas">
-                    </div>
-                </div>
-                <div class="search-row">
-                    <div class="search-field">
-                        <label for="searchPrecioMin">Precio Mín</label>
-                        <input type="number" id="searchPrecioMin" name="precio_min" placeholder="0" min="0">
-                    </div>
-                    <div class="search-field">
-                        <label for="searchPrecioMax">Precio Máx</label>
-                        <input type="number" id="searchPrecioMax" name="precio_max" placeholder="Sin límite" min="0">
-                    </div>
-                    <div class="search-field">
-                        <label for="searchHabitaciones">Habitaciones</label>
-                        <select id="searchHabitaciones" name="habitaciones">
-                            <option value="">Cualquiera</option>
-                            <option value="1">1+</option>
-                            <option value="2">2+</option>
-                            <option value="3">3+</option>
-                            <option value="4">4+</option>
-                            <option value="5">5+</option>
-                        </select>
-                    </div>
-                    <div class="search-field">
-                        <label for="searchBanos">Baños</label>
-                        <select id="searchBanos" name="banos">
-                            <option value="">Cualquiera</option>
-                            <option value="1">1+</option>
-                            <option value="2">2+</option>
-                            <option value="3">3+</option>
-                            <option value="4">4+</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-search">
-                        <i class="fas fa-search"></i> Buscar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <!-- Property Types Section -->
-    <section class="section">
+    <!-- ===== 5. HOW IT WORKS ===== -->
+    <section class="idx-section idx-section-alt">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Explora por Tipo de Propiedad</h2>
+            <div class="idx-section-header idx-section-header-center">
+                <div class="idx-section-icon" style="background: linear-gradient(135deg, #28a745, #5cb85c);">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div>
+                    <h2 class="idx-section-title">¿Cómo funciona?</h2>
+                    <p class="idx-section-subtitle">Encuentra o publica tu propiedad en 3 sencillos pasos</p>
+                </div>
             </div>
-            <div class="types-grid">
-                <a href="search.html?tipo=Casa" class="type-card">
-                    <div class="type-icon"><i class="fas fa-house"></i></div>
-                    <h3>Casas</h3>
-                </a>
-                <a href="search.html?tipo=Apartamento" class="type-card">
-                    <div class="type-icon"><i class="fas fa-building"></i></div>
-                    <h3>Apartamentos</h3>
-                </a>
-                <a href="search.html?tipo=Terreno" class="type-card">
-                    <div class="type-icon"><i class="fas fa-mountain-sun"></i></div>
-                    <h3>Terrenos</h3>
-                </a>
-                <a href="search.html?tipo=Local+Comercial" class="type-card">
-                    <div class="type-icon"><i class="fas fa-store"></i></div>
-                    <h3>Locales Comerciales</h3>
-                </a>
-                <a href="search.html?tipo=Oficina" class="type-card">
-                    <div class="type-icon"><i class="fas fa-briefcase"></i></div>
-                    <h3>Oficinas</h3>
-                </a>
-                <a href="search.html?tipo=Finca" class="type-card">
-                    <div class="type-icon"><i class="fas fa-tree"></i></div>
-                    <h3>Fincas</h3>
-                </a>
-                <a href="search.html?tipo=Hotel" class="type-card">
-                    <div class="type-icon"><i class="fas fa-hotel"></i></div>
-                    <h3>Hoteles</h3>
-                </a>
-                <a href="search.html?tipo=Galpón" class="type-card">
-                    <div class="type-icon"><i class="fas fa-warehouse"></i></div>
-                    <h3>Galpones</h3>
-                </a>
-                <a href="search.html?tipo=Estacionamiento" class="type-card">
-                    <div class="type-icon"><i class="fas fa-square-parking"></i></div>
-                    <h3>Estacionamientos</h3>
-                </a>
-                <a href="search.html?tipo=Otro" class="type-card">
-                    <div class="type-icon"><i class="fas fa-ellipsis"></i></div>
-                    <h3>Otros</h3>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="section section-light">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">¿Cómo funciona?</h2>
-                <p class="section-subtitle">Encuentra o publica tu propiedad en 3 sencillos pasos</p>
-            </div>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <div class="step-icon"><i class="fas fa-plus-circle"></i></div>
+            <div class="idx-steps-grid">
+                <div class="idx-step-card">
+                    <div class="idx-step-connector"></div>
+                    <div class="idx-step-number">01</div>
+                    <div class="idx-step-icon-wrap">
+                        <div class="idx-step-icon" style="background: linear-gradient(135deg, #1a73e8, #4a90e8);">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                    </div>
                     <h3>Publica</h3>
-                    <p>Regístrate y publica tu propiedad con fotos, detalles y precio de forma gratuita.</p>
+                    <p>Regístrate y publica tu propiedad con fotos, detalles y precio de forma completamente gratuita.</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <div class="step-icon"><i class="fas fa-search-location"></i></div>
+                <div class="idx-step-card">
+                    <div class="idx-step-connector"></div>
+                    <div class="idx-step-number">02</div>
+                    <div class="idx-step-icon-wrap">
+                        <div class="idx-step-icon" style="background: linear-gradient(135deg, #ff6b35, #ff8c5a);">
+                            <i class="fas fa-search-location"></i>
+                        </div>
+                    </div>
                     <h3>Busca</h3>
                     <p>Explora propiedades usando filtros avanzados, mapa interactivo y búsqueda por zona.</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <div class="step-icon"><i class="fas fa-comments"></i></div>
+                <div class="idx-step-card">
+                    <div class="idx-step-number">03</div>
+                    <div class="idx-step-icon-wrap">
+                        <div class="idx-step-icon" style="background: linear-gradient(135deg, #28a745, #5cb85c);">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                    </div>
                     <h3>Contacta</h3>
-                    <p>Comunícate directamente con el propietario o agente inmobiliario sin intermediarios.</p>
+                    <p>Comunícate directamente con el propietario o agente sin intermediarios.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="section section-dark">
+    <!-- ===== 6. STATS SECTION ===== -->
+    <section class="idx-stats-section">
+        <div class="idx-stats-bg"></div>
         <div class="container">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <i class="fas fa-home stat-icon"></i>
-                    <div class="stat-number" id="statProperties">0</div>
-                    <div class="stat-label">Propiedades</div>
+            <div class="idx-stats-grid">
+                <div class="idx-stat-card">
+                    <div class="idx-stat-icon-wrap">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="idx-stat-number" id="statProperties">0</div>
+                    <div class="idx-stat-label">Propiedades Publicadas</div>
                 </div>
-                <div class="stat-item">
-                    <i class="fas fa-users stat-icon"></i>
-                    <div class="stat-number" id="statUsers">0</div>
-                    <div class="stat-label">Usuarios</div>
+                <div class="idx-stat-card">
+                    <div class="idx-stat-icon-wrap" style="background: rgba(40, 167, 69, 0.15);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="idx-stat-number" id="statUsers">0</div>
+                    <div class="idx-stat-label">Usuarios Activos</div>
                 </div>
-                <div class="stat-item">
-                    <i class="fas fa-map-marker-alt stat-icon"></i>
-                    <div class="stat-number">Barinas</div>
-                    <div class="stat-label">Venezuela</div>
+                <div class="idx-stat-card">
+                    <div class="idx-stat-icon-wrap" style="background: rgba(255, 107, 53, 0.15);">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="idx-stat-number">Barinas</div>
+                    <div class="idx-stat-label">Venezuela</div>
                 </div>
-                <div class="stat-item">
-                    <i class="fas fa-handshake stat-icon"></i>
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Gratuito</div>
+                <div class="idx-stat-card">
+                    <div class="idx-stat-icon-wrap" style="background: rgba(111, 66, 193, 0.15);">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="idx-stat-number">100%</div>
+                    <div class="idx-stat-label">Gratuito</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 7. CTA SECTION ===== -->
+    <section class="idx-cta-section">
+        <div class="container">
+            <div class="idx-cta-card">
+                <div class="idx-cta-glow"></div>
+                <div class="idx-cta-content">
+                    <h2>¿Tienes una propiedad que vender o alquilar?</h2>
+                    <p>Publica tu propiedad gratis en CasasBarinas y llega a miles de personas buscando su próximo hogar.</p>
+                    <a href="new-property.html" class="idx-cta-btn">
+                        <i class="fas fa-plus-circle"></i> Publicar Propiedad Gratis
+                    </a>
                 </div>
             </div>
         </div>
