@@ -429,22 +429,58 @@
     function setupProfileForm() {
         if (!profileForm || !currentUser) return;
 
-        // Populate form
+        // Update profile header display
+        updateProfileHeader();
+
+        // Populate form fields
         const nameField = document.getElementById('profileName');
         const emailField = document.getElementById('profileEmail');
         const phoneField = document.getElementById('profilePhone');
         const whatsappField = document.getElementById('profileWhatsApp');
         const bioField = document.getElementById('profileBio');
+        const bioCharCount = document.getElementById('bioCharCount');
 
         if (nameField) nameField.value = currentUser.name || '';
         if (emailField) emailField.value = currentUser.email || '';
         if (phoneField) phoneField.value = currentUser.phone || '';
         if (whatsappField) whatsappField.value = currentUser.whatsapp || '';
-        if (bioField) bioField.value = currentUser.bio || '';
+        if (bioField) {
+            bioField.value = currentUser.bio || '';
+            updateBioCharCount();
+        }
+
+        // Bio character counter
+        if (bioField && bioCharCount) {
+            bioField.addEventListener('input', updateBioCharCount);
+        }
+
+        // Cancel button
+        const cancelBtn = document.getElementById('profileCancelBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                // Reset form to current values
+                if (nameField) nameField.value = currentUser.name || '';
+                if (emailField) emailField.value = currentUser.email || '';
+                if (phoneField) phoneField.value = currentUser.phone || '';
+                if (whatsappField) whatsappField.value = currentUser.whatsapp || '';
+                if (bioField) {
+                    bioField.value = currentUser.bio || '';
+                    updateBioCharCount();
+                }
+                showToast('Cambios descartados', 'info');
+            });
+        }
 
         // Submit handler
         profileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const saveBtn = document.getElementById('profileSaveBtn');
+            if (saveBtn) {
+                saveBtn.classList.add('saving');
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            }
+
             try {
                 const formData = new FormData(profileForm);
                 const data = {
@@ -459,12 +495,60 @@
                 showToast('Perfil actualizado exitosamente', 'success');
 
                 // Update cache
-                setCachedUser({ ...currentUser, ...data });
+                currentUser = { ...currentUser, ...data };
+                setCachedUser(currentUser);
                 updateUserDisplay();
+                updateProfileHeader();
             } catch (error) {
                 showToast(error.message || 'Error al actualizar perfil', 'error');
+            } finally {
+                if (saveBtn) {
+                    saveBtn.classList.remove('saving');
+                    saveBtn.innerHTML = '<i class="fas fa-check-circle"></i> Guardar Cambios';
+                }
             }
         });
+    }
+
+    function updateProfileHeader() {
+        if (!currentUser) return;
+
+        const displayName = document.getElementById('profileDisplayName');
+        const displayEmail = document.getElementById('profileDisplayEmail');
+        const roleBadge = document.getElementById('profileRoleBadge');
+        const avatarLarge = document.getElementById('profileAvatarLarge');
+
+        if (displayName) displayName.textContent = currentUser.name || 'Usuario';
+        if (displayEmail) displayEmail.textContent = currentUser.email || '';
+
+        if (roleBadge) {
+            const role = currentUser.role || 'user';
+            const roleLabels = { admin: 'Administrador', agent: 'Agente', user: 'Usuario' };
+            roleBadge.textContent = roleLabels[role] || 'Usuario';
+            roleBadge.className = 'profile-role-badge';
+            if (role === 'admin') roleBadge.classList.add('role-admin');
+            else if (role === 'agent') roleBadge.classList.add('role-agent');
+        }
+
+        if (avatarLarge) {
+            if (currentUser.avatar) {
+                avatarLarge.innerHTML = `<img src="${currentUser.avatar}" alt="${currentUser.name || 'Avatar'}">`;
+            } else {
+                // Show initials
+                const initials = (currentUser.name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+                avatarLarge.innerHTML = `<span style="font-weight:700; font-size:28px;">${initials}</span>`;
+            }
+        }
+    }
+
+    function updateBioCharCount() {
+        const bioField = document.getElementById('profileBio');
+        const bioCharCount = document.getElementById('bioCharCount');
+        if (bioField && bioCharCount) {
+            const len = bioField.value.length;
+            bioCharCount.textContent = `${len}/500`;
+            bioCharCount.style.color = len > 450 ? '#e74c3c' : len > 350 ? '#f39c12' : '#bbb';
+        }
     }
 
     // ─── Delete Modal ──────────────────────────────────────────

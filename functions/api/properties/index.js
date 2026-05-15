@@ -127,6 +127,7 @@ export async function onRequestGet(context) {
         p.*,
         u.name as owner_name,
         u.phone as owner_phone,
+        u.whatsapp as owner_whatsapp,
         u.avatar as owner_avatar,
         (SELECT url FROM images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image,
         (SELECT COUNT(*) FROM images WHERE property_id = p.id) as image_count

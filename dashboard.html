@@ -323,43 +323,120 @@
 
                 <!-- Profile Section -->
                 <section class="dashboard-section hidden" id="sectionProfile">
-                    <div class="dash-card">
-                        <div class="dash-card-header">
-                            <h3>Mi Perfil</h3>
+                    <!-- Profile Header Card -->
+                    <div class="profile-header-card">
+                        <div class="profile-cover"></div>
+                        <div class="profile-header-body">
+                            <div class="profile-avatar-large" id="profileAvatarLarge">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-header-info">
+                                <h2 id="profileDisplayName">Usuario</h2>
+                                <span class="profile-role-badge" id="profileRoleBadge">Usuario</span>
+                                <p class="profile-email-display" id="profileDisplayEmail">usuario@email.com</p>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Profile Form Card -->
+                    <div class="profile-form-card">
+                        <div class="profile-form-card-header">
+                            <div class="profile-section-icon">
+                                <i class="fas fa-user-edit"></i>
+                            </div>
+                            <div>
+                                <h3>Información Personal</h3>
+                                <p>Actualiza tus datos y se reflejarán en todas tus publicaciones</p>
+                            </div>
+                        </div>
+
                         <form class="profile-form" id="profileForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="profileName">Nombre Completo</label>
-                                    <input type="text" id="profileName" name="name" required>
+                            <!-- Contact Info Section -->
+                            <div class="profile-form-section">
+                                <div class="profile-form-section-title">
+                                    <i class="fas fa-id-card"></i>
+                                    <span>Datos Básicos</span>
                                 </div>
-                                <div class="form-group">
-                                    <label for="profileEmail">Correo Electrónico</label>
-                                    <input type="email" id="profileEmail" name="email" required>
+                                <div class="form-row">
+                                    <div class="profile-input-group">
+                                        <label for="profileName">Nombre Completo</label>
+                                        <div class="profile-input-wrapper">
+                                            <i class="fas fa-user"></i>
+                                            <input type="text" id="profileName" name="name" required placeholder="Ej: Juan Pérez">
+                                        </div>
+                                    </div>
+                                    <div class="profile-input-group">
+                                        <label for="profileEmail">Correo Electrónico</label>
+                                        <div class="profile-input-wrapper">
+                                            <i class="fas fa-envelope"></i>
+                                            <input type="email" id="profileEmail" name="email" required placeholder="correo@ejemplo.com">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="profilePhone"><i class="fas fa-phone"></i> Teléfono</label>
-                                    <input type="tel" id="profilePhone" name="phone" placeholder="+58 414 0000000">
+
+                            <!-- Phone Section -->
+                            <div class="profile-form-section">
+                                <div class="profile-form-section-title">
+                                    <i class="fas fa-phone-alt"></i>
+                                    <span>Teléfonos de Contacto</span>
                                 </div>
-                                <div class="form-group">
-                                    <label for="profileWhatsApp"><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp</label>
-                                    <input type="tel" id="profileWhatsApp" name="whatsapp" placeholder="+58 414 0000000">
-                                    <small style="color:#888; font-size:12px;">Número de WhatsApp para que los compradores te contacten</small>
+                                <div class="form-row">
+                                    <div class="profile-input-group">
+                                        <label for="profilePhone">Teléfono Principal</label>
+                                        <div class="profile-input-wrapper">
+                                            <i class="fas fa-phone"></i>
+                                            <input type="tel" id="profilePhone" name="phone" placeholder="+58 414 0000000">
+                                        </div>
+                                    </div>
+                                    <div class="profile-input-group">
+                                        <label for="profileWhatsApp">
+                                            <i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp
+                                        </label>
+                                        <div class="profile-input-wrapper">
+                                            <i class="fab fa-whatsapp" style="color:#25d366"></i>
+                                            <input type="tel" id="profileWhatsApp" name="whatsapp" placeholder="+58 414 0000000">
+                                        </div>
+                                        <small class="profile-input-hint">Los compradores podrán contactarte directamente por WhatsApp desde tus propiedades</small>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="profileBio">Biografía</label>
-                                <textarea id="profileBio" name="bio" rows="3" placeholder="Cuéntanos sobre ti, tu experiencia, zona donde trabajas..."></textarea>
+
+                            <!-- Bio Section -->
+                            <div class="profile-form-section">
+                                <div class="profile-form-section-title">
+                                    <i class="fas fa-align-left"></i>
+                                    <span>Sobre Mí</span>
+                                </div>
+                                <div class="profile-input-group">
+                                    <label for="profileBio">Biografía / Descripción</label>
+                                    <div class="profile-textarea-wrapper">
+                                        <textarea id="profileBio" name="bio" rows="4" placeholder="Cuéntanos sobre ti, tu experiencia en bienes raíces, las zonas donde trabajas..." maxlength="500"></textarea>
+                                        <span class="profile-char-count" id="bioCharCount">0/500</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="profile-info-note">
-                                <i class="fas fa-info-circle"></i>
-                                Al guardar, tu información se actualizará automáticamente en todas tus propiedades publicadas, incluyendo el número de WhatsApp para contacto.
+
+                            <!-- Sync Info Banner -->
+                            <div class="profile-sync-banner">
+                                <div class="profile-sync-icon">
+                                    <i class="fas fa-sync-alt"></i>
+                                </div>
+                                <div class="profile-sync-text">
+                                    <strong>Sincronización automática</strong>
+                                    <p>Al guardar, tu información se actualizará en todas tus propiedades publicadas. Los compradores verán tu teléfono y WhatsApp actualizados al contactarte.</p>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar Cambios
-                            </button>
+
+                            <!-- Actions -->
+                            <div class="profile-form-actions">
+                                <button type="submit" class="btn btn-primary profile-save-btn" id="profileSaveBtn">
+                                    <i class="fas fa-check-circle"></i> Guardar Cambios
+                                </button>
+                                <button type="button" class="btn btn-secondary profile-cancel-btn" id="profileCancelBtn">
+                                    Cancelar
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </section>
