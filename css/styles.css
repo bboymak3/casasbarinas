@@ -1338,6 +1338,132 @@ strong {
     color: #bbf7d0;
 }
 
+/* --- Mobile Search Trigger --- */
+.idx-mobile-search-trigger {
+    display: none; /* hidden on desktop */
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 400px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #1a73e8, #4a90e8);
+    border: none;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(26, 115, 232, 0.45), 0 0 0 0 rgba(26, 115, 232, 0.2);
+    margin: 0 auto 16px;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.idx-mobile-search-trigger::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    pointer-events: none;
+}
+
+.idx-mobile-search-trigger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(26, 115, 232, 0.55), 0 0 0 0 rgba(26, 115, 232, 0.2);
+}
+
+.idx-mobile-search-trigger:active {
+    transform: translateY(0);
+}
+
+.idx-mobile-search-trigger i:first-child {
+    font-size: 1.1rem;
+}
+
+.idx-mobile-search-trigger span {
+    flex: 1;
+    text-align: center;
+}
+
+.idx-mobile-search-arrow {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    transition: transform 0.3s;
+}
+
+.idx-mobile-search-trigger.active .idx-mobile-search-arrow {
+    transform: rotate(180deg);
+}
+
+/* --- Search Modal Header (mobile only) --- */
+.idx-search-modal-header {
+    display: none; /* hidden on desktop */
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.idx-search-modal-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.idx-search-modal-header h3 i {
+    color: #60a5fa;
+    font-size: 0.9rem;
+}
+
+.idx-search-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.idx-search-modal-close:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+}
+
+/* --- Mobile Search Backdrop --- */
+.idx-mobile-search-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 90;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.idx-mobile-search-backdrop.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* Quick links inside modal - hidden on desktop */
+.idx-quick-links-modal {
+    display: none;
+}
+
 /* --- Sections --- */
 .idx-section {
     padding: 64px 0;
@@ -1762,7 +1888,7 @@ strong {
     box-shadow: 0 12px 36px rgba(0,0,0,0.25);
 }
 
-/* --- Responsive: Tablet --- */
+/* --- Responsive: Tablet & Mobile (≤768px) --- */
 @media (max-width: 768px) {
     .idx-hero-title {
         font-size: 2.2rem;
@@ -1770,12 +1896,46 @@ strong {
 
     .idx-hero-subtitle {
         font-size: 0.95rem;
-        margin-bottom: 28px;
+        margin-bottom: 20px;
     }
 
+    /* Show the mobile search trigger button */
+    .idx-mobile-search-trigger {
+        display: flex;
+    }
+
+    /* Hide the search form inline - it becomes a slide-up modal */
     .idx-search-bar {
-        padding: 18px;
-        border-radius: 16px;
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 20px 20px 0 0;
+        padding: 20px 16px 32px;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: idx-search-slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.98) 0%, rgba(15, 23, 42, 0.99) 100%);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255,255,255,0.1);
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        /* iOS safe area */
+        padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .idx-search-bar.mobile-open {
+        display: block;
+    }
+
+    /* Show modal header on mobile */
+    .idx-search-modal-header {
+        display: flex;
     }
 
     .idx-search-row,
@@ -1788,6 +1948,30 @@ strong {
         width: 100%;
         justify-content: center;
         padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        margin-top: 6px;
+    }
+
+    /* Hide quick links inline on mobile */
+    .idx-quick-links {
+        display: none;
+    }
+
+    /* Show quick links inside the mobile modal */
+    .idx-quick-links-modal {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .idx-quick-links-modal .idx-quick-link {
+        font-size: 0.72rem;
+        padding: 6px 12px;
     }
 
     .idx-types-grid {
@@ -1827,9 +2011,27 @@ strong {
     .idx-cta-card h2 {
         font-size: 1.4rem;
     }
+}
 
-    .idx-quick-links {
-        gap: 8px;
+@keyframes idx-search-slide-up {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes idx-search-slide-down {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
     }
 }
 
@@ -1841,13 +2043,13 @@ strong {
     }
 
     .idx-hero-content {
-        padding: calc(var(--navbar-height) + 24px) 16px 40px;
+        padding: calc(var(--navbar-height) + 24px) 16px 32px;
     }
 
     .idx-hero-badge {
         font-size: 0.7rem;
         padding: 5px 12px;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
     }
 
     .idx-hero-title {
@@ -1856,13 +2058,18 @@ strong {
 
     .idx-hero-subtitle {
         font-size: 0.85rem;
-        margin-bottom: 24px;
+        margin-bottom: 16px;
+        line-height: 1.5;
     }
 
-    .idx-search-bar {
-        padding: 14px;
-        border-radius: 14px;
-        margin-bottom: 16px;
+    /* Compact hero - less padding so properties are closer */
+    .idx-hero {
+        padding-bottom: 0;
+    }
+
+    .idx-search-bar.mobile-open {
+        padding: 16px 14px calc(28px + env(safe-area-inset-bottom, 0px));
+        border-radius: 18px 18px 0 0;
     }
 
     .idx-search-field input,

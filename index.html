@@ -51,8 +51,21 @@
             <h1 class="idx-hero-title">Encuentra tu <span class="idx-hero-highlight">hogar ideal</span> en Barinas</h1>
             <p class="idx-hero-subtitle">Casas, apartamentos, terrenos y mucho más. Publica gratis y conecta directamente con compradores.</p>
 
-            <!-- Search Bar -->
+            <!-- Mobile: Search Trigger Button -->
+            <button class="idx-mobile-search-trigger" id="mobileSearchTrigger">
+                <i class="fas fa-search"></i>
+                <span>Buscar Propiedades</span>
+                <i class="fas fa-chevron-down idx-mobile-search-arrow"></i>
+            </button>
+
+            <!-- Search Bar (desktop inline, mobile inside modal) -->
             <form class="idx-search-bar" id="heroSearchForm" action="search.html" method="GET">
+                <div class="idx-search-modal-header" id="searchModalHeader">
+                    <h3><i class="fas fa-search"></i> Buscar Propiedades</h3>
+                    <button type="button" class="idx-search-modal-close" id="searchModalClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
                 <div class="idx-search-row">
                     <div class="idx-search-field">
                         <label><i class="fas fa-home"></i> Tipo</label>
@@ -129,9 +142,24 @@
                         <i class="fas fa-search"></i> Buscar
                     </button>
                 </div>
+                <!-- Quick Links inside form (visible in mobile modal) -->
+                <div class="idx-quick-links idx-quick-links-modal">
+                    <a href="search.html?tipo=Casa&operacion=Venta" class="idx-quick-link">
+                        <i class="fas fa-fire"></i> Casas en Venta
+                    </a>
+                    <a href="search.html?tipo=Apartamento&operacion=Alquiler" class="idx-quick-link">
+                        <i class="fas fa-key"></i> Apartamentos en Alquiler
+                    </a>
+                    <a href="search.html?tipo=Terreno" class="idx-quick-link">
+                        <i class="fas fa-mountain-sun"></i> Terrenos
+                    </a>
+                    <a href="new-property.html" class="idx-quick-link idx-quick-link-publish">
+                        <i class="fas fa-plus-circle"></i> Publicar Gratis
+                    </a>
+                </div>
             </form>
 
-            <!-- Quick Links -->
+            <!-- Quick Links (desktop only) -->
             <div class="idx-quick-links">
                 <a href="search.html?tipo=Casa&operacion=Venta" class="idx-quick-link">
                     <i class="fas fa-fire"></i> Casas en Venta
@@ -146,6 +174,9 @@
                     <i class="fas fa-plus-circle"></i> Publicar Gratis
                 </a>
             </div>
+
+            <!-- Mobile Search Modal Backdrop -->
+            <div class="idx-mobile-search-backdrop" id="mobileSearchBackdrop"></div>
         </div>
     </section>
 

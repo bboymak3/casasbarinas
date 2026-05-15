@@ -601,10 +601,63 @@ function handleLogout() {
     }, 1000);
 }
 
+// ─── Mobile Search Modal ──────────────────────────────────────
+function initMobileSearchModal() {
+    const trigger = document.getElementById('mobileSearchTrigger');
+    const searchForm = document.getElementById('heroSearchForm');
+    const backdrop = document.getElementById('mobileSearchBackdrop');
+    const closeBtn = document.getElementById('searchModalClose');
+
+    if (!trigger || !searchForm) return;
+
+    function openSearchModal() {
+        searchForm.classList.add('mobile-open');
+        trigger.classList.add('active');
+        if (backdrop) backdrop.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSearchModal() {
+        searchForm.classList.remove('mobile-open');
+        trigger.classList.remove('active');
+        if (backdrop) backdrop.classList.remove('visible');
+        document.body.style.overflow = '';
+    }
+
+    trigger.addEventListener('click', () => {
+        if (searchForm.classList.contains('mobile-open')) {
+            closeSearchModal();
+        } else {
+            openSearchModal();
+        }
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeSearchModal();
+        });
+    }
+
+    if (backdrop) {
+        backdrop.addEventListener('click', closeSearchModal);
+    }
+
+    // Allow form submission (search) to work normally
+    searchForm.addEventListener('submit', () => {
+        // Let the form submit naturally to search.html
+        document.body.style.overflow = '';
+    });
+}
+
 // ─── Initialization ────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     // Update navigation bar
     updateNav();
+
+    // Initialize mobile search modal
+    initMobileSearchModal();
 
     // Hamburger menu toggle
     const navToggle = document.getElementById('navToggle');
