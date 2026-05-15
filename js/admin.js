@@ -505,23 +505,71 @@
                 return;
             }
 
-            tbody.innerHTML = users.map(u => `
-                <tr data-user-id="${u.id}">
-                    <td>${u.id}</td>
-                    <td>${u.name || '--'}</td>
-                    <td>${u.email || '--'}</td>
-                    <td>${u.phone || '--'}</td>
-                    <td><span class="badge badge-${u.role === 'admin' ? 'info' : 'default'}">${u.role === 'admin' ? 'Admin' : 'Usuario'}</span></td>
-                    <td>${u.is_active ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-danger">Inactivo</span>'}</td>
-                    <td>${u.property_count || 0}</td>
-                    <td>${formatDate(u.created_at)}</td>
-                    <td class="admin-actions">
-                        <button class="btn btn-xs btn-outline" onclick="window.admin.editUser(${u.id})" title="Editar"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-xs btn-outline" onclick="window.admin.toggleUserStatus(${u.id}, ${u.is_active ? 0 : 1})" title="${u.is_active ? 'Desactivar' : 'Activar'}"><i class="fas fa-${u.is_active ? 'toggle-on' : 'toggle-off'}"></i></button>
-                        <button class="btn btn-xs btn-danger" onclick="window.admin.deleteUser(${u.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
+            const myUser = getCachedUser();
+            const myId = myUser ? myUser.id : null;
+
+            tbody.innerHTML = users.map(u => {
+                const initials = (u.name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+                const avatarHTML = u.avatar
+                    ? `<div class="admin-user-avatar"><img src="${u.avatar}" alt=""></div>`
+                    : `<div class="admin-user-avatar">${initials}</div>`;
+                const isSelf = myId && (String(u.id) === String(myId));
+                const currentRole = u.role || 'user';
+                const selfLabel = isSelf ? ' <span style="color:#aaa;font-size:0.7rem">(Tú)</span>' : '';
+
+                // Role toggle
+                let toggleHTML = `<div class="role-toggle" data-user-id="${u.id}" data-current-role="${currentRole}">`;
+                toggleHTML += `<button class="role-toggle-btn ${currentRole === 'admin' ? 'active-admin' : ''} ${isSelf ? 'self-badge' : ''}" data-role="admin" ${isSelf ? 'disabled' : ''}><i class="fas fa-shield-alt"></i> Admin</button>`;
+                toggleHTML += `<button class="role-toggle-btn ${currentRole === 'user' ? 'active-user' : ''} ${isSelf ? 'self-badge' : ''}" data-role="user" ${isSelf ? 'disabled' : ''}><i class="fas fa-user"></i> User</button>`;
+                toggleHTML += `</div>`;
+
+                return `
+                    <tr data-user-id="${u.id}">
+                        <td>${u.id}</td>
+                        <td>
+                            <div class="admin-user-cell">
+                                ${avatarHTML}
+                                <div>
+                                    <div class="admin-user-name">${u.name || '--'}${selfLabel}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="font-size:0.83rem; color:#666;">${u.email || '--'}</td>
+                        <td style="font-size:0.83rem;">${u.phone || '<span style="color:#ccc">—</span>'}</td>
+                        <td>
+                            <span class="admin-role-badge-inline role-${currentRole}">
+                                <i class="fas ${currentRole === 'admin' ? 'fa-shield-alt' : 'fa-user'}"></i>
+                                ${currentRole === 'admin' ? 'Admin' : 'Usuario'}
+                            </span>
+                        </td>
+                        <td>${u.is_active ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-danger">Inactivo</span>'}</td>
+                        <td style="text-align:center; font-weight:600;">${u.property_count || 0}</td>
+                        <td><span class="admin-user-date">${formatDate(u.created_at)}</span></td>
+                        <td>
+                            ${toggleHTML}
+                            <div style="margin-top:6px;">
+                                <button class="btn btn-xs btn-outline" onclick="window.admin.editUser(${u.id})" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-xs btn-outline" onclick="window.admin.toggleUserStatus(${u.id}, ${u.is_active ? 0 : 1})" title="${u.is_active ? 'Desactivar' : 'Activar'}"><i class="fas fa-${u.is_active ? 'toggle-on' : 'toggle-off'}"></i></button>
+                                <button class="btn btn-xs btn-danger" onclick="window.admin.deleteUser(${u.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Attach role toggle handlers
+            tbody.querySelectorAll('.role-toggle-btn:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const toggle = btn.closest('.role-toggle');
+                    const userId = toggle.dataset.userId;
+                    const currentRole = toggle.dataset.currentRole;
+                    const newRole = btn.dataset.role;
+                    if (newRole !== currentRole) {
+                        toggleUserRole(userId, newRole, toggle);
+                    }
+                });
+            });
 
             renderAdminPagination('adminUsersPagination', data.pagination, (page) => {
                 usersPage = page;
@@ -531,6 +579,45 @@
         } catch (error) {
             tbody.innerHTML = '<tr class="empty-row"><td colspan="9"><div class="empty-state-sm"><p>Error al cargar usuarios.</p></div></td></tr>';
             showToast(error.message, 'error');
+        }
+    }
+
+    async function toggleUserRole(userId, newRole, toggleEl) {
+        const buttons = toggleEl.querySelectorAll('.role-toggle-btn');
+        buttons.forEach(b => b.classList.add('saving-role'));
+
+        try {
+            await api.put(`/users/${userId}`, { role: newRole });
+            showToast(`Rol cambiado a ${newRole === 'admin' ? 'Administrador' : 'Usuario'} exitosamente`, 'success');
+
+            // Update toggle UI
+            toggleEl.dataset.currentRole = newRole;
+            buttons.forEach(b => {
+                b.classList.remove('active-admin', 'active-user', 'active-agent', 'saving-role');
+                if (b.dataset.role === newRole) {
+                    b.classList.add(newRole === 'admin' ? 'active-admin' : newRole === 'agent' ? 'active-agent' : 'active-user');
+                }
+            });
+
+            // Update role badge inline
+            const row = toggleEl.closest('tr');
+            if (row) {
+                const badgeCell = row.querySelectorAll('td')[4];
+                if (badgeCell) {
+                    badgeCell.innerHTML = `
+                        <span class="admin-role-badge-inline role-${newRole}">
+                            <i class="fas ${newRole === 'admin' ? 'fa-shield-alt' : 'fa-user'}"></i>
+                            ${newRole === 'admin' ? 'Admin' : 'Usuario'}
+                        </span>
+                    `;
+                }
+            }
+
+            // Refresh stats and dashboard
+            loadDashboardStats();
+        } catch (error) {
+            showToast(error.message || 'Error al cambiar rol', 'error');
+            buttons.forEach(b => b.classList.remove('saving-role'));
         }
     }
 
