@@ -62,7 +62,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    const jwtSecret = env.JWT_SECRET || 'casasbarinas_default_secret_2024';
+    const jwtSecret = env.JWT_SECRET || 'aunclick_default_secret_2024';
 
     // Auto-migrate schema
     await ensureSchema(env);

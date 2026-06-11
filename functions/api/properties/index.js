@@ -129,8 +129,8 @@ export async function onRequestGet(context) {
         u.phone as owner_phone,
         u.whatsapp as owner_whatsapp,
         u.avatar as owner_avatar,
-        (SELECT url FROM images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image,
-        (SELECT COUNT(*) FROM images WHERE property_id = p.id) as image_count
+        (SELECT url FROM property_images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image,
+        (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as image_count
       FROM properties p
       LEFT JOIN users u ON p.user_id = u.id
       WHERE ${whereClause}
@@ -180,7 +180,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    const jwtSecret = env.JWT_SECRET || 'casasbarinas_default_secret_2024';
+    const jwtSecret = env.JWT_SECRET || 'aunclick_default_secret_2024';
 
     // Auth required
     const authHeader = request.headers.get('Authorization');

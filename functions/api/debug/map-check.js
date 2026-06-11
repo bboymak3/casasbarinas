@@ -51,7 +51,7 @@ export async function onRequestGet(context) {
       try {
         const tables = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
         const tableNames = tables.results.map(t => t.name);
-        const requiredTables = ['properties', 'users', 'images', 'contacts'];
+        const requiredTables = ['properties', 'users', 'property_images', 'property_contacts'];
 
         requiredTables.forEach(table => {
           if (tableNames.includes(table)) {
@@ -80,7 +80,7 @@ export async function onRequestGet(context) {
       try {
         // Get all approved properties
         const allProps = await env.DB.prepare(
-          "SELECT p.id, p.title, p.lat, p.lng, p.price, p.currency, p.property_type, p.operation_type, (SELECT url FROM images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image, (SELECT COUNT(*) FROM images WHERE property_id = p.id) as image_count FROM properties p WHERE p.status = 'approved'"
+          "SELECT p.id, p.title, p.lat, p.lng, p.price, p.currency, p.property_type, p.operation_type, (SELECT url FROM property_images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image, (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as image_count FROM properties p WHERE p.status = 'approved'"
         ).all();
 
         const properties = allProps.results || [];

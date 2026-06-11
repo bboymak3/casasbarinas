@@ -313,13 +313,13 @@ async function runImport(env) {
 
         // Insert cover image
         if (images.length > 0) {
-          await env.DB.prepare('INSERT INTO images (property_id, url, is_cover, order_index) VALUES (?, ?, 1, 0)').bind(
+          await env.DB.prepare('INSERT INTO property_images (property_id, url, is_cover, order_index) VALUES (?, ?, 1, 0)').bind(
             propertyId, images[0], 1, 0
           ).run();
 
           // Insert additional images
           for (let i = 1; i < images.length; i++) {
-            await env.DB.prepare('INSERT INTO images (property_id, url, is_cover, order_index) VALUES (?, ?, 0, ?)').bind(
+            await env.DB.prepare('INSERT INTO property_images (property_id, url, is_cover, order_index) VALUES (?, ?, 0, ?)').bind(
               propertyId, images[i], 0, i
             ).run();
           }

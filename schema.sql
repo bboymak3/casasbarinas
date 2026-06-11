@@ -1,7 +1,7 @@
 -- ============================================================
 -- Esquema D1 para CasasBarinas
--- Base de datos: casas_db
--- ID: a7cfdb1e-820b-45e2-ad5d-1625bf7e39a2
+-- Base de datos: generico_db
+-- ID: 38dd85ba-03dc-4937-af19-4d1c41a18f27
 -- ============================================================
 
 -- Tabla de usuarios
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS properties (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Tabla de imágenes
-CREATE TABLE IF NOT EXISTS images (
+-- Tabla de imágenes (property_images in generico_db)
+CREATE TABLE IF NOT EXISTS property_images (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   property_id INTEGER NOT NULL,
   url TEXT NOT NULL,
@@ -71,8 +71,8 @@ CREATE TABLE IF NOT EXISTS images (
   FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
 );
 
--- Tabla de mensajes/contactos
-CREATE TABLE IF NOT EXISTS contacts (
+-- Tabla de mensajes/contactos (property_contacts in generico_db)
+CREATE TABLE IF NOT EXISTS property_contacts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   property_id INTEGER NOT NULL,
   sender_name TEXT NOT NULL,
@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS contacts (
   FOREIGN KEY (property_id) REFERENCES properties(id)
 );
 
--- Tabla de favoritos
-CREATE TABLE IF NOT EXISTS favorites (
+-- Tabla de favoritos (property_favorites in generico_db)
+CREATE TABLE IF NOT EXISTS property_favorites (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
   property_id INTEGER NOT NULL,
@@ -103,9 +103,9 @@ CREATE INDEX IF NOT EXISTS idx_properties_city ON properties(city);
 CREATE INDEX IF NOT EXISTS idx_properties_price ON properties(price);
 CREATE INDEX IF NOT EXISTS idx_properties_user ON properties(user_id);
 CREATE INDEX IF NOT EXISTS idx_properties_latlng ON properties(lat, lng);
-CREATE INDEX IF NOT EXISTS idx_images_property ON images(property_id);
-CREATE INDEX IF NOT EXISTS idx_contacts_property ON contacts(property_id);
-CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_property_images_property ON property_images(property_id);
+CREATE INDEX IF NOT EXISTS idx_property_contacts_property ON property_contacts(property_id);
+CREATE INDEX IF NOT EXISTS idx_property_favorites_user ON property_favorites(user_id);
 
 -- Usuario admin por defecto (password: admin123 - hash SHA-256)
 -- En producción cambiar la contraseña

@@ -89,14 +89,14 @@ export async function onRequestPost(context) {
 
     // If setting as cover, unset previous cover
     if (is_cover) {
-      await env.DB.prepare('UPDATE images SET is_cover = 0 WHERE property_id = ?').bind(propertyId).run();
+      await env.DB.prepare('UPDATE property_images SET is_cover = 0 WHERE property_id = ?').bind(propertyId).run();
     }
 
     // Get current max order
-    const maxOrder = await env.DB.prepare('SELECT COALESCE(MAX(order_index), 0) as max_order FROM images WHERE property_id = ?').bind(propertyId).first();
+    const maxOrder = await env.DB.prepare('SELECT COALESCE(MAX(order_index), 0) as max_order FROM property_images WHERE property_id = ?').bind(propertyId).first();
 
     const result = await env.DB.prepare(
-      'INSERT INTO images (property_id, url, thumbnail_url, is_cover, order_index) VALUES (?, ?, ?, ?, ?)'
+      'INSERT INTO property_images (property_id, url, thumbnail_url, is_cover, order_index) VALUES (?, ?, ?, ?, ?)'
     ).bind(
       propertyId,
       url,
@@ -108,9 +108,9 @@ export async function onRequestPost(context) {
     const imageId = result.meta.last_row_id;
 
     // If this is the first image, set it as cover
-    const imageCount = await env.DB.prepare('SELECT COUNT(*) as total FROM images WHERE property_id = ?').bind(propertyId).first();
+    const imageCount = await env.DB.prepare('SELECT COUNT(*) as total FROM property_images WHERE property_id = ?').bind(propertyId).first();
     if (imageCount.total === 1) {
-      await env.DB.prepare('UPDATE images SET is_cover = 1 WHERE id = ?').bind(imageId).run();
+      await env.DB.prepare('UPDATE property_images SET is_cover = 1 WHERE id = ?').bind(imageId).run();
     }
 
     return new Response(JSON.stringify({
@@ -164,7 +164,7 @@ export async function onRequestDelete(context) {
     }
 
     // Check image exists
-    const image = await env.DB.prepare('SELECT * FROM images WHERE id = ? AND property_id = ?').bind(imageId, propertyId).first();
+    const image = await env.DB.prepare('SELECT * FROM property_images WHERE id = ? AND property_id = ?').bind(imageId, propertyId).first();
     if (!image) {
       return new Response(JSON.stringify({ error: 'Imagen no encontrada' }), {
         status: 404,
@@ -193,15 +193,15 @@ export async function onRequestDelete(context) {
     }
 
     // Delete from DB
-    await env.DB.prepare('DELETE FROM images WHERE id = ?').bind(imageId).run();
+    await env.DB.prepare('DELETE FROM property_images WHERE id = ?').bind(imageId).run();
 
     // If deleted image was cover, set another image as cover
     if (wasCover) {
       const nextImage = await env.DB.prepare(
-        'SELECT id FROM images WHERE property_id = ? ORDER BY order_index ASC LIMIT 1'
+        'SELECT id FROM property_images WHERE property_id = ? ORDER BY order_index ASC LIMIT 1'
       ).bind(propertyId).first();
       if (nextImage) {
-        await env.DB.prepare('UPDATE images SET is_cover = 1 WHERE id = ?').bind(nextImage.id).run();
+        await env.DB.prepare('UPDATE property_images SET is_cover = 1 WHERE id = ?').bind(nextImage.id).run();
       }
     }
 

@@ -67,7 +67,7 @@ export async function onRequestGet(context) {
 
     // Get all images for this property
     const images = await env.DB.prepare(
-      'SELECT * FROM images WHERE property_id = ? ORDER BY is_cover DESC, order_index ASC'
+      'SELECT * FROM property_images WHERE property_id = ? ORDER BY is_cover DESC, order_index ASC'
     ).bind(id).all();
 
     // Increment views
@@ -203,7 +203,7 @@ export async function onRequestDelete(context) {
 
     // Delete images from R2 bucket (best effort)
     try {
-      const images = await env.DB.prepare('SELECT url FROM images WHERE property_id = ?').bind(id).all();
+      const images = await env.DB.prepare('SELECT url FROM property_images WHERE property_id = ?').bind(id).all();
       for (const img of images.results) {
         try {
           // Extract key from URL
@@ -220,11 +220,11 @@ export async function onRequestDelete(context) {
 
     // Delete related records that lack ON DELETE CASCADE
     // (contacts, favorites, conversations reference properties without cascade)
-    try { await env.DB.prepare('DELETE FROM contacts WHERE property_id = ?').bind(id).run(); } catch (e) {}
-    try { await env.DB.prepare('DELETE FROM favorites WHERE property_id = ?').bind(id).run(); } catch (e) {}
+    try { await env.DB.prepare('DELETE FROM property_contacts WHERE property_id = ?').bind(id).run(); } catch (e) {}
+    try { await env.DB.prepare('DELETE FROM property_favorites WHERE property_id = ?').bind(id).run(); } catch (e) {}
     try { await env.DB.prepare('DELETE FROM conversations WHERE property_id = ?').bind(id).run(); } catch (e) {}
 
-    // Now safe to delete property (images cascade automatically due to FK)
+    // Now safe to delete property (property_images cascade automatically due to FK)
     await env.DB.prepare('DELETE FROM properties WHERE id = ?').bind(id).run();
 
     return new Response(JSON.stringify({ message: 'Propiedad eliminada exitosamente' }), {

@@ -49,7 +49,7 @@ export async function onRequestGet(context) {
       });
     }
 
-    const jwtSecret = env.JWT_SECRET || 'casasbarinas_default_secret_2024';
+    const jwtSecret = env.JWT_SECRET || 'aunclick_default_secret_2024';
 
     // Auth required
     const authHeader = request.headers.get('Authorization');
@@ -76,7 +76,7 @@ export async function onRequestGet(context) {
     if (user.role === 'admin') {
       query = `
         SELECT c.*, p.title as property_title, p.user_id as property_owner_id
-        FROM contacts c
+        FROM property_contacts c
         LEFT JOIN properties p ON c.property_id = p.id
         ORDER BY c.created_at DESC
         LIMIT 100
@@ -85,7 +85,7 @@ export async function onRequestGet(context) {
     } else {
       query = `
         SELECT c.*, p.title as property_title, p.user_id as property_owner_id
-        FROM contacts c
+        FROM property_contacts c
         LEFT JOIN properties p ON c.property_id = p.id
         WHERE p.user_id = ?
         ORDER BY c.created_at DESC
@@ -147,7 +147,7 @@ export async function onRequestPost(context) {
 
     // Insert contact message
     const result = await env.DB.prepare(
-      'INSERT INTO contacts (property_id, sender_name, sender_email, sender_phone, message) VALUES (?, ?, ?, ?, ?)'
+      'INSERT INTO property_contacts (property_id, sender_name, sender_email, sender_phone, message) VALUES (?, ?, ?, ?, ?)'
     ).bind(property_id, sender_name, sender_email, sender_phone || null, message).run();
 
     const contactId = result.meta.last_row_id;

@@ -81,10 +81,10 @@ export async function onRequestGet(context) {
       env.DB.prepare("SELECT COUNT(*) as total FROM properties WHERE status = 'approved'").first(),
 
       // Total contact messages
-      env.DB.prepare('SELECT COUNT(*) as total FROM contacts').first(),
+      env.DB.prepare('SELECT COUNT(*) as total FROM property_contacts').first(),
 
       // Recent unread contacts
-      env.DB.prepare('SELECT COUNT(*) as total FROM contacts WHERE is_read = 0').first(),
+      env.DB.prepare('SELECT COUNT(*) as total FROM property_contacts WHERE is_read = 0').first(),
 
       // Property type breakdown
       env.DB.prepare(`

@@ -74,10 +74,12 @@ export async function onRequestGet(context) {
     // Ensure new columns exist (auto-migration)
     try { await env.DB.prepare('ALTER TABLE users ADD COLUMN whatsapp TEXT').run(); } catch (e) { /* column may exist */ }
     try { await env.DB.prepare('ALTER TABLE users ADD COLUMN bio TEXT').run(); } catch (e) { /* column may exist */ }
+    try { await env.DB.prepare('ALTER TABLE users ADD COLUMN google_id TEXT').run(); } catch (e) { /* column may exist */ }
+    try { await env.DB.prepare('ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT \'email\'').run(); } catch (e) { /* column may exist */ }
 
     // Fetch user from DB
     const user = await env.DB.prepare(
-      'SELECT id, name, email, phone, whatsapp, bio, role, avatar, is_active, created_at, updated_at FROM users WHERE id = ?'
+      'SELECT id, name, email, phone, whatsapp, bio, google_id, auth_provider, role, avatar, is_active, created_at, updated_at FROM users WHERE id = ?'
     ).bind(payload.id).first();
 
     if (!user) {

@@ -68,7 +68,7 @@ export async function onRequestGet(context) {
     }
 
     const favorite = await env.DB.prepare(
-      'SELECT id FROM favorites WHERE user_id = ? AND property_id = ?'
+      'SELECT id FROM property_favorites WHERE user_id = ? AND property_id = ?'
     ).bind(user.id, propertyId).first();
 
     return new Response(JSON.stringify({

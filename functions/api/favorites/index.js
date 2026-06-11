@@ -66,7 +66,7 @@ export async function onRequestGet(context) {
     const offset = (page - 1) * limit;
 
     const countResult = await env.DB.prepare(
-      'SELECT COUNT(*) as total FROM favorites WHERE user_id = ?'
+      'SELECT COUNT(*) as total FROM property_favorites WHERE user_id = ?'
     ).bind(user.id).first();
     const total = countResult.total;
 
@@ -75,8 +75,8 @@ export async function onRequestGet(context) {
         f.id as favorite_id,
         f.created_at as favorited_at,
         p.*,
-        (SELECT url FROM images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image
-      FROM favorites f
+        (SELECT url FROM property_images WHERE property_id = p.id AND is_cover = 1 LIMIT 1) as cover_image
+      FROM property_favorites f
       JOIN properties p ON f.property_id = p.id
       WHERE f.user_id = ?
       ORDER BY f.created_at DESC
@@ -146,7 +146,7 @@ export async function onRequestPost(context) {
 
     // Check if already favorited
     const existing = await env.DB.prepare(
-      'SELECT id FROM favorites WHERE user_id = ? AND property_id = ?'
+      'SELECT id FROM property_favorites WHERE user_id = ? AND property_id = ?'
     ).bind(user.id, property_id).first();
     if (existing) {
       return new Response(JSON.stringify({ error: 'La propiedad ya está en tus favoritos' }), {
@@ -157,7 +157,7 @@ export async function onRequestPost(context) {
 
     // Add favorite
     await env.DB.prepare(
-      'INSERT INTO favorites (user_id, property_id) VALUES (?, ?)'
+      'INSERT INTO property_favorites (user_id, property_id) VALUES (?, ?)'
     ).bind(user.id, property_id).run();
 
     return new Response(JSON.stringify({ message: 'Propiedad agregada a favoritos' }), {
@@ -212,7 +212,7 @@ export async function onRequestDelete(context) {
     }
 
     const result = await env.DB.prepare(
-      'DELETE FROM favorites WHERE user_id = ? AND property_id = ?'
+      'DELETE FROM property_favorites WHERE user_id = ? AND property_id = ?'
     ).bind(user.id, propertyId).run();
 
     if (result.meta.changes === 0) {

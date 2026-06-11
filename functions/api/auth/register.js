@@ -47,7 +47,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    const jwtSecret = env.JWT_SECRET || 'casasbarinas_default_secret_2024';
+    const jwtSecret = env.JWT_SECRET || 'aunclick_default_secret_2024';
 
     let body;
     try {
@@ -105,8 +105,8 @@ export async function onRequestPost(context) {
 
     // Insert user
     const result = await env.DB.prepare(
-      'INSERT INTO users (name, email, phone, password_hash, role) VALUES (?, ?, ?, ?, ?)'
-    ).bind(name, email, phone || null, passwordHash, assignedRole).run();
+      'INSERT INTO users (name, email, phone, password_hash, role, google_id, auth_provider) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(name, email, phone || null, passwordHash, assignedRole, null, 'email').run();
 
     const userId = result.meta.last_row_id;
 
